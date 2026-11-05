@@ -1,0 +1,12 @@
+====================================================================
+TerraScope: Preprocessing and Spatial Resampling Audit Log
+Target CRS: EPSG:32644 (UTM Zone 44N) | Target Resolution: 30.0 meters
+====================================================================
+
+1. Sentinel-1 GRD (VV/VH): Native 10 m -> Decimated/Bilinear to 30 m grid.
+2. Sentinel-2 L2A (B03/B08): Native 10 m -> Bilinear resampled to 30 m grid.
+3. SRTM DEM: Native 1 Arc-Sec (~30 m) -> Reprojected to EPSG:32644 at 30 m.
+4. [UPSAMPLED] CHIRPS Rainfall: Native 0.05 deg (~5500 m) -> Bilinear upsampled to 30 m.
+5. [UPSAMPLED] ERA5-Land (Wind, Temp): Native 0.10 deg (~9000 m) -> Nearest/Bilinear upsampled to 30 m.
+6. [UPSAMPLED] WorldPop Population: Native 100 m -> Mass-conserving bilinear upsampled to 30 m.
+7. NRSC Ground Truth Layer (2024/FL/TS/03/01092024): Vector polygons rasterized to 30 m binary grid.

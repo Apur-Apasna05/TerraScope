@@ -1,0 +1,108 @@
+project:
+  name: "TerraScope"
+  title: "A Multi-Source Geospatial Intelligence Framework for Flood and Fire Monitoring and Risk Assessment in Telangana"
+  region: "Telangana, India"
+  event_name: "September 2024 Telangana Flood and Fire Assessment"
+  event_target_date: "2024-09-02"
+  event_window_start: "2024-08-28"
+  event_window_end: "2024-09-04"
+
+reproducibility:
+  seed: 42
+  crs_target: "EPSG:32644"  # UTM Zone 44N covering Telangana
+  crs_geographic: "EPSG:4326"
+  common_grid_res_m: 30.0
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  paper_assets_dir: "paper_assets"
+  run_config_out: "paper_assets/run_config.json"
+  run_log_file: "paper_assets/run_execution.log"
+
+data_sources:
+  sentinel1:
+    mode: "IW"
+    product: "GRD"
+    polarizations: ["VV", "VH"]
+    native_res_m: 10.0
+  sentinel2:
+    level: "L2A"
+    bands: ["B03", "B08", "SCL"] # Green, NIR, Scene Classification Layer
+    native_res_m: 10.0
+  chirps:
+    variable: "precipitation"
+    native_res_deg: 0.05
+    aggregation_days: 7
+  era5_land:
+    variables: ["u10", "v10", "t2m"]
+    native_res_deg: 0.10
+  srtm:
+    product: "SRTM 1 Arc-Second Global (30m)"
+    native_res_m: 30.0
+  firms:
+    instruments: ["MODIS", "VIIRS_SNPP", "VIIRS_NOAA20"]
+    confidence_min: "nominal"
+  worldpop:
+    product: "IND_ppp_2020_UNadj_constrained"
+    native_res_m: 100.0
+  osm:
+    layers: ["roads", "settlements"]
+  nrsc_ground_truth:
+    map_id: "2024/FL/TS/03/01092024"
+    title: "Flood Inundation Areas in Part of Telangana (02-Sep-2024)"
+
+flood_module:
+  rf_n_estimators: 200
+  rf_random_state: 42
+  rf_max_depth: 18
+  rf_min_samples_split: 5
+  rf_n_jobs: -1
+  features:
+    - "vv_db"
+    - "vh_db"
+    - "ndwi"
+    - "rainfall_7d_mm"
+    - "elevation_m"
+    - "slope_deg"
+    - "hand_m"
+  train_split_ratio: 0.70
+  test_split_ratio: 0.30
+  spatial_block_size_km: 10.0
+  spatial_block_buffer_km: 1.0  # Buffer between train and test blocks to eliminate spatial leakage
+  baselines:
+    ndwi_threshold: 0.00
+    sar_otsu_polarization: "VH"
+
+fire_module:
+  wedge_angle_deg: 30.0          # +/- 30 degrees (60 deg total cone)
+  wedge_distance_m: 5000.0       # 5 km downwind buffer
+  settlement_proximity_km: 2.0   # Direct buffer alert for nearby communities
+  propagation_disclaimer: "Downwind exposure wedge represents atmospheric advection and contextual ember risk, not a physical fire spread model."
+
+risk_index:
+  ahp:
+    pairwise_matrix:
+      # Criteria: [Hazard, Exposure, Vulnerability]
+      - [1.000, 2.000, 3.000]
+      - [0.500, 1.000, 2.000]
+      - [0.333, 0.500, 1.000]
+    cr_threshold: 0.10
+  exposure_weights:
+    population: 0.35
+    roads: 0.25
+    settlements: 0.20
+    vegetation: 0.10
+    terrain_slope: 0.10
+  vulnerability_weights:
+    social_density: 0.50
+    infrastructure_isolation: 0.30
+    drainage_deficiency: 0.20
+  alert_threshold_percentile: 90.0
+  index_interpretation_label: "Relative risk ranking, not an absolute calibrated probability."
+
+alerts:
+  high_risk_threshold_percentile: 90.0
+  fire_settlement_proximity_km: 2.0
+  log_csv: "paper_assets/alerts_log.csv"
+

@@ -1,0 +1,8 @@
+Feature,Importance
+hand_m,0.5027
+elevation_m,0.2376
+ndwi,0.0998
+vh_db,0.0558
+vv_db,0.0458
+rainfall_7d_mm,0.0306
+slope_deg,0.0276

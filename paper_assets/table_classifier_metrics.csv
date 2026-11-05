@@ -1,0 +1,4 @@
+Model,Precision,Recall,F1_Score,IoU,TP,FP,FN,TN
+Baseline 1: Optical NDWI Threshold,0.0759,0.7957,0.1385,0.0744,148,1803,38,24339
+Baseline 2: SAR Otsu Threshold,0.0184,0.9892,0.0362,0.0184,184,9809,2,16333
+TerraScope Random Forest (Multi-Source),0.9947,1.0,0.9973,0.9947,186,1,0,26141

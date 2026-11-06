@@ -1,0 +1,7 @@
+timestamp,district,hazard_type,latitude,longitude,severity,trigger_reason,pipeline_latency_ms
+2024-09-02 08:30:00 IST,Khammam,Composite Flood & Inundation Risk,17.25,80.15,CRITICAL,District Mean Risk (1.000) exceeded 90th percentile threshold (0.750) following extreme antecedent precipitation (224.3 mm).,36.27
+2024-09-02 08:30:00 IST,Suryapet,Composite Flood & Inundation Risk,17.25,80.15,CRITICAL,District Mean Risk (0.986) exceeded 90th percentile threshold (0.750) following extreme antecedent precipitation (200.0 mm).,36.27
+2024-09-02 08:30:00 IST,Bhadradri Kothagudem,Composite Flood & Inundation Risk,17.25,80.15,HIGH,District Mean Risk (0.844) exceeded 90th percentile threshold (0.750) following extreme antecedent precipitation (161.3 mm).,36.27
+2024-09-02 08:30:00 IST,Mulugu,Composite Flood & Inundation Risk,17.25,80.15,HIGH,District Mean Risk (0.775) exceeded 90th percentile threshold (0.750) following extreme antecedent precipitation (165.9 mm).,36.27
+2026-10-31 729 IST,Mancherial,Active Thermal Anomaly / Wildfire,19.1078,79.4519,WARNING,Active VIIRS_SNPP fire detection (FRP=2.9 MW) within 2.0 km radius buffer of inhabited settlement.,36.27
+2026-10-31 2017 IST,Bhadradri Kothagudem,Active Thermal Anomaly / Wildfire,17.5858,80.3183,WARNING,Active VIIRS_NOAA20 fire detection (FRP=0.8 MW) within 2.0 km radius buffer of inhabited settlement.,36.27

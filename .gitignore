@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches
+data/cache/
+.gev-cache/
+.gev-logs/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db

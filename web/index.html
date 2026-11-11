@@ -22,7 +22,7 @@
 
   <style>
     :root {
-      --bg-space: #050811;
+      --bg-space: #030611;
       --bg-header: #080d1a;
       --bg-panel: rgba(8, 13, 26, 0.94);
       --bg-card: rgba(13, 20, 38, 0.88);
@@ -466,7 +466,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at 50% 50%, #0a1122 0%, #03060e 100%);
+      background: radial-gradient(circle at 50% 50%, #0d162a 0%, #030611 100%);
       overflow: hidden;
     }
 
@@ -484,10 +484,10 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 580px;
-      height: 580px;
+      width: 590px;
+      height: 590px;
       border-radius: 50%;
-      box-shadow: 0 0 120px 40px rgba(56, 189, 248, 0.22), inset 0 0 80px 20px rgba(56, 189, 248, 0.15);
+      box-shadow: 0 0 130px 45px rgba(56, 189, 248, 0.28), inset 0 0 90px 25px rgba(56, 189, 248, 0.20);
       pointer-events: none;
       z-index: 5;
     }
@@ -541,11 +541,11 @@
       top: 41%;
       left: 45%;
       transform: translate(-50%, -50%);
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.92);
       font-weight: 800;
-      font-size: 18px;
+      font-size: 19px;
       letter-spacing: 2.5px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.6);
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.7);
       pointer-events: none;
       z-index: 20;
     }
@@ -553,9 +553,9 @@
       position: absolute;
       top: 48%;
       left: 46.5%;
-      background: rgba(168, 85, 247, 0.3);
+      background: rgba(168, 85, 247, 0.35);
       border: 1.5px solid #c084fc;
-      box-shadow: 0 0 18px rgba(192, 132, 252, 0.7);
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
       color: #f3e8ff;
       padding: 3px 9px;
       border-radius: 12px;
@@ -1082,7 +1082,7 @@
     </section>
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- RIGHT COLUMN: EVENT INTELLIGENCE                                      -->
+    <!-- RIGHT SIDEBAR: EVENT INTELLIGENCE                                      -->
     <!-- --------------------------------------------------------------------- -->
     <aside class="sidebar-right">
       <!-- Header -->
@@ -1158,7 +1158,7 @@
           </div>
         </div>
 
-        <!-- AI Assessment Card -->
+        <!-- AI Assessment Box -->
         <div class="ai-card">
           <div class="ai-card-top">
             <h3>AI Assessment</h3>
@@ -1340,10 +1340,11 @@
     let leafletMapInstance = null;
 
     // -------------------------------------------------------------------------
-    // 2. Three.js Photorealistic 3D Globe Engine
+    // 2. Three.js Authentic NASA Blue Marble Earth Globe
     // -------------------------------------------------------------------------
-    let scene, camera, renderer, globeMesh, cloudsMesh, atmosphereMesh;
-    let targetRotationY = 0.55;
+    let scene, camera, renderer, globeMesh, cloudsMesh;
+    // Initial camera orientation pointing directly at India & Telangana (Lat 18°N, Lon 79°E)
+    let targetRotationY = -1.38;
     let targetRotationX = 0.32;
     let isDragging = false;
     let prevMouseX = 0, prevMouseY = 0;
@@ -1362,44 +1363,65 @@
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Sun Lighting (Day/Night Contrast)
-      const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
-      sunLight.position.set(-2, 1.5, 2.5);
+      // Sun Directional Lighting
+      const sunLight = new THREE.DirectionalLight(0xffffff, 1.35);
+      sunLight.position.set(-3, 2, 2.5);
       scene.add(sunLight);
 
-      const ambientLight = new THREE.AmbientLight(0x1e293b, 0.6);
+      const ambientLight = new THREE.AmbientLight(0x1a263d, 0.7);
       scene.add(ambientLight);
 
-      // Create Earth Sphere Geometry
-      const earthGeo = new THREE.SphereGeometry(0.85, 64, 64);
-      
-      // Generate Procedural High-Contrast Earth Texture Canvas
-      const earthTexture = createEarthCanvasTexture();
-      const earthMaterial = new THREE.MeshPhongMaterial({
-        map: earthTexture,
-        shininess: 25,
-        specular: new THREE.Color(0x38bdf8)
-      });
-      globeMesh = new THREE.Mesh(earthGeo, earthMaterial);
-      globeMesh.rotation.y = targetRotationY;
-      globeMesh.rotation.x = targetRotationX;
-      scene.add(globeMesh);
+      // Load Authentic NASA Blue Marble Satellite Textures (with fallback to CDN)
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
 
-      // Clouds Layer
-      const cloudsGeo = new THREE.SphereGeometry(0.865, 48, 48);
-      const cloudsTexture = createCloudsCanvasTexture();
-      const cloudsMaterial = new THREE.MeshLambertMaterial({
-        map: cloudsTexture,
-        transparent: true,
-        opacity: 0.65,
-        blending: THREE.AdditiveBlending
-      });
-      cloudsMesh = new THREE.Mesh(cloudsGeo, cloudsMaterial);
-      cloudsMesh.rotation.y = targetRotationY;
-      cloudsMesh.rotation.x = targetRotationX;
-      scene.add(cloudsMesh);
+      const primaryBlueMarble = 'assets/earth-blue-marble.jpg';
+      const cdnBlueMarble = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
 
-      // Mouse & Touch Controls
+      loader.load(
+        primaryBlueMarble,
+        function(texture) { setupGlobeWithTexture(texture); },
+        undefined,
+        function(err) {
+          console.warn("Loading local Blue Marble failed, loading from CDN...", err);
+          loader.load(cdnBlueMarble, function(cdnTex) { setupGlobeWithTexture(cdnTex); });
+        }
+      );
+
+      function setupGlobeWithTexture(earthDayTexture) {
+        earthDayTexture.wrapS = THREE.RepeatWrapping;
+        earthDayTexture.wrapT = THREE.ClampToEdgeWrapping;
+
+        const earthGeo = new THREE.SphereGeometry(0.85, 64, 64);
+        const earthMaterial = new THREE.MeshPhongMaterial({
+          map: earthDayTexture,
+          shininess: 15,
+          specular: new THREE.Color(0x38bdf8)
+        });
+
+        globeMesh = new THREE.Mesh(earthGeo, earthMaterial);
+        globeMesh.rotation.y = targetRotationY;
+        globeMesh.rotation.x = targetRotationX;
+        scene.add(globeMesh);
+
+        // Add Realistic Cloud Layer
+        const cloudsGeo = new THREE.SphereGeometry(0.865, 48, 48);
+        const cloudsCanvas = createDynamicCloudCanvas();
+        const cloudsTex = new THREE.CanvasTexture(cloudsCanvas);
+        const cloudsMaterial = new THREE.MeshLambertMaterial({
+          map: cloudsTex,
+          transparent: true,
+          opacity: 0.55,
+          blending: THREE.AdditiveBlending
+        });
+
+        cloudsMesh = new THREE.Mesh(cloudsGeo, cloudsMaterial);
+        cloudsMesh.rotation.y = targetRotationY;
+        cloudsMesh.rotation.x = targetRotationX;
+        scene.add(cloudsMesh);
+      }
+
+      // Mouse Drag Controls
       canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
         prevMouseX = e.clientX;
@@ -1418,7 +1440,7 @@
         targetRotationX = Math.max(-1.1, Math.min(1.1, targetRotationX));
       });
 
-      // Zoom via Mouse Wheel
+      // Mouse Wheel Zoom
       canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
         camera.position.z += e.deltaY * 0.0015;
@@ -1440,7 +1462,7 @@
           globeMesh.rotation.y += (targetRotationY - globeMesh.rotation.y) * 0.08;
           globeMesh.rotation.x += (targetRotationX - globeMesh.rotation.x) * 0.08;
           if (cloudsMesh) {
-            cloudsMesh.rotation.y = globeMesh.rotation.y + 0.00015;
+            cloudsMesh.rotation.y = globeMesh.rotation.y + 0.00018;
             cloudsMesh.rotation.x = globeMesh.rotation.x;
           }
         }
@@ -1449,122 +1471,34 @@
       animate();
     }
 
-    // High-Resolution Procedural Texture for Photorealistic Continents & Oceans
-    function createEarthCanvasTexture() {
-      const c = document.createElement('canvas');
-      c.width = 2048; c.height = 1024;
-      const ctx = c.getContext('2d');
-
-      // Deep Blue Oceans with Bathymetric Gradients
-      const oceanGrad = ctx.createLinearGradient(0, 0, 0, 1024);
-      oceanGrad.addColorStop(0, '#041026');
-      oceanGrad.addColorStop(0.5, '#082046');
-      oceanGrad.addColorStop(1, '#041026');
-      ctx.fillStyle = oceanGrad;
-      ctx.fillRect(0, 0, 2048, 1024);
-
-      // Continent Landmasses (Realistic Shapes)
-      ctx.fillStyle = '#1c3d2e'; // Lush green/forest land
-
-      // Eurasia & India
-      ctx.beginPath();
-      ctx.moveTo(850, 250);
-      ctx.bezierCurveTo(1050, 200, 1400, 220, 1600, 300);
-      ctx.bezierCurveTo(1550, 480, 1350, 520, 1250, 480);
-      // Indian Subcontinent V-Shape
-      ctx.lineTo(1220, 420);
-      ctx.lineTo(1210, 550); // Southern Tip of India (Kanyakumari)
-      ctx.lineTo(1160, 430); // West Coast (Gujarat / Mumbai)
-      ctx.lineTo(1050, 450); // Arabian Peninsula
-      ctx.lineTo(920, 380);
-      ctx.closePath();
-      ctx.fill();
-
-      // Terrain Relief Shading (Deserts & Mountains in Warm Ochre)
-      ctx.fillStyle = '#5c4e32';
-      ctx.beginPath();
-      ctx.arc(1100, 380, 70, 0, Math.PI * 2); // Middle East / Thar Desert
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(1260, 350, 90, 0, Math.PI * 2); // Tibetan Plateau / Himalayas
-      ctx.fillStyle = '#e2e8f0'; // Snow caps
-      ctx.fill();
-
-      // Africa
-      ctx.fillStyle = '#224d35';
-      ctx.beginPath();
-      ctx.moveTo(900, 380);
-      ctx.bezierCurveTo(1020, 420, 1050, 560, 980, 720); // South Africa
-      ctx.bezierCurveTo(900, 700, 800, 520, 780, 420);
-      ctx.closePath();
-      ctx.fill();
-
-      // Australia & Islands
-      ctx.fillStyle = '#423724';
-      ctx.beginPath();
-      ctx.arc(1650, 680, 85, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Night City Lights Shimmer (Glowing Gold Dots across India & Europe)
-      ctx.fillStyle = 'rgba(253, 224, 71, 0.85)';
-      for (let i = 0; i < 300; i++) {
-        const lx = 1140 + Math.random() * 120;
-        const ly = 380 + Math.random() * 160;
-        ctx.beginPath();
-        ctx.arc(lx, ly, Math.random() * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Highlighted Telangana Boundary on the Map (Vibrant Neon Purple)
-      ctx.strokeStyle = '#c084fc';
-      ctx.lineWidth = 4;
-      ctx.fillStyle = 'rgba(192, 132, 252, 0.45)';
-      ctx.beginPath();
-      // Geographic Position of Telangana (Lat ~17.5, Lon ~79)
-      const tx = 1195, ty = 475;
-      ctx.moveTo(tx - 12, ty - 10);
-      ctx.lineTo(tx + 14, ty - 12);
-      ctx.lineTo(tx + 22, ty + 12);
-      ctx.lineTo(tx + 4, ty + 24);
-      ctx.lineTo(tx - 14, ty + 10);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Return Three Texture
-      const texture = new THREE.CanvasTexture(c);
-      return texture;
-    }
-
-    // Swirling Clouds & Typhoon Texture
-    function createCloudsCanvasTexture() {
+    // Dynamic Swirling Weather Clouds & Typhoon Canvas
+    function createDynamicCloudCanvas() {
       const c = document.createElement('canvas');
       c.width = 1024; c.height = 512;
       const ctx = c.getContext('2d');
-
       ctx.clearRect(0, 0, 1024, 512);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
 
-      // Atmospheric cloud bands
-      for (let i = 0; i < 40; i++) {
+      // Soft Cirrus & Cumulus Cloud Bands
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.32)';
+      for (let i = 0; i < 45; i++) {
         const x = Math.random() * 1024;
         const y = Math.random() * 512;
         ctx.beginPath();
-        ctx.ellipse(x, y, 60 + Math.random() * 90, 15 + Math.random() * 25, Math.random() * 0.4, 0, Math.PI * 2);
+        ctx.ellipse(x, y, 60 + Math.random() * 100, 15 + Math.random() * 25, Math.random() * 0.4, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Distinct Tropical Cyclone Spiral (Over East Asia / Pacific)
-      const cx = 780, cy = 190;
-      for (let r = 10; r < 60; r += 8) {
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.8 - r / 80})`;
-        ctx.lineWidth = 4;
+      // Swirling Tropical Cyclone Spiral (East Asia / Western Pacific)
+      const cx = 820, cy = 190;
+      for (let r = 8; r < 65; r += 7) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.85 - r / 80})`;
+        ctx.lineWidth = 3.5;
         ctx.beginPath();
-        ctx.arc(cx, cy, r, r * 0.1, r * 0.1 + Math.PI * 1.5);
+        ctx.arc(cx, cy, r, r * 0.12, r * 0.12 + Math.PI * 1.55);
         ctx.stroke();
       }
 
-      return new THREE.CanvasTexture(c);
+      return c;
     }
 
     // -------------------------------------------------------------------------
@@ -1628,7 +1562,7 @@
         globeEl.style.display = 'block';
         glowEl.style.display = 'block';
         markers.forEach(m => m && (m.style.display = 'block'));
-        targetRotationY = 0.55;
+        targetRotationY = -1.38;
         targetRotationX = 0.32;
         camera.position.z = 2.45;
       }
@@ -1646,7 +1580,7 @@
         document.getElementById('pillGlobal').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'block';
         if (lblTelangana) lblTelangana.style.display = 'flex';
-        targetRotationY = 0.55;
+        targetRotationY = -1.38;
         targetRotationX = 0.32;
         camera.position.z = 2.45;
         if (leafletMapInstance) leafletMapInstance.flyTo([20.0, 78.5], 4);
@@ -1654,23 +1588,23 @@
         document.getElementById('pillIndia').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'block';
         if (lblTelangana) lblTelangana.style.display = 'flex';
-        targetRotationY = 0.58;
-        targetRotationX = 0.36;
+        targetRotationY = -1.38;
+        targetRotationX = 0.34;
         camera.position.z = 1.85;
         if (leafletMapInstance) leafletMapInstance.flyTo([21.0, 79.0], 5);
       } else if (scope === 'telangana') {
         document.getElementById('pillTelangana').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'none';
         if (lblTelangana) lblTelangana.style.display = 'none';
-        targetRotationY = 0.61;
-        targetRotationX = 0.38;
+        targetRotationY = -1.39;
+        targetRotationX = 0.36;
         camera.position.z = 1.45;
         if (leafletMapInstance) leafletMapInstance.flyTo([17.9, 79.3], 8);
       }
     }
 
     function resetGlobeView() {
-      targetRotationY = 0.55;
+      targetRotationY = -1.38;
       targetRotationX = 0.32;
       camera.position.z = 2.45;
     }
@@ -1729,8 +1663,8 @@
 
       // Camera Adjustment
       if (!is2DActive) {
-        targetRotationY = 0.60;
-        targetRotationX = 0.38;
+        targetRotationY = -1.38;
+        targetRotationX = 0.35;
         camera.position.z = 1.70;
       } else if (leafletMapInstance) {
         leafletMapInstance.flyTo([currentEvent.lat, currentEvent.lon], 9);

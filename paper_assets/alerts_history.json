@@ -5,8 +5,8 @@
     "district": "Bhadradri Kothagudem",
     "severity": "CRITICAL",
     "timestamp_utc": "2024-09-02T00:48:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096295+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.743865+00:00"
   },
   "ef69307f61aa": {
     "alert_id": "TS-ALERT-FLD-20240902-002",
@@ -14,8 +14,8 @@
     "district": "Khammam",
     "severity": "CRITICAL",
     "timestamp_utc": "2024-09-02T00:48:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096402+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.743911+00:00"
   },
   "49a413afde45": {
     "alert_id": "TS-ALERT-FLD-20240902-003",
@@ -24,7 +24,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096488+00:00"
+    "last_updated": "2026-11-11T07:32:53.743949+00:00"
   },
   "5f5fbf1a9e51": {
     "alert_id": "TS-ALERT-FLD-20240902-004",
@@ -33,7 +33,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096551+00:00"
+    "last_updated": "2026-11-11T07:32:53.743984+00:00"
   },
   "de28ccb8d958": {
     "alert_id": "TS-ALERT-FLD-20240902-005",
@@ -42,7 +42,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096628+00:00"
+    "last_updated": "2026-11-11T07:32:53.744020+00:00"
   },
   "5a3baf75c093": {
     "alert_id": "TS-ALERT-FLD-20240902-006",
@@ -51,7 +51,7 @@
     "severity": "ADVISORY",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096690+00:00"
+    "last_updated": "2026-11-11T07:32:53.744055+00:00"
   },
   "b79356ce65e9": {
     "alert_id": "TS-ALERT-FLD-20240902-007",
@@ -60,7 +60,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096782+00:00"
+    "last_updated": "2026-11-11T07:32:53.744088+00:00"
   },
   "a5dbc03ea9a7": {
     "alert_id": "TS-ALERT-FLD-20240902-008",
@@ -69,7 +69,7 @@
     "severity": "ADVISORY",
     "timestamp_utc": "2024-09-02T00:48:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096853+00:00"
+    "last_updated": "2026-11-11T07:32:53.744128+00:00"
   },
   "bbbd568871c5": {
     "alert_id": "TS-ALERT-FIR-20261029-009",
@@ -78,7 +78,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-10-29T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.096922+00:00"
+    "last_updated": "2026-11-11T07:32:53.744161+00:00"
   },
   "925120ee09dd": {
     "alert_id": "TS-ALERT-FIR-20261030-010",
@@ -87,7 +87,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097000+00:00"
+    "last_updated": "2026-11-11T07:32:53.744194+00:00"
   },
   "886bff3ad6b2": {
     "alert_id": "TS-ALERT-FIR-20261030-011",
@@ -96,7 +96,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097071+00:00"
+    "last_updated": "2026-11-11T07:32:53.744227+00:00"
   },
   "2ce47602d229": {
     "alert_id": "TS-ALERT-FIR-20261030-012",
@@ -105,7 +105,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097144+00:00"
+    "last_updated": "2026-11-11T07:32:53.744258+00:00"
   },
   "5ff746f64659": {
     "alert_id": "TS-ALERT-FIR-20261030-013",
@@ -114,7 +114,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097224+00:00"
+    "last_updated": "2026-11-11T07:32:53.744292+00:00"
   },
   "236eb330ad47": {
     "alert_id": "TS-ALERT-FIR-20261030-014",
@@ -123,7 +123,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097294+00:00"
+    "last_updated": "2026-11-11T07:32:53.744324+00:00"
   },
   "6777961f45a0": {
     "alert_id": "TS-ALERT-FIR-20261030-015",
@@ -132,7 +132,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-30T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097365+00:00"
+    "last_updated": "2026-11-11T07:32:53.744356+00:00"
   },
   "1eb5c12a69c7": {
     "alert_id": "TS-ALERT-FIR-20261031-016",
@@ -141,7 +141,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-10-31T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097438+00:00"
+    "last_updated": "2026-11-11T07:32:53.744388+00:00"
   },
   "907bac1d825f": {
     "alert_id": "TS-ALERT-FIR-20261101-017",
@@ -150,7 +150,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-01T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097518+00:00"
+    "last_updated": "2026-11-11T07:32:53.744425+00:00"
   },
   "99ffcfcc2115": {
     "alert_id": "TS-ALERT-FIR-20261101-018",
@@ -159,7 +159,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-01T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097591+00:00"
+    "last_updated": "2026-11-11T07:32:53.744458+00:00"
   },
   "26650c955c9c": {
     "alert_id": "TS-ALERT-FIR-20261101-019",
@@ -168,7 +168,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-01T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097662+00:00"
+    "last_updated": "2026-11-11T07:32:53.744489+00:00"
   },
   "445b95456ecf": {
     "alert_id": "TS-ALERT-FIR-20261102-020",
@@ -177,7 +177,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097732+00:00"
+    "last_updated": "2026-11-11T07:32:53.744521+00:00"
   },
   "10cbd13cb564": {
     "alert_id": "TS-ALERT-FIR-20261102-021",
@@ -186,7 +186,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097819+00:00"
+    "last_updated": "2026-11-11T07:32:53.744552+00:00"
   },
   "a5a926187184": {
     "alert_id": "TS-ALERT-FIR-20261102-022",
@@ -195,7 +195,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097888+00:00"
+    "last_updated": "2026-11-11T07:32:53.744583+00:00"
   },
   "cb6b819aedc8": {
     "alert_id": "TS-ALERT-FIR-20261102-023",
@@ -204,7 +204,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.097952+00:00"
+    "last_updated": "2026-11-11T07:32:53.744615+00:00"
   },
   "9beeefbc9e52": {
     "alert_id": "TS-ALERT-FIR-20261102-024",
@@ -213,7 +213,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098020+00:00"
+    "last_updated": "2026-11-11T07:32:53.744647+00:00"
   },
   "09c314c6f718": {
     "alert_id": "TS-ALERT-FIR-20261102-025",
@@ -222,7 +222,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098098+00:00"
+    "last_updated": "2026-11-11T07:32:53.744680+00:00"
   },
   "87409ccd18a4": {
     "alert_id": "TS-ALERT-FIR-20261102-026",
@@ -231,7 +231,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098160+00:00"
+    "last_updated": "2026-11-11T07:32:53.744711+00:00"
   },
   "639f4fc95011": {
     "alert_id": "TS-ALERT-FIR-20261102-027",
@@ -240,7 +240,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098237+00:00"
+    "last_updated": "2026-11-11T07:32:53.744743+00:00"
   },
   "0d6ae587cb85": {
     "alert_id": "TS-ALERT-FIR-20261102-028",
@@ -249,7 +249,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098303+00:00"
+    "last_updated": "2026-11-11T07:32:53.744782+00:00"
   },
   "813ebc93f1b2": {
     "alert_id": "TS-ALERT-FIR-20261102-029",
@@ -258,7 +258,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098372+00:00"
+    "last_updated": "2026-11-11T07:32:53.744814+00:00"
   },
   "fdb4b16ca666": {
     "alert_id": "TS-ALERT-FIR-20261102-030",
@@ -267,7 +267,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098443+00:00"
+    "last_updated": "2026-11-11T07:32:53.744846+00:00"
   },
   "07cd5932740f": {
     "alert_id": "TS-ALERT-FIR-20261102-031",
@@ -275,8 +275,8 @@
     "district": "Narayanpet",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-02T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098507+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.744877+00:00"
   },
   "9408da4e1471": {
     "alert_id": "TS-ALERT-FIR-20261102-032",
@@ -285,7 +285,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098553+00:00"
+    "last_updated": "2026-11-11T07:32:53.744909+00:00"
   },
   "8312b6e2e220": {
     "alert_id": "TS-ALERT-FIR-20261102-033",
@@ -294,7 +294,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098595+00:00"
+    "last_updated": "2026-11-11T07:32:53.744941+00:00"
   },
   "1b1a02924536": {
     "alert_id": "TS-ALERT-FIR-20261102-034",
@@ -302,8 +302,8 @@
     "district": "Kamareddy",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-02T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098635+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.744987+00:00"
   },
   "16edc26dfc2e": {
     "alert_id": "TS-ALERT-FIR-20261102-035",
@@ -312,7 +312,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098675+00:00"
+    "last_updated": "2026-11-11T07:32:53.745019+00:00"
   },
   "9ece4a6ccb34": {
     "alert_id": "TS-ALERT-FIR-20261102-036",
@@ -321,7 +321,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098716+00:00"
+    "last_updated": "2026-11-11T07:32:53.745050+00:00"
   },
   "067d8fbda37b": {
     "alert_id": "TS-ALERT-FIR-20261102-037",
@@ -330,7 +330,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098768+00:00"
+    "last_updated": "2026-11-11T07:32:53.745082+00:00"
   },
   "81735ab709d9": {
     "alert_id": "TS-ALERT-FIR-20261102-038",
@@ -339,7 +339,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098809+00:00"
+    "last_updated": "2026-11-11T07:32:53.745120+00:00"
   },
   "35a3831cd7d7": {
     "alert_id": "TS-ALERT-FIR-20261102-039",
@@ -348,7 +348,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098861+00:00"
+    "last_updated": "2026-11-11T07:32:53.745155+00:00"
   },
   "74adb507347c": {
     "alert_id": "TS-ALERT-FIR-20261102-040",
@@ -357,7 +357,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098909+00:00"
+    "last_updated": "2026-11-11T07:32:53.745188+00:00"
   },
   "1b869a653eef": {
     "alert_id": "TS-ALERT-FIR-20261102-041",
@@ -366,7 +366,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-02T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098951+00:00"
+    "last_updated": "2026-11-11T07:32:53.745220+00:00"
   },
   "e80deafdfda8": {
     "alert_id": "TS-ALERT-FIR-20261103-042",
@@ -375,7 +375,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-03T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.098991+00:00"
+    "last_updated": "2026-11-11T07:32:53.745252+00:00"
   },
   "563aa2647d77": {
     "alert_id": "TS-ALERT-FIR-20261104-043",
@@ -384,7 +384,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-04T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099031+00:00"
+    "last_updated": "2026-11-11T07:32:53.745285+00:00"
   },
   "be9896f81657": {
     "alert_id": "TS-ALERT-FIR-20261104-044",
@@ -393,7 +393,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-04T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099071+00:00"
+    "last_updated": "2026-11-11T07:32:53.745316+00:00"
   },
   "73f1617f33fa": {
     "alert_id": "TS-ALERT-FIR-20261104-045",
@@ -402,7 +402,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-04T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099112+00:00"
+    "last_updated": "2026-11-11T07:32:53.745349+00:00"
   },
   "0663351292f2": {
     "alert_id": "TS-ALERT-FIR-20261104-046",
@@ -411,7 +411,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-04T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099152+00:00"
+    "last_updated": "2026-11-11T07:32:53.745381+00:00"
   },
   "096d89f526e7": {
     "alert_id": "TS-ALERT-FIR-20261104-047",
@@ -419,8 +419,8 @@
     "district": "Nizamabad",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-04T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099192+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.745412+00:00"
   },
   "6feae10f191b": {
     "alert_id": "TS-ALERT-FIR-20261105-048",
@@ -429,7 +429,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099232+00:00"
+    "last_updated": "2026-11-11T07:32:53.745444+00:00"
   },
   "3210335f9ddf": {
     "alert_id": "TS-ALERT-FIR-20261105-049",
@@ -438,7 +438,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099272+00:00"
+    "last_updated": "2026-11-11T07:32:53.745478+00:00"
   },
   "3ae092e923fd": {
     "alert_id": "TS-ALERT-FIR-20261105-050",
@@ -447,7 +447,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099310+00:00"
+    "last_updated": "2026-11-11T07:32:53.745513+00:00"
   },
   "3d7d047b0f16": {
     "alert_id": "TS-ALERT-FIR-20261105-051",
@@ -456,7 +456,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099349+00:00"
+    "last_updated": "2026-11-11T07:32:53.745560+00:00"
   },
   "27378cabceaf": {
     "alert_id": "TS-ALERT-FIR-20261105-052",
@@ -465,7 +465,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099407+00:00"
+    "last_updated": "2026-11-11T07:32:53.745592+00:00"
   },
   "8acbaeec7057": {
     "alert_id": "TS-ALERT-FIR-20261105-053",
@@ -473,8 +473,8 @@
     "district": "Nizamabad",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-05T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099451+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.745626+00:00"
   },
   "b9630609661a": {
     "alert_id": "TS-ALERT-FIR-20261105-054",
@@ -482,8 +482,8 @@
     "district": "Nizamabad",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-05T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099491+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.745666+00:00"
   },
   "171cb1528ad2": {
     "alert_id": "TS-ALERT-FIR-20261105-055",
@@ -492,7 +492,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099530+00:00"
+    "last_updated": "2026-11-11T07:32:53.745718+00:00"
   },
   "f0a4836764a0": {
     "alert_id": "TS-ALERT-FIR-20261105-056",
@@ -501,7 +501,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099575+00:00"
+    "last_updated": "2026-11-11T07:32:53.745795+00:00"
   },
   "613a41bd79e7": {
     "alert_id": "TS-ALERT-FIR-20261105-057",
@@ -510,7 +510,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099636+00:00"
+    "last_updated": "2026-11-11T07:32:53.745871+00:00"
   },
   "0a699d342bfa": {
     "alert_id": "TS-ALERT-FIR-20261105-058",
@@ -519,7 +519,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099700+00:00"
+    "last_updated": "2026-11-11T07:32:53.745920+00:00"
   },
   "297b9dae0335": {
     "alert_id": "TS-ALERT-FIR-20261105-059",
@@ -528,7 +528,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099767+00:00"
+    "last_updated": "2026-11-11T07:32:53.745967+00:00"
   },
   "367252653602": {
     "alert_id": "TS-ALERT-FIR-20261105-060",
@@ -537,7 +537,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099829+00:00"
+    "last_updated": "2026-11-11T07:32:53.746000+00:00"
   },
   "908a6ee6c142": {
     "alert_id": "TS-ALERT-FIR-20261105-061",
@@ -546,7 +546,7 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099885+00:00"
+    "last_updated": "2026-11-11T07:32:53.746034+00:00"
   },
   "ef22b3400f8d": {
     "alert_id": "TS-ALERT-FIR-20261105-062",
@@ -555,7 +555,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099928+00:00"
+    "last_updated": "2026-11-11T07:32:53.746080+00:00"
   },
   "09513dc99ce5": {
     "alert_id": "TS-ALERT-FIR-20261105-063",
@@ -564,7 +564,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.099976+00:00"
+    "last_updated": "2026-11-11T07:32:53.746141+00:00"
   },
   "8a4bc09788c3": {
     "alert_id": "TS-ALERT-FIR-20261105-064",
@@ -573,7 +573,7 @@
     "severity": "HIGH",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.100038+00:00"
+    "last_updated": "2026-11-11T07:32:53.746221+00:00"
   },
   "db1113555d02": {
     "alert_id": "TS-ALERT-FIR-20261105-065",
@@ -581,8 +581,8 @@
     "district": "Nizamabad",
     "severity": "CRITICAL",
     "timestamp_utc": "2026-11-05T07:45:00Z",
-    "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.100101+00:00"
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T07:32:53.746292+00:00"
   },
   "456d497c9312": {
     "alert_id": "TS-ALERT-FIR-20261105-066",
@@ -591,6 +591,6 @@
     "severity": "WARNING",
     "timestamp_utc": "2026-11-05T07:45:00Z",
     "lifecycle_status": "ACTIVE",
-    "last_updated": "2026-11-11T05:41:34.100172+00:00"
+    "last_updated": "2026-11-11T07:32:53.746367+00:00"
   }
 }

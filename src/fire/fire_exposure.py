@@ -9,6 +9,12 @@ Satisfies Paper Section IV-D:
 """
 import os
 import sys
+
+# Ensure repository root is in sys.path
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
+
 import json
 import yaml
 import numpy as np
@@ -192,6 +198,13 @@ def run_fire_module():
     plt.savefig(fig4_path, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved publication Figure 4 to {fig4_path}")
+
+    # Execute Phase 5 Advanced Fire Intelligence Pipeline
+    try:
+        from src.fire.advanced_fire_intelligence import run_advanced_fire_intelligence
+        run_advanced_fire_intelligence()
+    except Exception as e:
+        print(f"Note: Advanced Fire Intelligence execution: {e}")
 
 if __name__ == "__main__":
     run_fire_module()

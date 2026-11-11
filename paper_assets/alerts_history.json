@@ -1,0 +1,596 @@
+{
+  "91f80b97dadf": {
+    "alert_id": "TS-ALERT-FLD-20240902-001",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Bhadradri Kothagudem",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.486136+00:00"
+  },
+  "ef69307f61aa": {
+    "alert_id": "TS-ALERT-FLD-20240902-002",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Khammam",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.486180+00:00"
+  },
+  "49a413afde45": {
+    "alert_id": "TS-ALERT-FLD-20240902-003",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Nalgonda",
+    "severity": "HIGH",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486217+00:00"
+  },
+  "5f5fbf1a9e51": {
+    "alert_id": "TS-ALERT-FLD-20240902-004",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Suryapet",
+    "severity": "HIGH",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486262+00:00"
+  },
+  "de28ccb8d958": {
+    "alert_id": "TS-ALERT-FLD-20240902-005",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Mahabubabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486308+00:00"
+  },
+  "5a3baf75c093": {
+    "alert_id": "TS-ALERT-FLD-20240902-006",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Warangal Rural",
+    "severity": "ADVISORY",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486345+00:00"
+  },
+  "b79356ce65e9": {
+    "alert_id": "TS-ALERT-FLD-20240902-007",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Mulugu",
+    "severity": "HIGH",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486397+00:00"
+  },
+  "a5dbc03ea9a7": {
+    "alert_id": "TS-ALERT-FLD-20240902-008",
+    "hazard_type": "Flash Flood & Riverine Inundation",
+    "district": "Jayashankar",
+    "severity": "ADVISORY",
+    "timestamp_utc": "2024-09-02T00:48:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486432+00:00"
+  },
+  "bbbd568871c5": {
+    "alert_id": "TS-ALERT-FIR-20261029-009",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-10-29T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486467+00:00"
+  },
+  "925120ee09dd": {
+    "alert_id": "TS-ALERT-FIR-20261030-010",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Narayanpet",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486503+00:00"
+  },
+  "886bff3ad6b2": {
+    "alert_id": "TS-ALERT-FIR-20261030-011",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486543+00:00"
+  },
+  "2ce47602d229": {
+    "alert_id": "TS-ALERT-FIR-20261030-012",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486582+00:00"
+  },
+  "5ff746f64659": {
+    "alert_id": "TS-ALERT-FIR-20261030-013",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486616+00:00"
+  },
+  "236eb330ad47": {
+    "alert_id": "TS-ALERT-FIR-20261030-014",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486652+00:00"
+  },
+  "6777961f45a0": {
+    "alert_id": "TS-ALERT-FIR-20261030-015",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Rajanna Sircilla",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-30T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486690+00:00"
+  },
+  "1eb5c12a69c7": {
+    "alert_id": "TS-ALERT-FIR-20261031-016",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Narayanpet",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-10-31T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486724+00:00"
+  },
+  "907bac1d825f": {
+    "alert_id": "TS-ALERT-FIR-20261101-017",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-01T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486787+00:00"
+  },
+  "99ffcfcc2115": {
+    "alert_id": "TS-ALERT-FIR-20261101-018",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-01T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486837+00:00"
+  },
+  "26650c955c9c": {
+    "alert_id": "TS-ALERT-FIR-20261101-019",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-01T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486876+00:00"
+  },
+  "445b95456ecf": {
+    "alert_id": "TS-ALERT-FIR-20261102-020",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486910+00:00"
+  },
+  "10cbd13cb564": {
+    "alert_id": "TS-ALERT-FIR-20261102-021",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486946+00:00"
+  },
+  "a5a926187184": {
+    "alert_id": "TS-ALERT-FIR-20261102-022",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.486979+00:00"
+  },
+  "cb6b819aedc8": {
+    "alert_id": "TS-ALERT-FIR-20261102-023",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487012+00:00"
+  },
+  "9beeefbc9e52": {
+    "alert_id": "TS-ALERT-FIR-20261102-024",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Medak",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487045+00:00"
+  },
+  "09c314c6f718": {
+    "alert_id": "TS-ALERT-FIR-20261102-025",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Medak",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487078+00:00"
+  },
+  "87409ccd18a4": {
+    "alert_id": "TS-ALERT-FIR-20261102-026",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Sangareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487111+00:00"
+  },
+  "639f4fc95011": {
+    "alert_id": "TS-ALERT-FIR-20261102-027",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Sangareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487144+00:00"
+  },
+  "0d6ae587cb85": {
+    "alert_id": "TS-ALERT-FIR-20261102-028",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Sangareddy",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487177+00:00"
+  },
+  "813ebc93f1b2": {
+    "alert_id": "TS-ALERT-FIR-20261102-029",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Sangareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487211+00:00"
+  },
+  "fdb4b16ca666": {
+    "alert_id": "TS-ALERT-FIR-20261102-030",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Vikarabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487244+00:00"
+  },
+  "07cd5932740f": {
+    "alert_id": "TS-ALERT-FIR-20261102-031",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Narayanpet",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.487276+00:00"
+  },
+  "9408da4e1471": {
+    "alert_id": "TS-ALERT-FIR-20261102-032",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Jogulamba Gadwal",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487308+00:00"
+  },
+  "8312b6e2e220": {
+    "alert_id": "TS-ALERT-FIR-20261102-033",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Vikarabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487340+00:00"
+  },
+  "1b1a02924536": {
+    "alert_id": "TS-ALERT-FIR-20261102-034",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.487372+00:00"
+  },
+  "16edc26dfc2e": {
+    "alert_id": "TS-ALERT-FIR-20261102-035",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487404+00:00"
+  },
+  "9ece4a6ccb34": {
+    "alert_id": "TS-ALERT-FIR-20261102-036",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487435+00:00"
+  },
+  "067d8fbda37b": {
+    "alert_id": "TS-ALERT-FIR-20261102-037",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487467+00:00"
+  },
+  "81735ab709d9": {
+    "alert_id": "TS-ALERT-FIR-20261102-038",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487499+00:00"
+  },
+  "35a3831cd7d7": {
+    "alert_id": "TS-ALERT-FIR-20261102-039",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487530+00:00"
+  },
+  "74adb507347c": {
+    "alert_id": "TS-ALERT-FIR-20261102-040",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487562+00:00"
+  },
+  "1b869a653eef": {
+    "alert_id": "TS-ALERT-FIR-20261102-041",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-02T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487593+00:00"
+  },
+  "e80deafdfda8": {
+    "alert_id": "TS-ALERT-FIR-20261103-042",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-03T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487625+00:00"
+  },
+  "563aa2647d77": {
+    "alert_id": "TS-ALERT-FIR-20261104-043",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-04T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487656+00:00"
+  },
+  "be9896f81657": {
+    "alert_id": "TS-ALERT-FIR-20261104-044",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-04T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487688+00:00"
+  },
+  "73f1617f33fa": {
+    "alert_id": "TS-ALERT-FIR-20261104-045",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-04T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487720+00:00"
+  },
+  "0663351292f2": {
+    "alert_id": "TS-ALERT-FIR-20261104-046",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-04T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487752+00:00"
+  },
+  "096d89f526e7": {
+    "alert_id": "TS-ALERT-FIR-20261104-047",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-04T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.487785+00:00"
+  },
+  "6feae10f191b": {
+    "alert_id": "TS-ALERT-FIR-20261105-048",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487817+00:00"
+  },
+  "3210335f9ddf": {
+    "alert_id": "TS-ALERT-FIR-20261105-049",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487857+00:00"
+  },
+  "3ae092e923fd": {
+    "alert_id": "TS-ALERT-FIR-20261105-050",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487890+00:00"
+  },
+  "3d7d047b0f16": {
+    "alert_id": "TS-ALERT-FIR-20261105-051",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487926+00:00"
+  },
+  "27378cabceaf": {
+    "alert_id": "TS-ALERT-FIR-20261105-052",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.487959+00:00"
+  },
+  "8acbaeec7057": {
+    "alert_id": "TS-ALERT-FIR-20261105-053",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.487993+00:00"
+  },
+  "b9630609661a": {
+    "alert_id": "TS-ALERT-FIR-20261105-054",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.488026+00:00"
+  },
+  "171cb1528ad2": {
+    "alert_id": "TS-ALERT-FIR-20261105-055",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nalgonda",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488058+00:00"
+  },
+  "f0a4836764a0": {
+    "alert_id": "TS-ALERT-FIR-20261105-056",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Ranga Reddy",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488091+00:00"
+  },
+  "613a41bd79e7": {
+    "alert_id": "TS-ALERT-FIR-20261105-057",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488123+00:00"
+  },
+  "0a699d342bfa": {
+    "alert_id": "TS-ALERT-FIR-20261105-058",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488155+00:00"
+  },
+  "297b9dae0335": {
+    "alert_id": "TS-ALERT-FIR-20261105-059",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488188+00:00"
+  },
+  "367252653602": {
+    "alert_id": "TS-ALERT-FIR-20261105-060",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488220+00:00"
+  },
+  "908a6ee6c142": {
+    "alert_id": "TS-ALERT-FIR-20261105-061",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488253+00:00"
+  },
+  "ef22b3400f8d": {
+    "alert_id": "TS-ALERT-FIR-20261105-062",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488284+00:00"
+  },
+  "09513dc99ce5": {
+    "alert_id": "TS-ALERT-FIR-20261105-063",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Kamareddy",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488315+00:00"
+  },
+  "8a4bc09788c3": {
+    "alert_id": "TS-ALERT-FIR-20261105-064",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "HIGH",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488347+00:00"
+  },
+  "db1113555d02": {
+    "alert_id": "TS-ALERT-FIR-20261105-065",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "CRITICAL",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ESCALATED",
+    "last_updated": "2026-11-11T05:15:50.488379+00:00"
+  },
+  "456d497c9312": {
+    "alert_id": "TS-ALERT-FIR-20261105-066",
+    "hazard_type": "Active Wildfire Thermal Anomaly & Ember Advection",
+    "district": "Nizamabad",
+    "severity": "WARNING",
+    "timestamp_utc": "2026-11-05T07:45:00Z",
+    "lifecycle_status": "ACTIVE",
+    "last_updated": "2026-11-11T05:15:50.488411+00:00"
+  }
+}

@@ -103,6 +103,12 @@ risk_index:
 
 alerts:
   high_risk_threshold_percentile: 90.0
+  flood_rainfall_7d_threshold_mm: 150.0
+  flood_inundation_area_threshold_km2: 25.0
   fire_settlement_proximity_km: 2.0
+  fire_frp_critical_mw: 25.0
+  fire_frp_warning_mw: 10.0
+  data_freshness_sla_hours: 6.0
   log_csv: "paper_assets/alerts_log.csv"
+  history_json: "paper_assets/alerts_history.json"
 

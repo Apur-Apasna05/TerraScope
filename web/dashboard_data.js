@@ -4,6 +4,7 @@ window.TERRASCOPE_DATA = {
     "system_name": "TerraScope Geospatial Intelligence Framework",
     "region": "Telangana, India (33 Administrative Districts)",
     "event_reference": "September 2024 Deep Depression Flood Disaster & Seasonal Thermal Anomalies",
+    "carto_basemap_key": "cb1_56ol_1_c37417fcc3decf99d3ade9b6",
     "data_sources": [
       "Copernicus Sentinel-1A SAR IW GRD (Dual-Pol VV+VH, 10m/30m, Orbits 041 & 143)",
       "NRSC / ISRO Flood Reference Inundation Layer (Map ID: 2024/FL/TS/03/01092024)",
@@ -6123,10 +6124,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "VERY HIGH (Multi-Sensor Cross-Validated against NRSC Reference Ground Truth)",
       "Alert_Verification_Status": "VERIFIED_MULTI_SENSOR",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "91f80b97dadf",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-002",
@@ -6149,10 +6150,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "VERY HIGH (Multi-Sensor Cross-Validated against NRSC Reference Ground Truth)",
       "Alert_Verification_Status": "VERIFIED_MULTI_SENSOR",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "ef69307f61aa",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-003",
@@ -6178,7 +6179,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "49a413afde45",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-004",
@@ -6204,7 +6205,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "5f5fbf1a9e51",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-005",
@@ -6230,7 +6231,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "de28ccb8d958",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-006",
@@ -6256,7 +6257,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "5a3baf75c093",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-007",
@@ -6282,7 +6283,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "b79356ce65e9",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FLD-20240902-008",
@@ -6308,7 +6309,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "a5dbc03ea9a7",
       "External_Acquisition_Latency_Hours": 2.5,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261029-009",
@@ -6334,7 +6335,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "bbbd568871c5",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-010",
@@ -6360,7 +6361,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "925120ee09dd",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-011",
@@ -6386,7 +6387,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "886bff3ad6b2",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-012",
@@ -6412,7 +6413,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "2ce47602d229",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-013",
@@ -6438,7 +6439,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "5ff746f64659",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-014",
@@ -6464,7 +6465,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "236eb330ad47",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261030-015",
@@ -6490,7 +6491,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "6777961f45a0",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261031-016",
@@ -6516,7 +6517,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "1eb5c12a69c7",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261101-017",
@@ -6542,7 +6543,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "907bac1d825f",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261101-018",
@@ -6568,7 +6569,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "99ffcfcc2115",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261101-019",
@@ -6594,7 +6595,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "26650c955c9c",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-020",
@@ -6620,7 +6621,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "445b95456ecf",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-021",
@@ -6646,7 +6647,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "10cbd13cb564",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-022",
@@ -6672,7 +6673,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "a5a926187184",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-023",
@@ -6698,7 +6699,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "cb6b819aedc8",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-024",
@@ -6724,7 +6725,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "9beeefbc9e52",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-025",
@@ -6750,7 +6751,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "09c314c6f718",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-026",
@@ -6776,7 +6777,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "87409ccd18a4",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-027",
@@ -6802,7 +6803,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "639f4fc95011",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-028",
@@ -6828,7 +6829,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "0d6ae587cb85",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-029",
@@ -6854,7 +6855,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "813ebc93f1b2",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-030",
@@ -6880,7 +6881,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "fdb4b16ca666",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-031",
@@ -6903,10 +6904,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "HIGH",
       "Alert_Verification_Status": "GROUND_CONFIRMED",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "07cd5932740f",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-032",
@@ -6932,7 +6933,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "9408da4e1471",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-033",
@@ -6958,7 +6959,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "8312b6e2e220",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-034",
@@ -6981,10 +6982,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "HIGH (Multi-Sensor Confirmed)",
       "Alert_Verification_Status": "VERIFIED_MULTI_SENSOR",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "1b1a02924536",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-035",
@@ -7010,7 +7011,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "16edc26dfc2e",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-036",
@@ -7036,7 +7037,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "9ece4a6ccb34",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-037",
@@ -7062,7 +7063,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "067d8fbda37b",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-038",
@@ -7088,7 +7089,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "81735ab709d9",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-039",
@@ -7114,7 +7115,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "35a3831cd7d7",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-040",
@@ -7140,7 +7141,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "74adb507347c",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261102-041",
@@ -7166,7 +7167,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "1b869a653eef",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261103-042",
@@ -7192,7 +7193,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "e80deafdfda8",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261104-043",
@@ -7218,7 +7219,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "563aa2647d77",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261104-044",
@@ -7244,7 +7245,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "be9896f81657",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261104-045",
@@ -7270,7 +7271,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "73f1617f33fa",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261104-046",
@@ -7296,7 +7297,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "0663351292f2",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261104-047",
@@ -7319,10 +7320,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "HIGH (Multi-Sensor Confirmed)",
       "Alert_Verification_Status": "VERIFIED_MULTI_SENSOR",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "096d89f526e7",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-048",
@@ -7348,7 +7349,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "6feae10f191b",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-049",
@@ -7374,7 +7375,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "3210335f9ddf",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-050",
@@ -7400,7 +7401,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "3ae092e923fd",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-051",
@@ -7426,7 +7427,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "3d7d047b0f16",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-052",
@@ -7452,7 +7453,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "27378cabceaf",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-053",
@@ -7475,10 +7476,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "HIGH",
       "Alert_Verification_Status": "GROUND_CONFIRMED",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "8acbaeec7057",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-054",
@@ -7501,10 +7502,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "HIGH",
       "Alert_Verification_Status": "GROUND_CONFIRMED",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "b9630609661a",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-055",
@@ -7530,7 +7531,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "171cb1528ad2",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-056",
@@ -7556,7 +7557,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "f0a4836764a0",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-057",
@@ -7582,7 +7583,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "613a41bd79e7",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-058",
@@ -7608,7 +7609,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "0a699d342bfa",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-059",
@@ -7634,7 +7635,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "297b9dae0335",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-060",
@@ -7660,7 +7661,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "367252653602",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-061",
@@ -7686,7 +7687,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "908a6ee6c142",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-062",
@@ -7712,7 +7713,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "ef22b3400f8d",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-063",
@@ -7738,7 +7739,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "09513dc99ce5",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-064",
@@ -7764,7 +7765,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "8a4bc09788c3",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-065",
@@ -7787,10 +7788,10 @@ window.TERRASCOPE_DATA = {
       "Data_Freshness_SLA_Status": "WITHIN_SLA (< 6h)",
       "Confidence_Level": "NOMINAL",
       "Alert_Verification_Status": "GROUND_CONFIRMED",
-      "Lifecycle_Status": "ESCALATED",
+      "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "db1113555d02",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     },
     {
       "Alert_ID": "TS-ALERT-FIR-20261105-066",
@@ -7816,7 +7817,7 @@ window.TERRASCOPE_DATA = {
       "Lifecycle_Status": "ACTIVE",
       "Deduplication_Hash": "456d497c9312",
       "External_Acquisition_Latency_Hours": 1.8,
-      "Processing_Latency_ms": 6.45
+      "Processing_Latency_ms": 11.08
     }
   ]
 };

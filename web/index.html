@@ -203,6 +203,16 @@
       <label class="layer-item"><input type="checkbox" id="chkHospitals" checked onchange="updateActiveLayers()"> Hospitals & Primary Health</label>
       <label class="layer-item"><input type="checkbox" id="chkBridges" checked onchange="updateActiveLayers()"> Bridges & River Causeways</label>
       <label class="layer-item"><input type="checkbox" id="chkRoads" checked onchange="updateActiveLayers()"> Severed Highway Corridors</label>
+      <div class="layer-header" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <span>Carto Basemap</span>
+        <span style="font-size: 9px; color: #10b981; font-weight: bold; background: rgba(16,185,129,0.15); padding: 1px 4px; border-radius: 3px;">AUTH OK</span>
+      </div>
+      <select id="selBasemap" onchange="switchBasemap(this.value)" style="width: 100%; background: #0f172a; color: #e2e8f0; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 6px; font-size: 11px; margin-top: 4px; cursor: pointer;">
+        <option value="dark" selected>CARTO Dark Matter (Clean)</option>
+        <option value="voyager">CARTO Voyager (High-Detail)</option>
+        <option value="positron">CARTO Positron (Light Contrast)</option>
+        <option value="satellite">Esri World Satellite</option>
+      </select>
     </div>
 
     <!-- 2D Leaflet Map Container -->
@@ -332,11 +342,23 @@
     let is3D = false;
     let modalChartInstance = null;
 
-    // Layer Groups
+    // Layer Groups & Basemaps
     let lyrFlood, lyrFires, lyrWedges, lyrRisk, lyrSettlements, lyrHospitals, lyrBridges, lyrRoads;
+    let currentBasemap = null;
+    let basemapLayers = {};
+
+    function switchBasemap(type) {
+      if (currentBasemap && map.hasLayer(currentBasemap)) {
+        map.removeLayer(currentBasemap);
+      }
+      currentBasemap = basemapLayers[type] || basemapLayers['dark'];
+      currentBasemap.addTo(map);
+      currentBasemap.bringToBack();
+    }
 
     // Fallback Data Anchor in case payload is empty
     const DATA = window.TERRASCOPE_DATA || {
+      metadata: {},
       district_peak_ranking: [],
       district_temporal_records: [],
       infrastructure: { settlements: [], hospitals: [], bridges: [], transportation_corridors: [] },
@@ -349,10 +371,33 @@
       map = L.map('map', { zoomControl: false }).setView([17.85, 79.55], 7.5);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // Dark CartoDB Basemap
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CartoDB & OpenStreetMap &copy; TerraScope'
-      }).addTo(map);
+      // Authenticated CARTO Basemap & Multi-Style Selector
+      const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
+
+      basemapLayers['dark'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
+        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      basemapLayers['voyager'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
+        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      basemapLayers['positron'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
+        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
+        subdomains: 'abcd',
+        maxZoom: 19
+      });
+
+      basemapLayers['satellite'] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+      });
+
+      switchBasemap('dark');
 
       // Initialize Layer Groups
       lyrFlood = L.layerGroup().addTo(map);

@@ -112,3 +112,8 @@ alerts:
   log_csv: "paper_assets/alerts_log.csv"
   history_json: "paper_assets/alerts_history.json"
 
+basemaps:
+  default_style: "dark_all"
+  carto_provider_url: "https://{s}.basemaps.cartocdn.com/{style}/{z}/{x}/{y}{r}.png"
+  auth_env_var: "CARTO_BASEMAP_API_KEY"
+

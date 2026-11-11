@@ -198,10 +198,23 @@ def export_dashboard_data():
     production_alerts = df_alerts.to_dict(orient="records") if not df_alerts.empty else []
 
     # 7. Metadata & Provenance Header
+    carto_key = os.environ.get("CARTO_BASEMAP_API_KEY") or os.environ.get("CARTO_API_KEY")
+    if not carto_key:
+        env_path = os.path.join(root_dir, ".env")
+        if os.path.exists(env_path):
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.startswith("CARTO_BASEMAP_API_KEY=") or line.startswith("CARTO_API_KEY="):
+                        carto_key = line.strip().split("=", 1)[1]
+                        break
+    if not carto_key:
+        carto_key = "cb1_56ol_1_c37417fcc3decf99d3ade9b6"
+
     metadata = {
         "system_name": "TerraScope Geospatial Intelligence Framework",
         "region": "Telangana, India (33 Administrative Districts)",
         "event_reference": "September 2024 Deep Depression Flood Disaster & Seasonal Thermal Anomalies",
+        "carto_basemap_key": carto_key,
         "data_sources": [
             "Copernicus Sentinel-1A SAR IW GRD (Dual-Pol VV+VH, 10m/30m, Orbits 041 & 143)",
             "NRSC / ISRO Flood Reference Inundation Layer (Map ID: 2024/FL/TS/03/01092024)",

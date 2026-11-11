@@ -30,7 +30,7 @@ Every alert fired by TerraScope adheres to a 14-point audit schema:
 
 A critical integrity requirement is separating **internal algorithmic processing latency** from **external data acquisition latency**:
 
-- **Algorithmic Processing Latency ($T_{proc}$):** `6.45 ms`
+- **Algorithmic Processing Latency ($T_{proc}$):** `11.08 ms`
   - Ingestion and data frame validation: ~1.8 ms
   - Spatial KD-tree proximity query: ~10.4 ms
   - Multi-condition threshold filtering: ~7.2 ms
@@ -49,21 +49,21 @@ A critical integrity requirement is separating **internal algorithmic processing
 
 | Alert ID | Hazard Type | District | Severity | Multiplicative Risk | Trigger Reason | Verification Status | Processing Latency |
 | :--- | :--- | :---: | :---: | :---: | :--- | :---: | :---: |
-| **TS-ALERT-FLD-20240902-001** | Flash Flood & Riverine I... | **Bhadradri Kothagudem** | **CRITICAL** | 1.000 | Multiplicative Risk Index (1.0000) exceeded threshold (0.4698) [Rank #1]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-002** | Flash Flood & Riverine I... | **Khammam** | **CRITICAL** | 0.826 | Multiplicative Risk Index (0.8259) exceeded threshold (0.4698) [Rank #2]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-003** | Flash Flood & Riverine I... | **Nalgonda** | **HIGH** | 0.630 | Multiplicative Risk Index (0.6296) exceeded threshold (0.4698) [Rank #3]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-004** | Flash Flood & Riverine I... | **Suryapet** | **HIGH** | 0.517 | Multiplicative Risk Index (0.5171) exceeded threshold (0.4698) [Rank #4]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-005** | Flash Flood & Riverine I... | **Mahabubabad** | **HIGH** | 0.280 | Multiplicative Risk Index (0.2804) exceeded threshold (0.4698) [Rank #5]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-006** | Flash Flood & Riverine I... | **Warangal Rural** | **ADVISORY** | 0.132 | Multiplicative Risk Index (0.1322) exceeded threshold (0.4698) [Rank #6]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-007** | Flash Flood & Riverine I... | **Mulugu** | **HIGH** | 0.115 | Multiplicative Risk Index (0.1152) exceeded threshold (0.4698) [Rank #7]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FLD-20240902-008** | Flash Flood & Riverine I... | **Jayashankar** | **ADVISORY** | 0.109 | Multiplicative Risk Index (0.1093) exceeded threshold (0.4698) [Rank #8]; A... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261029-009** | Active Wildfire Thermal ... | **Nizamabad** | **WARNING** | 0.176 | NASA FIRMS Active Thermal Detection (VIIRS_SNPP) confirmed hotspot with Pea... | `GROUND_CONFIRMED` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-010** | Active Wildfire Thermal ... | **Narayanpet** | **HIGH** | 0.212 | NASA FIRMS Active Thermal Detection (VIIRS_SNPP) confirmed hotspot with Pea... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-011** | Active Wildfire Thermal ... | **Kamareddy** | **HIGH** | 0.410 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-012** | Active Wildfire Thermal ... | **Kamareddy** | **HIGH** | 0.268 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-013** | Active Wildfire Thermal ... | **Nizamabad** | **WARNING** | 0.185 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-014** | Active Wildfire Thermal ... | **Nizamabad** | **HIGH** | 0.308 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
-| **TS-ALERT-FIR-20261030-015** | Active Wildfire Thermal ... | **Rajanna Sircilla** | **HIGH** | 0.210 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20) confirmed hotspot with P... | `VERIFIED_MULTI_SENSOR` | 6.45 ms |
+| **TS-ALERT-FLD-20240902-001** | Flash Flood & Riverine I... | **Bhadradri Kothagudem** | **CRITICAL** | 1.000 | Multiplicative Risk Index (1.0000) exceeded threshold (0.4698) [Rank #1]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-002** | Flash Flood & Riverine I... | **Khammam** | **CRITICAL** | 0.826 | Multiplicative Risk Index (0.8259) exceeded threshold (0.4698) [Rank #2]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-003** | Flash Flood & Riverine I... | **Nalgonda** | **HIGH** | 0.630 | Multiplicative Risk Index (0.6296) exceeded threshold (0.4698) [Rank #3]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-004** | Flash Flood & Riverine I... | **Suryapet** | **HIGH** | 0.517 | Multiplicative Risk Index (0.5171) exceeded threshold (0.4698) [Rank #4]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-005** | Flash Flood & Riverine I... | **Mahabubabad** | **HIGH** | 0.280 | Multiplicative Risk Index (0.2804) exceeded threshold (0.4698) [Rank #5]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-006** | Flash Flood & Riverine I... | **Warangal Rural** | **ADVISORY** | 0.132 | Multiplicative Risk Index (0.1322) exceeded threshold (0.4698) [Rank #6]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-007** | Flash Flood & Riverine I... | **Mulugu** | **HIGH** | 0.115 | Multiplicative Risk Index (0.1152) exceeded threshold (0.4698) [Rank #7]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FLD-20240902-008** | Flash Flood & Riverine I... | **Jayashankar** | **ADVISORY** | 0.109 | Multiplicative Risk Index (0.1093) exceeded threshold (0.4698) [Rank #8]; A... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261029-009** | Active Wildfire Thermal ... | **Nizamabad** | **WARNING** | 0.176 | NASA FIRMS Active Thermal Detection (VIIRS_SNPP) confirmed hotspot with Pea... | `GROUND_CONFIRMED` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-010** | Active Wildfire Thermal ... | **Narayanpet** | **HIGH** | 0.212 | NASA FIRMS Active Thermal Detection (VIIRS_SNPP) confirmed hotspot with Pea... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-011** | Active Wildfire Thermal ... | **Kamareddy** | **HIGH** | 0.410 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-012** | Active Wildfire Thermal ... | **Kamareddy** | **HIGH** | 0.268 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-013** | Active Wildfire Thermal ... | **Nizamabad** | **WARNING** | 0.185 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-014** | Active Wildfire Thermal ... | **Nizamabad** | **HIGH** | 0.308 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20+VIIRS_SNPP) confirmed hot... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
+| **TS-ALERT-FIR-20261030-015** | Active Wildfire Thermal ... | **Rajanna Sircilla** | **HIGH** | 0.210 | NASA FIRMS Active Thermal Detection (VIIRS_NOAA20) confirmed hotspot with P... | `VERIFIED_MULTI_SENSOR` | 11.08 ms |
 
 ---
 

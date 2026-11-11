@@ -1,0 +1,8 @@
+District,Total_Road_Network_km,Inundated_Road_Length_km,Percent_Road_Network_Exposed,Severed_Highway_Corridors,Total_Hospitals,Hospitals_Directly_Inundated,Hospitals_Access_Compromised_500m,Total_Schools,Schools_Directly_Inundated,Submerged_Cropland_Hectares,Severed_Bridges_Count,Primary_Disrupted_Sectors
+Khammam,2840.0,142.6,5.02,"NH-365A (Prakashnagar), NH-563 (Wyra Link)",48,3,9,612,28,14850.0,4,"Municipal Urban Lowlands, Inter-District Freight Transport"
+Bhadradri Kothagudem,3650.0,118.4,3.24,NH-30 Bhadrachalam–Kunavaram Road,42,2,6,540,22,16400.0,3,"Godavari Lowlands, Mining & Forest Corridors"
+Suryapet,2420.0,94.2,3.89,"NH-65 Feeder Roads, SH-42 Link",36,1,5,480,19,11200.0,2,"Agricultural Paddy Corridors, Rural Feeder Roads"
+Mahabubabad,1980.0,72.8,3.68,SH-24 Mahabubabad–Khammam Road,24,1,4,390,14,8900.0,2,"Tribal Habitations, Rural Causeway Breach"
+Nalgonda,3910.0,48.6,1.24,Musi River Rural Bridges,52,0,3,710,7,5600.0,1,Downstream Musi Riparian Agricultural Belt
+Mulugu,1640.0,44.5,2.71,NH-163 Venkatapuram–Eturnagaram Stretch,18,0,3,260,8,6800.0,1,Riparian Forest Tribal Hamlets
+Warangal Rural,1820.0,32.1,1.76,SH-15 Rayaparthy Feeder,28,0,2,310,5,3400.0,1,Agricultural Drainage Lowlands

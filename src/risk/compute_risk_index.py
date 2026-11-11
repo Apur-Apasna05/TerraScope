@@ -9,6 +9,12 @@ Satisfies Paper Section IV-E:
 """
 import os
 import sys
+
+# Ensure repository root is in sys.path
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
+
 import json
 import yaml
 import numpy as np
@@ -177,6 +183,7 @@ def run_risk_module():
     output_cols = ["Rank", "district", "Mean_Risk", "Max_Risk", "Hazard_Score", "Exposure_Score", "Vulnerability_Score", "rainfall_7d_mm", "active_fires"]
     df_ranking = df_all[output_cols].rename(columns={"district": "District"})
     
+    # Save legacy table_district_risk_ranking.csv for backward compatibility
     ranking_csv = os.path.join(assets_dir, "table_district_risk_ranking.csv")
     df_ranking.to_csv(ranking_csv, index=False)
     print(f"\nSuccessfully generated District Risk Ranking Table for all 33 districts -> {ranking_csv}")
@@ -188,7 +195,15 @@ def run_risk_module():
     print("Label: " + cfg["risk_index"]["index_interpretation_label"])
     print("Spearman Rank Correlation: Validated against state disaster management emergency relief allocations (r_s = 0.884, p < 0.001).")
 
+    # 8. Execute Phase 4 Advanced Temporal Multi-Hazard Risk Intelligence
+    try:
+        from src.risk.temporal_risk_intelligence import run_temporal_risk_intelligence
+        run_temporal_risk_intelligence()
+    except Exception as e:
+        print(f"Note: Temporal risk intelligence execution: {e}")
+
     return df_ranking
 
 if __name__ == "__main__":
     run_risk_module()
+

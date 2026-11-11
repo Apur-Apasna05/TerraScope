@@ -1,0 +1,6 @@
+Metric,Unbuffered_Point_Estimate,CI_95_Lower,CI_95_Upper,Buffered_Point_Estimate,Buffered_CI_95_Lower,Buffered_CI_95_Upper
+Precision,0.9947,0.9818,1.0,0.9906,0.9687,1.0
+Recall,1.0,1.0,1.0,1.0,1.0,1.0
+F1_Score,0.9973,0.9908,1.0,0.9953,0.9841,1.0
+IoU,0.9947,0.9818,1.0,0.9906,0.9687,1.0
+Matthews_Correlation_Coefficient,0.9973,0.9908,1.0,0.9952,0.9841,1.0

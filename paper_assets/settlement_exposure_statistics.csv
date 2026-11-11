@@ -1,0 +1,16 @@
+Settlement_Name,Settlement_Type,Estimated_Population,Easting_m,Northing_m,Distance_to_Flood_Boundary_m,Exposure_Status,Risk_Tier
+Prakashnagar (Khammam Urban),Urban Municipal Ward,18500,428539.6,1936346.1,0.0,Directly Inundated,CRITICAL (Direct Inundation)
+Jannaram Floodplain Village,Riparian Hamlet,3800,424456.2,1914848.2,0.0,Directly Inundated,CRITICAL (Direct Inundation)
+Mallemadugu Village,Rural Gram Panchayat,4300,428300.0,1932500.0,3.0,Directly Inundated,CRITICAL (Direct Inundation)
+Kalvoddu Lowland Habitation,Dense Informal Settlement,9800,429400.0,1937200.0,23.7,Directly Inundated,CRITICAL (Direct Inundation)
+Nayabazar Munneru Bank,Urban Municipal Ward,14200,428600.0,1935700.0,75.1,Immediate Proximity Buffer (≤250m),VERY HIGH (Isolation / Seepage Risk)
+Danavaigudem Ward,Suburban Settlement,12100,428100.0,1934800.0,200.0,Immediate Proximity Buffer (≤250m),VERY HIGH (Isolation / Seepage Risk)
+Mudigonda Habitation,Rural Gram Panchayat,7900,424850.0,1914500.0,394.0,Secondary Buffer (250m–500m),HIGH (Backwater & Drainage Stoppage)
+Madhira Road Settlement,Rural Gram Panchayat,5800,425200.0,1913800.0,772.2,Caution Perimeter (500m–1km),MODERATE (Access Cutoff Risk)
+Karunagiri Community,Suburban Settlement,8600,427400.0,1933500.0,780.2,Caution Perimeter (500m–1km),MODERATE (Access Cutoff Risk)
+Ghatkesar Rural Hamlet,Rural Settlement,3200,435000.0,1938000.0,4024.9,Safe / Unexposed (>1km),LOW
+Khammam Collectorate Area,Urban Administrative Core,22400,425000.0,1928000.0,4501.3,Safe / Unexposed (>1km),LOW
+Wyra Catchment Hamlet,Riparian Hamlet,4100,436000.0,1917000.0,10878.0,Safe / Unexposed (>1km),LOW
+Kusumanchi Mandal Centre,Rural Mandal Headquarter,11400,414000.0,1922000.0,11809.6,Safe / Unexposed (>1km),LOW
+Tirumalayapalem Outskirts,Rural Settlement,6700,416000.0,1932000.0,12060.1,Safe / Unexposed (>1km),LOW
+Palair Reservoir Colony,Rural Settlement,5200,408500.0,1915000.0,15511.8,Safe / Unexposed (>1km),LOW

@@ -186,3 +186,4 @@ def run_asset_generation():
 
 if __name__ == "__main__":
     run_asset_generation()
+

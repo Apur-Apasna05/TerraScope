@@ -1,0 +1,6 @@
+Observation_ID,Date,Flood_Phase,Satellite_Sensor,Acquisition_Mode,Relative_Orbit,Daily_Rainfall_mm,Cumulative_Rainfall_mm,Mean_SAR_Delta_VH_dB,Inundated_Pixels,Inundated_Area_km2,Inundated_Area_Hectares,Delta_from_Baseline_km2,Percent_Expansion_over_Baseline
+S1A-OBS-01,2024-08-22,Pre-Event Baseline,Sentinel-1A,IW GRD (VV+VH),041 (Descending),4.2,18.5,-0.2,633,9.12,912.0,0.0,0.0
+S1A-OBS-02,2024-08-31,Event Onset (Heavy Rainfall),Sentinel-1A,IW GRD (VV+VH),143 (Ascending),92.4,128.6,-4.8,887,12.77,1277.0,3.65,40.0
+S1A-OBS-03,2024-09-02,Peak Inundation (NRSC Reference),Sentinel-1A,IW GRD (VV+VH),041 (Descending),125.8,224.3,-9.2,1194,17.19,1719.0,8.07,88.5
+S1A-OBS-04,2024-09-07,Early Recession Phase,Sentinel-1A,IW GRD (VV+VH),143 (Ascending),8.6,236.4,-3.5,834,12.01,1201.0,2.89,31.7
+S1A-OBS-05,2024-09-14,Post-Event Stabilization,Sentinel-1A,IW GRD (VV+VH),041 (Descending),2.1,242.0,-1.1,674,9.71,971.0,0.59,6.5

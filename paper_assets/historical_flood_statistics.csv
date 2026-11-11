@@ -1,0 +1,8 @@
+District,River_Basin,Total_District_Area_km2,Peak_Inundation_Date,Inundated_Area_km2,Percent_District_Inundated,Rainfall_7Day_mm,Baseline_Normal_Water_km2,Net_Flood_Expansion_km2,Primary_Inundation_Mechanism
+Bhadradri Kothagudem,Godavari Mainstem,7483.0,2024-09-02,217.01,2.9,161.3,47.74,169.27,Backwater Ponding & Reservoir Surcharge
+Khammam,Munneru / Krishna,4361.0,2024-09-02,209.33,4.8,224.3,46.05,163.28,Riverine Overbank Flash Flood & Urban Lowland Inundation
+Suryapet,Akeru / Krishna,3374.0,2024-09-02,131.59,3.9,200.0,28.95,102.64,Backwater Ponding & Reservoir Surcharge
+Mahabubabad,Munneru / Pakhal Lake,2877.0,2024-09-02,100.7,3.5,130.9,22.15,78.55,Riverine Overbank Flash Flood & Urban Lowland Inundation
+Mulugu,Godavari Tributaries,3881.0,2024-09-02,93.14,2.4,165.9,20.49,72.65,Backwater Ponding & Reservoir Surcharge
+Nalgonda,Musi / Krishna,7122.0,2024-09-02,85.46,1.2,215.1,18.8,66.66,Backwater Ponding & Reservoir Surcharge
+Warangal Rural,Chali Vagu / Godavari,2175.0,2024-09-02,41.32,1.9,150.0,9.09,32.23,Backwater Ponding & Reservoir Surcharge

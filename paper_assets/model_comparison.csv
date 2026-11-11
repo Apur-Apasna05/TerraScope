@@ -1,0 +1,7 @@
+Model,Evaluation_Set,Total_Samples,Positive_Flood_Samples,TP,FP,FN,TN,Accuracy,Balanced_Accuracy,Specificity,Precision,Recall,F1_Score,IoU,MCC,ROC_AUC,PR_AUC
+Baseline 1: Optical NDWI Threshold,Unbuffered Spatial Blocks,26328,186,148,1803,38,24339,0.93007,0.86336,0.93103,0.0759,0.7957,0.1385,0.0744,0.2324,N/A,N/A
+Baseline 1-Topo: Optical NDWI + Topo HAND Filter,Unbuffered Spatial Blocks,26328,186,148,6,38,26136,0.99833,0.89773,0.99977,0.961,0.7957,0.8706,0.7708,0.8737,N/A,N/A
+Baseline 2: Radar SAR Otsu Threshold,Unbuffered Spatial Blocks,26328,186,184,9809,2,16333,0.62735,0.80701,0.62478,0.0184,0.9892,0.0362,0.0184,0.106,N/A,N/A
+Baseline 2-Topo: Radar SAR Otsu + Topo HAND Filter,Unbuffered Spatial Blocks,26328,186,184,20,2,26122,0.99916,0.99424,0.99923,0.902,0.9892,0.9436,0.8932,0.9442,N/A,N/A
+TerraScope Random Forest (Unbuffered),Unbuffered Spatial Blocks,26328,186,186,1,0,26141,0.99996,0.99998,0.99996,0.9947,1.0,0.9973,0.9947,0.9973,1.0,0.9997
+TerraScope Random Forest (Buffered 1km Guard),Buffered (1km Guard),17137,105,105,1,0,17031,0.99994,0.99997,0.99994,0.9906,1.0,0.9953,0.9906,0.9952,1.0,0.9994

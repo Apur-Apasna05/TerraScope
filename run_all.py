@@ -25,6 +25,7 @@ from src.risk.compute_risk_index import run_risk_module
 from src.alerts.alert_engine import run_alert_engine
 from src.visualization.generate_assets import run_asset_generation
 from src.visualization.export_dashboard_data import export_dashboard_data
+from src.visualization.generate_phase8_assets import run_phase8_asset_generation
 
 def main():
     print("=" * 80)
@@ -65,6 +66,7 @@ def main():
     print("\n[Documentation & Assets] Compiling Figures, Config, and Limitations...")
     run_asset_generation()
     export_dashboard_data()
+    run_phase8_asset_generation()
     
     t_total = time.perf_counter() - t_start
     print("\n" + "=" * 80)

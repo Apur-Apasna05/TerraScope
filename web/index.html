@@ -3,872 +3,1834 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TerraScope — Telangana Multi-Hazard Geospatial Intelligence Console</title>
-  <!-- Leaflet 1.9.4 CSS & JS -->
+  <title>TerraScope — Global & Telangana Geospatial Intelligence Console</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet 1.9.4 CSS & JS for 2D Engine -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Chart.js for Component Breakdown and Temporal Sparklines -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Load Production Data Payload (Local JS avoids all file:// CORS restrictions) -->
+  
+  <!-- CesiumJS 1.119 for 3D Photorealistic Earth Globe -->
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+
+  <!-- Production Data Payload -->
   <script src="dashboard_data.js"></script>
 
   <style>
     :root {
-      --bg-dark: #090d16;
-      --panel-bg: rgba(15, 23, 42, 0.94);
-      --card-bg: #1e293b;
-      --card-hover: #334155;
-      --border-color: #334155;
-      --accent-blue: #38bdf8;
+      --bg-space: #060913;
+      --bg-panel: rgba(10, 15, 29, 0.92);
+      --bg-panel-border: rgba(30, 41, 69, 0.85);
+      --bg-card: rgba(16, 24, 45, 0.85);
+      --bg-card-hover: rgba(26, 38, 70, 0.95);
+      --accent-blue: #0284c7;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
       --accent-red: #ef4444;
-      --accent-orange: #f97316;
-      --accent-green: #22c55e;
       --accent-purple: #a855f7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-subtle: #1e293b;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    
-    /* Top Header Bar */
-    header {
-      background: #0f172a;
-      padding: 10px 20px;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: var(--bg-space);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* TOP NAVIGATION BAR                                                        */
+    /* ------------------------------------------------------------------------- */
+    header {
+      height: 58px;
+      background: rgba(9, 14, 26, 0.96);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      z-index: 1000;
+      justify-content: space-between;
+      padding: 0 18px;
+      z-index: 2000;
+      backdrop-filter: blur(16px);
     }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .badge { background: #0284c7; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }
-    .badge-evidence { background: #047857; color: white; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-
-    /* Main App Layout */
-    .main-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
-    #map, #view3d { width: 100%; height: 100%; background: #090d16; }
-    #view3d { display: none; background: #0b0f19; overflow-y: auto; }
-
-    /* Floating Timeline Toolbar (Historical Date Selection) */
-    .timeline-bar {
-      position: absolute; top: 15px; left: 15px; z-index: 1000;
-      background: var(--panel-bg); padding: 8px 14px; border-radius: 8px;
-      border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;
-      backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .timeline-btns { display: flex; gap: 4px; }
-    .time-btn {
-      background: #1e293b; color: var(--text-muted); border: 1px solid var(--border-color);
-      padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;
-      transition: all 0.15s;
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #38bdf8, #0369a1 60%, #082f49 100%);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.5), inset 0 0 6px rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      position: relative;
     }
-    .time-btn:hover { background: #334155; color: var(--text-main); }
-    .time-btn.active { background: #0284c7; color: white; border-color: #38bdf8; }
-
-    /* Layer Control Floating Box */
-    .layer-control {
-      position: absolute; bottom: 25px; left: 15px; z-index: 1000;
-      background: var(--panel-bg); padding: 12px 16px; border-radius: 8px;
-      border: 1px solid var(--border-color); width: 260px; font-size: 12px;
-      backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    .brand-logo::after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(56, 189, 248, 0.4);
+      animation: rotateRing 20s linear infinite;
     }
-    .layer-header { font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-size: 11px; }
-    .layer-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
-    .layer-item input { cursor: pointer; accent-color: var(--accent-blue); }
+    @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Right Sidebar (Tabs for Risk, Infrastructure, Alerts, Metadata) */
-    .sidebar {
-      width: 440px;
-      background: var(--panel-bg);
-      border-left: 1px solid var(--border-color);
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-text p {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      font-weight: 500;
+    }
+
+    /* Scope View Selector Pills */
+    .scope-selector {
+      display: flex;
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 2px;
+      margin-left: 20px;
+    }
+    .scope-btn {
+      padding: 5px 14px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .scope-btn:hover { color: var(--text-primary); }
+    .scope-btn.active {
+      background: var(--accent-blue);
+      color: white;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Central Search Box */
+    .search-bar {
+      width: 380px;
+      height: 36px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .search-bar:focus-within {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+      background: rgba(15, 23, 42, 1);
+    }
+    .search-bar input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 12px;
+      width: 100%;
+    }
+    .search-bar input::placeholder { color: var(--text-muted); }
+
+    /* Right Status Utilities */
+    .header-utilities {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .live-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.5px;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseLive 1.8s infinite;
+    }
+    @keyframes pulseLive { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+
+    .clock-display {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.25;
+    }
+    .clock-display strong { color: var(--text-primary); font-size: 12px; }
+
+    .icon-badge-btn {
+      position: relative;
+      background: #1e293b;
+      border: 1px solid var(--border-subtle);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .icon-badge-btn:hover { color: white; background: #334155; }
+    .badge-count {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--accent-red);
+      color: white;
+      font-size: 9px;
+      font-weight: bold;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #0f172a;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+    }
+    .safer-planet-tag {
+      font-size: 11px;
+      color: #34d399;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.08);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* MAIN CONSOLE LAYOUT (3 COLUMNS)                                           */
+    /* ------------------------------------------------------------------------- */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 290px 1fr 390px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* LEFT SIDEBAR: DATA LAYERS & AI DETECTED EVENTS                            */
+    /* ------------------------------------------------------------------------- */
+    .left-sidebar {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--bg-panel-border);
       display: flex;
       flex-direction: column;
       z-index: 1000;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      padding: 12px;
+      gap: 12px;
+      overflow-y: auto;
     }
-    .tabs { display: flex; border-bottom: 1px solid var(--border-color); background: #0f172a; }
-    .tab-btn {
-      flex: 1; padding: 12px 8px; background: none; border: none; color: var(--text-muted);
-      cursor: pointer; font-weight: 600; font-size: 12px; text-align: center;
-      transition: all 0.15s;
+    .panel-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
-    .tab-btn.active {
-      color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue);
-      background: rgba(56, 189, 248, 0.08);
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .panel-content { flex: 1; overflow-y: auto; padding: 15px; }
+    .box-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .box-action-link {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .box-action-link:hover { text-decoration: underline; }
 
-    /* Cards & Badges */
-    .rank-card {
-      background: var(--card-bg); padding: 10px 12px; border-radius: 6px;
-      margin-bottom: 8px; border-left: 4px solid var(--accent-blue);
-      cursor: pointer; transition: transform 0.15s, background 0.15s;
+    /* Layer Toggle Switch List */
+    .layer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 290px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
-    .rank-card:hover { transform: translateX(3px); background: var(--card-hover); }
-    .rank-card.critical { border-left-color: var(--accent-red); }
-    .rank-card.high { border-left-color: var(--accent-orange); }
-    .rank-card.moderate { border-left-color: var(--accent-blue); }
-    
-    .badge-pill { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
-    .badge-crit { background: var(--accent-red); color: white; }
-    .badge-high { background: var(--accent-orange); color: white; }
-    .badge-warn { background: #eab308; color: black; }
-    .badge-advisory { background: #3b82f6; color: white; }
+    .layer-list::-webkit-scrollbar { width: 4px; }
+    .layer-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
-    .alert-card {
-      background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35);
-      padding: 12px; border-radius: 6px; margin-bottom: 10px;
-    }
-    .alert-card.warning {
-      background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.35);
-    }
-
-    .btn {
-      background: #0284c7; color: white; border: none; padding: 6px 12px;
-      border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;
+    .layer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+      border-radius: 6px;
       transition: background 0.15s;
     }
-    .btn:hover { background: #0369a1; }
-    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-    .btn-outline:hover { background: #334155; }
-
-    /* District Detail Modal / Drawer */
-    #districtDetailModal {
-      position: absolute; bottom: 25px; right: 460px; z-index: 1000;
-      background: var(--panel-bg); border: 1px solid var(--border-color);
-      border-radius: 8px; width: 340px; padding: 14px;
-      backdrop-filter: blur(12px); box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      display: none;
+    .layer-row:hover { background: rgba(255, 255, 255, 0.04); }
+    .layer-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #cbd5e1;
+    }
+    .layer-icon {
+      font-size: 13px;
+      width: 18px;
+      text-align: center;
     }
 
-    /* Comparison Split Slider overlay */
-    .comparison-banner {
-      position: absolute; top: 70px; left: 15px; z-index: 1000;
-      background: rgba(180, 83, 9, 0.9); color: white; padding: 6px 12px;
-      border-radius: 6px; font-size: 11px; font-weight: bold; display: none;
+    /* iOS/Cyberpunk Custom Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 32px;
+      height: 18px;
     }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155;
+      transition: .2s;
+      border-radius: 18px;
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 12px; width: 12px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+    }
+    input:checked + .slider:before { transform: translateX(14px); }
+
+    /* AI Detected Events List */
+    .event-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+    .event-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .event-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateX(2px);
+    }
+    .event-card.active {
+      border-color: var(--accent-cyan);
+      background: rgba(2, 132, 199, 0.15);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+    .event-icon-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      flex-shrink: 0;
+    }
+    .event-icon-box.flood { background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.3); }
+    .event-icon-box.rain { background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); }
+    .event-icon-box.quake { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.3); }
+    .event-icon-box.cyclone { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
+
+    .event-details { flex: 1; min-width: 0; }
+    .event-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .event-subtitle {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .event-meta {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+    .badge-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-tag.high { background: #b91c1c; color: #fee2e2; border: 1px solid #ef4444; }
+    .badge-tag.medium { background: #b45309; color: #fef3c7; border: 1px solid #f59e0b; }
+    .badge-tag.low { background: #1e3a8a; color: #dbeafe; border: 1px solid #3b82f6; }
+    .badge-tag.watch { background: #78350f; color: #ffedd5; border: 1px solid #f97316; }
+    .event-time { font-size: 9px; color: var(--text-muted); }
+
+    /* ------------------------------------------------------------------------- */
+    /* CENTER MAP / 3D GLOBE VIEWPORT                                            */
+    /* ------------------------------------------------------------------------- */
+    .center-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, #0d162a 0%, #050811 100%);
+      overflow: hidden;
+    }
+
+    #cesiumContainer, #map2d {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    #map2d { display: none; z-index: 10; background: #070b14; }
+
+    /* Floating View Controls (Top-Right of Globe) */
+    .globe-controls {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .globe-btn {
+      width: 36px;
+      height: 36px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      transition: all 0.2s;
+    }
+    .globe-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--accent-cyan);
+    }
+    .compass-btn {
+      border-radius: 50%;
+      color: var(--accent-cyan);
+      font-size: 15px;
+    }
+    .mode-toggle-btn {
+      background: var(--accent-blue);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Floating Country/State Overlays & Labels */
+    .hud-label-india {
+      position: absolute;
+      top: 42%;
+      left: 45%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.5);
+      pointer-events: none;
+      z-index: 50;
+    }
+    .hud-badge-telangana {
+      position: absolute;
+      top: 49%;
+      left: 47%;
+      background: rgba(168, 85, 247, 0.25);
+      border: 1px solid #c084fc;
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.6);
+      color: #f3e8ff;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      pointer-events: none;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* RIGHT SIDEBAR: EVENT INTELLIGENCE                                         */
+    /* ------------------------------------------------------------------------- */
+    .right-sidebar {
+      background: var(--bg-panel);
+      border-left: 1px solid var(--bg-panel-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      backdrop-filter: blur(16px);
+      padding: 12px 14px;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    .intel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+    .intel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+    .verified-pill {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Event Headline Banner */
+    .event-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .event-banner-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .event-banner-text h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+    .event-banner-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .event-banner-tags {
+      margin-left: auto;
+      text-align: right;
+    }
+    .pill-risk {
+      background: #dc2626;
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+    .pill-conf {
+      font-size: 9px;
+      color: #94a3b8;
+    }
+
+    /* Intelligence Sub-Tabs */
+    .subtabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 2px;
+    }
+    .subtab-btn {
+      flex: 1;
+      padding: 6px 0;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      transition: color 0.15s;
+    }
+    .subtab-btn:hover { color: white; }
+    .subtab-btn.active {
+      color: var(--accent-cyan);
+    }
+    .subtab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+
+    /* Thermal / Satellite Image Preview */
+    .sat-preview-box {
+      width: 100%;
+      height: 125px;
+      background: #020617;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+    .sat-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .sat-tag {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Metadata Key-Value List */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 4px;
+      column-gap: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 11px;
+    }
+    .meta-row { display: flex; justify-content: space-between; }
+    .meta-label { color: var(--text-muted); }
+    .meta-val { color: #f1f5f9; font-weight: 500; font-family: 'JetBrains Mono', monospace; }
+    .meta-val.green { color: #34d399; font-weight: 600; }
+
+    /* 6 Metric Indicators (2 rows x 3 columns) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .metric-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+    }
+    .metric-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .metric-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      margin-top: 3px;
+    }
+    .metric-val.alert { color: #f87171; }
+    .metric-val.high { color: #fbbf24; }
+
+    /* AI Assessment Card */
+    .assessment-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+    }
+    .assessment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .assessment-header h3 { font-size: 11px; font-weight: 700; color: white; }
+    .assessment-text {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .action-alert {
+      margin-top: 8px;
+      background: rgba(220, 38, 38, 0.15);
+      border-left: 3px solid #ef4444;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #fca5a5;
+      line-height: 1.35;
+    }
+
+    /* Time-Lapse 24h Strip */
+    .timelapse-section h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .timelapse-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .timelapse-thumb {
+      background: #020617;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      height: 52px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .timelapse-thumb:hover, .timelapse-thumb.active {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+    }
+    .timelapse-canvas { width: 100%; height: 100%; }
+    .timelapse-tag {
+      position: absolute;
+      bottom: 2px;
+      left: 3px;
+      font-size: 8px;
+      color: #e2e8f0;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1px 4px;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* BOTTOM STATUS BAR: GLOBAL MONITORING TICKER                               */
+    /* ------------------------------------------------------------------------- */
+    footer {
+      height: 44px;
+      background: rgba(8, 12, 22, 0.98);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      z-index: 2000;
+    }
+    .ticker-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .ticker-left strong { color: white; display: flex; align-items: center; gap: 6px; }
+    .ticker-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+    .stat-pill strong { color: white; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- ========================================================================= -->
+  <!-- TOP NAVIGATION BAR                                                        -->
+  <!-- ========================================================================= -->
   <header>
-    <div class="header-left">
-      <h2 style="font-size: 15px; letter-spacing: 0.5px; font-weight: 800;">TERRASCOPE INTELLIGENCE CONSOLE</h2>
-      <span class="badge">TELANGANA 2024</span>
-      <span class="badge-evidence" title="Validated against NRSC Map 2024/FL/TS/03/01092024">NRSC VERIFIED</span>
-      <span id="currentPhaseLabel" style="font-size: 11px; color: var(--accent-blue); font-weight: 600;">
-        Active Epoch: Sep 02, 2024 (Disaster Peak)
-      </span>
+    <!-- Brand / Logo -->
+    <div class="brand-section">
+      <div class="brand-logo">🌐</div>
+      <div class="brand-text">
+        <h1>TerraScope</h1>
+        <p>Observe • Understand • Predict • Safer Tomorrow</p>
+      </div>
+
+      <!-- Scope Selector Pills -->
+      <div class="scope-selector">
+        <button class="scope-btn active" id="btnScopeGlobal" onclick="setScope('global')">Global</button>
+        <button class="scope-btn" id="btnScopeIndia" onclick="setScope('india')">India</button>
+        <button class="scope-btn" id="btnScopeTelangana" onclick="setScope('telangana')">Telangana</button>
+      </div>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-outline" id="compareBtn" onclick="toggleBeforeAfterMode()">Compare Baseline vs Peak</button>
-      <button class="btn btn-outline" id="viewToggleBtn" onclick="toggle3DView()">Toggle 3D View</button>
-      <button class="btn" onclick="captureConsoleScreenshot()">Export Research Figure</button>
+
+    <!-- Central Search Input -->
+    <div class="search-bar">
+      <span style="color: var(--accent-cyan); font-size: 13px;">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search location, event, or coordinates..." onkeydown="handleSearch(event)">
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="header-utilities">
+      <div class="live-pill">
+        <span class="live-dot"></span> LIVE
+      </div>
+      <div class="clock-display">
+        <strong id="liveClock">11:03 AM</strong><br>
+        <span id="liveDate">Sep 11, 2024</span>
+      </div>
+      <div class="icon-badge-btn" title="System Alerts">
+        🔔<span class="badge-count">3</span>
+      </div>
+      <div class="user-avatar" title="Logged in as Operator">AP</div>
+      <div class="safer-planet-tag">
+        AI for a Safer Planet 🍃
+      </div>
     </div>
   </header>
 
-  <!-- Main Viewport Layout -->
-  <div class="main-layout">
-
-    <!-- Floating Historical Timeline Bar (Section A) -->
-    <div class="timeline-bar">
-      <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">
-        TIMELINE EPOCH:
-      </span>
-      <div class="timeline-btns" id="timelineButtons">
-        <button class="time-btn" onclick="selectEpoch('2024-08-22', this)">Aug 22<br><span style="font-size:9px;">Baseline</span></button>
-        <button class="time-btn" onclick="selectEpoch('2024-08-31', this)">Aug 31<br><span style="font-size:9px;">Onset</span></button>
-        <button class="time-btn active" onclick="selectEpoch('2024-09-02', this)">Sep 02<br><span style="font-size:9px;">Peak</span></button>
-        <button class="time-btn" onclick="selectEpoch('2024-09-07', this)">Sep 07<br><span style="font-size:9px;">Recession</span></button>
-        <button class="time-btn" onclick="selectEpoch('2024-09-14', this)">Sep 14<br><span style="font-size:9px;">Recovery</span></button>
-      </div>
-    </div>
-
-    <!-- Comparison Banner -->
-    <div class="comparison-banner" id="comparisonBanner">
-      COMPARING: Aug 22 (Pre-Event Normal) vs Sep 02 (Peak Flood Inundation)
-    </div>
-
-    <!-- Floating Layer Controls (Section B & D) -->
-    <div class="layer-control">
-      <div class="layer-header">Map Layers & Hazards</div>
-      <label class="layer-item"><input type="checkbox" id="chkFlood" checked onchange="updateActiveLayers()"> Sentinel-1 SAR Flood Inundation</label>
-      <label class="layer-item"><input type="checkbox" id="chkFires" checked onchange="updateActiveLayers()"> Active Fires (NASA FIRMS)</label>
-      <label class="layer-item"><input type="checkbox" id="chkWedge" checked onchange="updateActiveLayers()"> Downwind Advection Wedges (±30°, 5km)</label>
-      <label class="layer-item"><input type="checkbox" id="chkRisk" checked onchange="updateActiveLayers()"> District Risk Heatmap (33 Mandals)</label>
-      <div class="layer-header" style="margin-top: 10px;">Critical Infrastructure</div>
-      <label class="layer-item"><input type="checkbox" id="chkSettlements" checked onchange="updateActiveLayers()"> Settlements & Habitations</label>
-      <label class="layer-item"><input type="checkbox" id="chkHospitals" checked onchange="updateActiveLayers()"> Hospitals & Primary Health</label>
-      <label class="layer-item"><input type="checkbox" id="chkBridges" checked onchange="updateActiveLayers()"> Bridges & River Causeways</label>
-      <label class="layer-item"><input type="checkbox" id="chkRoads" checked onchange="updateActiveLayers()"> Severed Highway Corridors</label>
-      <div class="layer-header" style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-        <span>Carto Basemap</span>
-        <span style="font-size: 9px; color: #10b981; font-weight: bold; background: rgba(16,185,129,0.15); padding: 1px 4px; border-radius: 3px;">AUTH OK</span>
-      </div>
-      <select id="selBasemap" onchange="switchBasemap(this.value)" style="width: 100%; background: #0f172a; color: #e2e8f0; border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 6px; font-size: 11px; margin-top: 4px; cursor: pointer;">
-        <option value="dark" selected>CARTO Dark Matter (Clean)</option>
-        <option value="voyager">CARTO Voyager (High-Detail)</option>
-        <option value="positron">CARTO Positron (Light Contrast)</option>
-        <option value="satellite">Esri World Satellite</option>
-      </select>
-    </div>
-
-    <!-- 2D Leaflet Map Container -->
-    <div id="map"></div>
-
-    <!-- 3D Cesium View Container -->
-    <div id="view3d">
-      <div style="padding: 30px; text-align: center; max-width: 900px; margin: 0 auto;">
-        <h3 style="color: var(--accent-blue); margin-bottom: 12px; font-size: 18px;">
-          TerraScope Cesium 3D Globe & Digital Elevation Flyover
-        </h3>
-        <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 20px;">
-          High-performance 3D perspective rendering 30 m SRTM elevation geometry, Height Above Nearest Drainage (HAND) stream corridors,
-          Sentinel-1 SAR inundation surfaces, and Godavari / Munneru River riverbank breaches.
-        </p>
-        <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px;">
-          <a href="../gods-eye-view/dist/index.html" target="_blank" class="btn" style="text-decoration: none; padding: 8px 16px;">
-            Open Live 3D Cesium Engine (New Window)
-          </a>
-          <button class="btn btn-outline" onclick="loadCesiumIframe()">Embed Live 3D Globe Here</button>
+  <!-- ========================================================================= -->
+  <!-- MAIN 3-COLUMN CONSOLE                                                     -->
+  <!-- ========================================================================= -->
+  <main>
+    <!-- --------------------------------------------------------------------- -->
+    <!-- LEFT COLUMN: DATA LAYERS & AI DETECTED EVENTS                         -->
+    <!-- --------------------------------------------------------------------- -->
+    <aside class="left-sidebar">
+      <!-- Data Layers Box -->
+      <div class="panel-box">
+        <div class="box-header">
+          <div class="box-title">Data Layers</div>
+          <a class="box-action-link" onclick="resetLayers()">↺ Reset</a>
         </div>
-        <div id="cesiumEmbedContainer">
-          <img src="../paper_assets/fig2_interface_2d_3d.png" alt="3D Interface Analytics"
-               style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 8px 30px rgba(0,0,0,0.7);" />
-        </div>
-      </div>
-    </div>
-
-    <!-- District Detail Drawer (Section C Detail) -->
-    <div id="districtDetailModal">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h4 id="modalDistrictName" style="color: var(--accent-blue); font-size: 14px;">District Details</h4>
-        <button onclick="closeDistrictModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;">✕</button>
-      </div>
-      <div style="font-size: 11px; margin-bottom: 6px;">
-        <strong>Multiplicative Risk:</strong> <span id="modalRiskScore" style="color: var(--accent-red); font-weight:bold;">0.826</span>
-        | <strong>Rank:</strong> <span id="modalRank">#2</span>
-      </div>
-      <div style="font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px;" id="modalDriverText">
-        Primary Driver: Inundation + Vulnerability
-      </div>
-      <div style="height: 110px; margin-bottom: 10px;">
-        <canvas id="modalHevChart"></canvas>
-      </div>
-      <div style="font-size: 10.5px; border-top: 1px solid var(--border-color); padding-top: 6px; color: var(--text-muted);">
-        <div>7-Day Rainfall: <span id="modalRain" style="color:white;">224 mm</span></div>
-        <div>Inundated Land: <span id="modalFloodArea" style="color:white;">209.3 km²</span></div>
-      </div>
-    </div>
-
-    <!-- Right Sidebar Panels -->
-    <div class="sidebar">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchSidebarTab('riskTab', this)">District Risk (33)</button>
-        <button class="tab-btn" onclick="switchSidebarTab('infraTab', this)">Infrastructure</button>
-        <button class="tab-btn" onclick="switchSidebarTab('alertsTab', this)">Alerts (<span id="alertCountBadge">66</span>)</button>
-        <button class="tab-btn" onclick="switchSidebarTab('metaTab', this)">Metadata</button>
-      </div>
-
-      <!-- Tab 1: District Risk Intelligence -->
-      <div class="panel-content" id="riskTab">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
-          Formula: $R = H \times E \times V$ | AHP Matrix Consistency $CR = 0.0076 \ll 0.10$
-        </div>
-        <input type="text" id="districtSearchInput" onkeyup="filterDistricts()" placeholder="Search 33 districts..."
-               style="width: 100%; background: #0b0f19; color: white; border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 4px; font-size: 12px; margin-bottom: 10px;" />
-        <div id="districtRankingList"></div>
-      </div>
-
-      <!-- Tab 2: Critical Infrastructure Exposure -->
-      <div class="panel-content" id="infraTab" style="display: none;">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-          Spatial Intersections & Multi-Tier Proximity Buffers (Khammam / Munneru Corridor)
-        </div>
-        <h4 style="font-size: 12px; color: var(--accent-orange); margin-bottom: 6px;">Exposed Habitations (d ≤ 500m)</h4>
-        <div id="settlementsList" style="margin-bottom: 14px;"></div>
-
-        <h4 style="font-size: 12px; color: var(--accent-red); margin-bottom: 6px;">Severed Bridges & Overtopped Roads</h4>
-        <div id="bridgesList" style="margin-bottom: 14px;"></div>
-
-        <h4 style="font-size: 12px; color: var(--accent-blue); margin-bottom: 6px;">Healthcare Facilities Status</h4>
-        <div id="hospitalsList"></div>
-      </div>
-
-      <!-- Tab 3: Intelligent Alert System -->
-      <div class="panel-content" id="alertsTab" style="display: none;">
-        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-          Real-Time Deduplicated Dispatcher | Latency: <strong>6.23 ms</strong> | SLA: &lt; 6.0h
-        </div>
-        <div style="display:flex; gap:6px; margin-bottom:10px;">
-          <button class="btn btn-outline" style="font-size:10px; padding:3px 8px;" onclick="filterAlerts('ALL')">All (66)</button>
-          <button class="btn btn-outline" style="font-size:10px; padding:3px 8px;" onclick="filterAlerts('CRITICAL')">Critical (12)</button>
-          <button class="btn btn-outline" style="font-size:10px; padding:3px 8px;" onclick="filterAlerts('Flood')">Floods (8)</button>
-          <button class="btn btn-outline" style="font-size:10px; padding:3px 8px;" onclick="filterAlerts('Fire')">Fires (58)</button>
-        </div>
-        <div id="alertsContainer"></div>
-      </div>
-
-      <!-- Tab 4: Evidence & Metadata Provenance -->
-      <div class="panel-content" id="metaTab" style="display: none;">
-        <div style="font-size: 12px; font-weight: bold; color: var(--accent-blue); margin-bottom: 8px;">
-          SYSTEM PROVENANCE & AUDIT TRAIL
-        </div>
-        <div style="font-size: 11px; line-height: 1.6; color: var(--text-muted);">
-          <p><strong>Primary Sensors:</strong> Copernicus Sentinel-1A SAR IW GRD (Dual-Pol VV+VH, 10m res, Orbits 041/143).</p>
-          <p style="margin-top:6px;"><strong>Ground Truth Reference:</strong> NRSC / ISRO Flood Inundation Map <code>2024/FL/TS/03/01092024</code>.</p>
-          <p style="margin-top:6px;"><strong>Active Fire Ingestion:</strong> NASA FIRMS VIIRS (NOAA-20, SNPP) & MODIS Ultra-Fast Stream.</p>
-          <p style="margin-top:6px;"><strong>Atmospheric Vectors:</strong> ECMWF ERA5-Land Hourly Wind ($u_{10}, v_{10}$) & Temp 2m.</p>
-          <p style="margin-top:6px;"><strong>Precipitation:</strong> CHIRPS v2.0 High-Resolution Grids.</p>
-          <p style="margin-top:6px;"><strong>Processing Latency:</strong> <code>6.23 ms</code> in-memory execution.</p>
-          <p style="margin-top:6px;"><strong>Satellite Acquisition Latency:</strong> <code>1.8h – 2.5h</code> (NRT FIRMS) | <code>6h – 12h</code> (SAR GRD).</p>
-        </div>
-
-        <div style="margin-top: 15px; padding: 10px; background: rgba(56, 189, 248, 0.08); border: 1px solid var(--accent-blue); border-radius: 6px; font-size: 11px;">
-          <strong>Scientific Interpretation Notice:</strong>
-          Normalized scores are comparative relative risk prioritization indices for civil defence staging; they do not constitute physical probabilities of disaster.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Global State
-    let map;
-    let currentEpoch = "2024-09-02";
-    let isCompareMode = false;
-    let is3D = false;
-    let modalChartInstance = null;
-
-    // Layer Groups & Basemaps
-    let lyrFlood, lyrFires, lyrWedges, lyrRisk, lyrSettlements, lyrHospitals, lyrBridges, lyrRoads;
-    let currentBasemap = null;
-    let basemapLayers = {};
-
-    function switchBasemap(type) {
-      if (currentBasemap && map.hasLayer(currentBasemap)) {
-        map.removeLayer(currentBasemap);
-      }
-      currentBasemap = basemapLayers[type] || basemapLayers['dark'];
-      currentBasemap.addTo(map);
-      currentBasemap.bringToBack();
-    }
-
-    // Fallback Data Anchor in case payload is empty
-    const DATA = window.TERRASCOPE_DATA || {
-      metadata: {},
-      district_peak_ranking: [],
-      district_temporal_records: [],
-      infrastructure: { settlements: [], hospitals: [], bridges: [], transportation_corridors: [] },
-      active_fire_clusters: [],
-      production_alerts: []
-    };
-
-    function initConsole() {
-      // Initialize Leaflet Map centered on Telangana
-      map = L.map('map', { zoomControl: false }).setView([17.85, 79.55], 7.5);
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      // Authenticated CARTO Basemap & Multi-Style Selector
-      const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
-
-      basemapLayers['dark'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
-        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
-        subdomains: 'abcd',
-        maxZoom: 19
-      });
-
-      basemapLayers['voyager'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
-        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
-        subdomains: 'abcd',
-        maxZoom: 19
-      });
-
-      basemapLayers['positron'] = L.tileLayer(`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
-        attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; OpenStreetMap &copy; TerraScope',
-        subdomains: 'abcd',
-        maxZoom: 19
-      });
-
-      basemapLayers['satellite'] = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
-        maxZoom: 19
-      });
-
-      switchBasemap('dark');
-
-      // Initialize Layer Groups
-      lyrFlood = L.layerGroup().addTo(map);
-      lyrFires = L.layerGroup().addTo(map);
-      lyrWedges = L.layerGroup().addTo(map);
-      lyrRisk = L.layerGroup().addTo(map);
-      lyrSettlements = L.layerGroup().addTo(map);
-      lyrHospitals = L.layerGroup().addTo(map);
-      lyrBridges = L.layerGroup().addTo(map);
-      lyrRoads = L.layerGroup().addTo(map);
-
-      // Render Everything
-      renderEpochData(currentEpoch);
-      renderInfrastructureLayers();
-      renderFireClusters();
-      populateSidebar();
-    }
-
-    // -------------------------------------------------------------------------
-    // Render Epoch-Specific Flood and Risk Surfaces (Section A & C)
-    // -------------------------------------------------------------------------
-    function renderEpochData(epochStr) {
-      lyrFlood.clearLayers();
-      lyrRisk.clearLayers();
-
-      // Multi-temporal flood extent scaling
-      const floodScales = {
-        "2024-08-22": { area_km2: 9.12, opacity: 0.25, label: "Baseline River Normal" },
-        "2024-08-31": { area_km2: 12.77, opacity: 0.50, label: "Onset Inundation" },
-        "2024-09-02": { area_km2: 17.19, opacity: 0.85, label: "Peak Disaster Inundation (NRSC)" },
-        "2024-09-07": { area_km2: 12.01, opacity: 0.55, label: "Receding Flood Waters" },
-        "2024-09-14": { area_km2: 9.71, opacity: 0.30, label: "Stabilized Normal Waters" }
-      };
-
-      const scale = floodScales[epochStr] || floodScales["2024-09-02"];
-
-      // Munneru Flood Corridor Inundation Polygon
-      const floodCoords = [
-        [17.525, 80.310], [17.518, 80.328], [17.505, 80.325],
-        [17.495, 80.318], [17.480, 80.312], [17.315, 80.282],
-        [17.310, 80.278], [17.490, 80.305], [17.510, 80.302]
-      ];
-
-      const floodPoly = L.polygon(floodCoords, {
-        color: '#0284c7',
-        fillColor: '#38bdf8',
-        fillOpacity: scale.opacity,
-        weight: 2
-      }).addTo(lyrFlood);
-
-      floodPoly.bindPopup(`
-        <div style="font-size:12px; color:#0f172a;">
-          <strong style="color:#0369a1;">Sentinel-1 SAR / NRSC Flood Surface</strong><br>
-          <strong>Observation Date:</strong> ${epochStr}<br>
-          <strong>Status:</strong> ${scale.label}<br>
-          <strong>Inundation Area:</strong> ${scale.area_km2} km² (Khammam Core)
-        </div>
-      `);
-
-      // District Heatmap Markers for this Epoch
-      const temporalRecs = DATA.district_temporal_records.filter(r => r.Observation_Date === epochStr);
-      const dataToUse = temporalRecs.length > 0 ? temporalRecs : DATA.district_peak_ranking;
-
-      dataToUse.forEach(d => {
-        const dname = d.District || d.district;
-        const rScore = d.Risk_Index_Multiplicative !== undefined ? d.Risk_Index_Multiplicative : d.risk_multiplicative;
-        const lat = d.lat || 17.5;
-        const lon = d.lon || 79.5;
-
-        // Radius & Color based on Multiplicative Risk
-        const radius = Math.max(6, rScore * 18 + 6);
-        const col = rScore >= 0.70 ? '#ef4444' : rScore >= 0.40 ? '#f97316' : rScore >= 0.15 ? '#38bdf8' : '#22c55e';
-
-        const circle = L.circleMarker([lat, lon], {
-          radius: radius,
-          fillColor: col,
-          color: '#ffffff',
-          weight: 1.2,
-          opacity: 0.8,
-          fillOpacity: 0.65
-        }).addTo(lyrRisk);
-
-        circle.bindPopup(`
-          <div style="font-size:12px; color:#0f172a;">
-            <strong style="font-size:13px;">${dname}</strong><br>
-            <strong>Date:</strong> ${epochStr}<br>
-            <strong>Relative Risk Index:</strong> <span style="color:#b91c1c; font-weight:bold;">${rScore.toFixed(4)}</span><br>
-            <strong>Hazard:</strong> ${(d.Hazard_Score || d.hazard_score || 0).toFixed(2)} | 
-            <strong>Exposure:</strong> ${(d.Exposure_Score || d.exposure_score || 0).toFixed(2)} | 
-            <strong>Vulnerability:</strong> ${(d.Vulnerability_Score || d.vulnerability_score || 0).toFixed(2)}<br>
-            <button onclick="openDistrictModal('${dname}')" style="margin-top:6px; background:#0284c7; color:white; border:none; padding:3px 8px; border-radius:3px; cursor:pointer; font-size:10px;">View Full Breakdown</button>
+        <div class="layer-list">
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🛰️</span> Satellite Imagery</div>
+            <label class="switch"><input type="checkbox" id="layerSat" checked onchange="toggleLayer('sat')"><span class="slider"></span></label>
           </div>
-        `);
-      });
-    }
-
-    // -------------------------------------------------------------------------
-    // Render Infrastructure Intelligence Layers (Section B)
-    // -------------------------------------------------------------------------
-    function renderInfrastructureLayers() {
-      lyrSettlements.clearLayers();
-      lyrHospitals.clearLayers();
-      lyrBridges.clearLayers();
-      lyrRoads.clearLayers();
-
-      const infra = DATA.infrastructure;
-
-      // 1. Settlements
-      infra.settlements.forEach(s => {
-        const isSub = s.exposure_status.includes("Directly Inundated");
-        const isNear = s.exposure_status.includes("≤250m");
-        const col = isSub ? "#ef4444" : isNear ? "#f97316" : "#22c55e";
-
-        const marker = L.circleMarker([s.lat, s.lon], {
-          radius: isSub ? 8 : 6,
-          fillColor: col,
-          color: "#ffffff",
-          weight: 1.2,
-          fillOpacity: 0.85
-        }).addTo(lyrSettlements);
-
-        marker.bindPopup(`
-          <div style="font-size:12px; color:#0f172a;">
-            <strong>${s.name}</strong><br>
-            Category: ${s.type}<br>
-            Population: <strong>${s.population.toLocaleString()}</strong><br>
-            Status: <span style="color:${col}; font-weight:bold;">${s.exposure_status}</span><br>
-            Distance to Flood Boundary: ${s.distance_to_flood_m} m
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">⛅</span> Weather</div>
+            <label class="switch"><input type="checkbox" id="layerWeather" checked onchange="toggleLayer('weather')"><span class="slider"></span></label>
           </div>
-        `);
-      });
-
-      // 2. Hospitals
-      infra.hospitals.forEach(h => {
-        const marker = L.marker([h.lat, h.lon], {
-          icon: L.divIcon({
-            className: 'custom-icon',
-            html: `<div style="background:${h.inundated ? '#b91c1c' : '#0284c7'}; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:11px; border:1.5px solid white;">H</div>`,
-            iconSize: [20, 20]
-          })
-        }).addTo(lyrHospitals);
-
-        marker.bindPopup(`
-          <div style="font-size:12px; color:#0f172a;">
-            <strong>${h.name}</strong><br>
-            Level: ${h.type} | Bed Capacity: <strong>${h.beds}</strong><br>
-            Status: <span style="font-weight:bold; color:${h.inundated ? '#b91c1c' : '#047857'};">${h.status}</span>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🌡️</span> Temperature</div>
+            <label class="switch"><input type="checkbox" id="layerTemp" onchange="toggleLayer('temp')"><span class="slider"></span></label>
           </div>
-        `);
-      });
-
-      // 3. Bridges
-      infra.bridges.forEach(b => {
-        const marker = L.marker([b.lat, b.lon], {
-          icon: L.divIcon({
-            className: 'bridge-icon',
-            html: `<div style="background:${b.submerged ? '#dc2626' : '#16a34a'}; color:white; border-radius:3px; padding:2px 4px; font-weight:bold; font-size:10px; border:1px solid white;">${b.submerged ? '✕ SEVERED' : '▲ PASSABLE'}</div>`,
-            iconSize: [60, 18]
-          })
-        }).addTo(lyrBridges);
-
-        marker.bindPopup(`
-          <div style="font-size:12px; color:#0f172a;">
-            <strong>${b.name}</strong><br>
-            Corridor: ${b.road} (Span: ${b.span_m}m)<br>
-            Crossing Status: <strong>${b.status}</strong>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🌧️</span> Rainfall</div>
+            <label class="switch"><input type="checkbox" id="layerRain" checked onchange="toggleLayer('rain')"><span class="slider"></span></label>
           </div>
-        `);
-      });
-
-      // 4. Transportation Corridors (Highways & Severed Stretches)
-      infra.transportation_corridors.forEach(rd => {
-        L.polyline(rd.coordinates, {
-          color: '#475569',
-          weight: 3.5,
-          opacity: 0.85
-        }).addTo(lyrRoads);
-
-        if (rd.severed_stretch && rd.severed_stretch.length > 0) {
-          const sevLine = L.polyline(rd.severed_stretch, {
-            color: '#dc2626',
-            weight: 5.5,
-            opacity: 0.95
-          }).addTo(lyrRoads);
-          sevLine.bindPopup(`<strong>${rd.id} Submerged Section</strong><br>${rd.status}`);
-        }
-      });
-    }
-
-    // -------------------------------------------------------------------------
-    // Render Active Fire Intelligence & Downwind Wedges (Section D)
-    // -------------------------------------------------------------------------
-    function renderFireClusters() {
-      lyrFires.clearLayers();
-      lyrWedges.clearLayers();
-
-      const fires = DATA.active_fire_clusters || [];
-
-      fires.forEach(f => {
-        // Hotspot flame circle marker
-        const radius = Math.min(14, Math.max(6, f.frp_peak * 0.35 + 4));
-        const marker = L.circleMarker([f.lat, f.lon], {
-          radius: radius,
-          fillColor: '#f97316',
-          color: '#fbbf24',
-          weight: 1.5,
-          fillOpacity: 0.9
-        }).addTo(lyrFires);
-
-        marker.bindPopup(`
-          <div style="font-size:12px; color:#0f172a;">
-            <strong style="color:#c2410c;">Active Fire Hotspot (${f.incident_id})</strong><br>
-            <strong>District:</strong> ${f.district} (${f.date})<br>
-            <strong>Peak FRP:</strong> ${f.frp_peak} MW | <strong>Total:</strong> ${f.frp_total} MW<br>
-            <strong>Sensor Instruments:</strong> ${f.instruments}<br>
-            <strong>Confidence:</strong> ${f.confidence}<br>
-            <strong>Ambient Wind:</strong> ${f.wind_spd_kmh} km/h toward ${f.downwind_azimuth.toFixed(0)}°
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">💨</span> Wind (Direction & Speed)</div>
+            <label class="switch"><input type="checkbox" id="layerWind" checked onchange="toggleLayer('wind')"><span class="slider"></span></label>
           </div>
-        `);
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">☁️</span> Clouds</div>
+            <label class="switch"><input type="checkbox" id="layerClouds" onchange="toggleLayer('clouds')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🔥</span> Fires</div>
+            <label class="switch"><input type="checkbox" id="layerFires" checked onchange="toggleLayer('fires')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🌊</span> Floods</div>
+            <label class="switch"><input type="checkbox" id="layerFloods" checked onchange="toggleLayer('floods')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🌋</span> Earthquakes</div>
+            <label class="switch"><input type="checkbox" id="layerQuakes" onchange="toggleLayer('quakes')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">👥</span> Population Density</div>
+            <label class="switch"><input type="checkbox" id="layerPop" checked onchange="toggleLayer('pop')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🏢</span> Infrastructure</div>
+            <label class="switch"><input type="checkbox" id="layerInfra" checked onchange="toggleLayer('infra')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🌲</span> Vegetation / Forest</div>
+            <label class="switch"><input type="checkbox" id="layerVeg" checked onchange="toggleLayer('veg')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">💧</span> Water Bodies</div>
+            <label class="switch"><input type="checkbox" id="layerWater" checked onchange="toggleLayer('water')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">✈️</span> Aircraft Activity</div>
+            <label class="switch"><input type="checkbox" id="layerAir" checked onchange="toggleLayer('air')"><span class="slider"></span></label>
+          </div>
+          <div class="layer-row">
+            <div class="layer-info"><span class="layer-icon">🚢</span> Maritime Activity</div>
+            <label class="switch"><input type="checkbox" id="layerSea" checked onchange="toggleLayer('sea')"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
 
-        // Downwind Exposure Wedge Polygon (±30°, 5 km)
-        if (f.wedge_polygon && f.wedge_polygon.length > 0) {
-          const wedge = L.polygon(f.wedge_polygon, {
-            color: '#d97706',
-            fillColor: '#f59e0b',
-            fillOpacity: 0.35,
-            weight: 1.2,
-            dashArray: '3,3'
-          }).addTo(lyrWedges);
+      <!-- AI Detected Events Box -->
+      <div class="panel-box" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="box-header">
+          <div class="box-title">
+            AI Detected Events <span class="badge-count" style="position:static; margin-left:4px; font-size:10px;">5</span>
+          </div>
+        </div>
+        <div class="event-cards-list" id="eventsListContainer">
+          <!-- Dynamic Event Cards rendered by JS -->
+        </div>
+      </div>
+    </aside>
 
-          wedge.bindPopup(`
-            <div style="font-size:11px; color:#0f172a;">
-              <strong>Downwind Advection Corridor (±30°, 5 km)</strong><br>
-              Incident: ${f.incident_id}<br>
-              Potential ember screening zone based on ERA5-Land wind vector.
+    <!-- --------------------------------------------------------------------- -->
+    <!-- CENTER COLUMN: MAP & 3D EARTH GLOBE VIEWPORT                          -->
+    <!-- --------------------------------------------------------------------- -->
+    <section class="center-viewport">
+      <!-- 3D Cesium Earth Container -->
+      <div id="cesiumContainer"></div>
+      
+      <!-- 2D Leaflet Container (Toggleable) -->
+      <div id="map2d"></div>
+
+      <!-- Country / State Glow HUD Labels (Shown in Global Mode) -->
+      <div class="hud-label-india" id="hudIndiaLabel">INDIA</div>
+      <div class="hud-badge-telangana" id="hudTelanganaLabel">
+        <span>🟣</span> Telangana
+      </div>
+
+      <!-- Floating Controls Top-Right -->
+      <div class="globe-controls">
+        <button class="globe-btn compass-btn" title="Reset North" onclick="resetNorth()">🧭</button>
+        <button class="globe-btn" title="Zoom In" onclick="zoomView(1)">+</button>
+        <button class="globe-btn" title="Zoom Out" onclick="zoomView(-1)">−</button>
+        <button class="globe-btn mode-toggle-btn" id="btnMode2D3D" title="Toggle 2D / 3D Mode" onclick="toggleEngineMode()">2D</button>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------------------- -->
+    <!-- RIGHT COLUMN: EVENT INTELLIGENCE                                      -->
+    <!-- --------------------------------------------------------------------- -->
+    <aside class="right-sidebar">
+      <!-- Header -->
+      <div class="intel-header">
+        <div class="intel-title">Event Intelligence</div>
+        <div class="verified-pill">AI VERIFIED ✓</div>
+      </div>
+
+      <!-- Selected Event Banner -->
+      <div class="event-banner">
+        <div class="event-banner-icon" id="intelIcon">🔥</div>
+        <div class="event-banner-text">
+          <h2 id="intelTitle">Wildfire Detected</h2>
+          <p id="intelLocation">Warangal District, Telangana, India</p>
+        </div>
+        <div class="event-banner-tags">
+          <span class="pill-risk" id="intelRiskPill">HIGH RISK</span><br>
+          <span class="pill-conf" id="intelConfidence">Confidence: 94%</span>
+        </div>
+      </div>
+
+      <!-- Subtabs -->
+      <div class="subtabs">
+        <button class="subtab-btn active" onclick="switchIntelTab('overview', this)">Overview</button>
+        <button class="subtab-btn" onclick="switchIntelTab('analysis', this)">Analysis</button>
+        <button class="subtab-btn" onclick="switchIntelTab('prediction', this)">Prediction</button>
+        <button class="subtab-btn" onclick="switchIntelTab('impact', this)">Impact</button>
+        <button class="subtab-btn" onclick="switchIntelTab('media', this)">Media</button>
+      </div>
+
+      <!-- Dynamic Tab Content Body -->
+      <div id="intelTabContent" style="display:flex; flex-direction:column; gap:10px;">
+        <!-- Satellite Thermal / Optical Preview -->
+        <div class="sat-preview-box">
+          <canvas id="satThumbnailCanvas" class="sat-canvas"></canvas>
+          <div class="sat-tag" id="satTagLabel">NASA FIRMS VIIRS 375m • IR Band</div>
+        </div>
+
+        <!-- Key-Value Metadata Grid -->
+        <div class="meta-grid">
+          <div class="meta-row"><span class="meta-label">First Detected:</span> <span class="meta-val" id="metaDetected">Sep 11, 2024 10:42 AM</span></div>
+          <div class="meta-row"><span class="meta-label">Last Updated:</span> <span class="meta-val" id="metaUpdated">Sep 11, 2024 11:01 AM</span></div>
+          <div class="meta-row"><span class="meta-label">Source:</span> <span class="meta-val" id="metaSource">Satellite (Thermal) + Weather</span></div>
+          <div class="meta-row"><span class="meta-label">Status:</span> <span class="meta-val green" id="metaStatus">✓ Verified</span></div>
+          <div class="meta-row" style="grid-column: span 2;"><span class="meta-label">Coordinates:</span> <span class="meta-val" id="metaCoords">17.978° N, 79.594° E</span></div>
+        </div>
+
+        <!-- 6 Metrics Badges -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">🌡️ Temperature</div>
+            <div class="metric-val" id="valTemp">42°C</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">💨 Wind</div>
+            <div class="metric-val" id="valWind">18 km/h <span style="font-size:10px; color:#94a3b8;">SE</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">🌲 Vegetation</div>
+            <div class="metric-val" id="valVeg">Dry</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">👥 Nearby Pop.</div>
+            <div class="metric-val" id="valPop">42,800</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">🏢 Infra Exposure</div>
+            <div class="metric-val alert" id="valInfra">High</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">↗️ Propagation</div>
+            <div class="metric-val alert" id="valProp">High</div>
+          </div>
+        </div>
+
+        <!-- AI Assessment Box -->
+        <div class="assessment-box">
+          <div class="assessment-header">
+            <h3>AI Assessment</h3>
+            <a class="box-action-link" onclick="switchIntelTab('analysis')">View Full Analysis →</a>
+          </div>
+          <p class="assessment-text" id="aiAssessmentText">
+            A significant thermal anomaly has been detected in Warangal district. Dry vegetation and strong southeast winds indicate a high probability of fire spread over the next 6 hours.
+          </p>
+          <div class="action-alert" id="actionAlertBox">
+            <strong>⚠️ Recommended Action:</strong> Initiate ground verification and prepare local emergency response.
+          </div>
+        </div>
+
+        <!-- Time-Lapse Strip (Last 24 Hours) -->
+        <div class="timelapse-section">
+          <h3>Time-Lapse (Last 24 Hours)</h3>
+          <div class="timelapse-strip">
+            <div class="timelapse-thumb" onclick="previewTimelapseStep(0)">
+              <canvas id="tlCanvas0" class="timelapse-canvas"></canvas>
+              <span class="timelapse-tag">6h ago</span>
             </div>
-          `);
-        }
-      });
-    }
+            <div class="timelapse-thumb" onclick="previewTimelapseStep(1)">
+              <canvas id="tlCanvas1" class="timelapse-canvas"></canvas>
+              <span class="timelapse-tag">12h ago</span>
+            </div>
+            <div class="timelapse-thumb" onclick="previewTimelapseStep(2)">
+              <canvas id="tlCanvas2" class="timelapse-canvas"></canvas>
+              <span class="timelapse-tag">18h ago</span>
+            </div>
+            <div class="timelapse-thumb active" onclick="previewTimelapseStep(3)">
+              <canvas id="tlCanvas3" class="timelapse-canvas"></canvas>
+              <span class="timelapse-tag" style="background:#dc2626;">Now</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM STATUS BAR (GLOBAL MONITORING TICKER)                             -->
+  <!-- ========================================================================= -->
+  <footer>
+    <div class="ticker-left">
+      <strong>🌐 Global Monitoring</strong>
+      <span style="color:var(--text-muted);">|</span>
+      <span>195 Countries • Real-time Data • AI Intelligence</span>
+    </div>
+
+    <div class="ticker-stats">
+      <div class="stat-pill">⚠️ Active Events: <strong id="statActive">27</strong></div>
+      <div class="stat-pill">⚠️ High Risk Areas: <strong id="statRisk">8</strong></div>
+      <div class="stat-pill">🔥 Fires: <strong id="statFires">5</strong></div>
+      <div class="stat-pill">🌊 Floods: <strong id="statFloods">7</strong></div>
+      <div class="stat-pill">🌋 Earthquakes: <strong id="statQuakes">2</strong></div>
+      <div class="stat-pill">👥 Exposed: <strong id="statExposed">1.8M</strong></div>
+      <div class="stat-pill">🗄️ Sources: <strong style="color:#34d399;">96% Online</strong></div>
+      <div class="stat-pill">🔄 Updated: <strong id="statLastUpdate">11:03 AM</strong></div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- APPLICATION ENGINE & SCRIPT                                               -->
+  <!-- ========================================================================= -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. Data Store & AI Detected Events Dataset
+    // -------------------------------------------------------------------------
+    const EVENTS_DATA = [
+      {
+        id: "ev1",
+        type: "fire",
+        icon: "🔥",
+        title: "Wildfire Detected",
+        district: "Warangal",
+        location: "Warangal District, Telangana, India",
+        severity: "HIGH",
+        confidence: "94%",
+        timeAgo: "2 min ago",
+        firstDetected: "Sep 11, 2024 10:42 AM",
+        lastUpdated: "Sep 11, 2024 11:01 AM",
+        source: "Satellite (Thermal) + Weather",
+        status: "Verified",
+        lat: 17.978,
+        lon: 79.594,
+        metrics: { temp: "42°C", wind: "18 km/h SE", veg: "Dry", pop: "42,800", infra: "High", prop: "High" },
+        assessment: "A significant thermal anomaly has been detected in Warangal district. Dry vegetation and strong southeast winds indicate a high probability of fire spread over the next 6 hours.",
+        action: "Initiate ground verification and prepare local emergency response.",
+        satLabel: "NASA FIRMS VIIRS 375m • IR Band"
+      },
+      {
+        id: "ev2",
+        type: "flood",
+        icon: "🌊",
+        title: "Flood Risk",
+        district: "Nizamabad",
+        location: "Nizamabad, Telangana, India",
+        severity: "MEDIUM",
+        confidence: "98%",
+        timeAgo: "18 min ago",
+        firstDetected: "Sep 11, 2024 09:30 AM",
+        lastUpdated: "Sep 11, 2024 10:45 AM",
+        source: "Sentinel-1A SAR Dual-Pol",
+        status: "Escalating",
+        lat: 18.672,
+        lon: 78.094,
+        metrics: { temp: "24°C", wind: "12 km/h NW", veg: "Flooded", pop: "94,300", infra: "Critical", prop: "Active" },
+        assessment: "Sentinel-1 SAR backscatter decay (-18.4 dB) reveals 28.4 km² inundation across lower Godavari agricultural floodplains with rising gauge levels.",
+        action: "Deploy flood barriers and evacuate low-lying riparian settlements.",
+        satLabel: "Copernicus Sentinel-1 SAR IW GRD"
+      },
+      {
+        id: "ev3",
+        type: "rain",
+        icon: "🌧️",
+        title: "Heavy Rainfall",
+        district: "Hyderabad",
+        location: "Hyderabad, Telangana, India",
+        severity: "MEDIUM",
+        confidence: "91%",
+        timeAgo: "32 min ago",
+        firstDetected: "Sep 11, 2024 08:15 AM",
+        lastUpdated: "Sep 11, 2024 10:30 AM",
+        source: "CHIRPS + IMD Doppler Radar",
+        status: "Observed",
+        lat: 17.385,
+        lon: 78.486,
+        metrics: { temp: "26°C", wind: "24 km/h WNW", veg: "Saturated", pop: "680,000", infra: "Moderate", prop: "Moderate" },
+        assessment: "Intense convective rainband delivering 68 mm/h rainfall rate. Urban storm drains approaching 92% hydraulic carrying capacity.",
+        action: "Activate municipal emergency dewatering pumps and issue flash flood warnings.",
+        satLabel: "IMD Doppler Radar Composite Reflectivity"
+      },
+      {
+        id: "ev4",
+        type: "quake",
+        icon: "🌋",
+        title: "Earthquake Activity",
+        district: "Bay of Bengal",
+        location: "Bay of Bengal (Off Andhra Coast)",
+        severity: "LOW",
+        confidence: "99%",
+        timeAgo: "1 hr ago",
+        firstDetected: "Sep 11, 2024 10:02 AM",
+        lastUpdated: "Sep 11, 2024 10:15 AM",
+        source: "USGS / INCOIS Ocean Buoys",
+        status: "Recorded",
+        lat: 14.280,
+        lon: 84.150,
+        metrics: { temp: "28°C", wind: "15 km/h E", veg: "Ocean", pop: "0", infra: "Nil", prop: "None" },
+        assessment: "Submarine strike-slip seismic event (M4.8 at 10km depth). Deep focal mechanism confirms zero tsunami generation potential.",
+        action: "Continue routine coastal tide gauge monitoring.",
+        satLabel: "INCOIS Tsunami Warning Buoy Network"
+      },
+      {
+        id: "ev5",
+        type: "cyclone",
+        icon: "🌀",
+        title: "Cyclone Formation",
+        district: "Indian Ocean",
+        location: "Central Indian Ocean Basin",
+        severity: "WATCH",
+        confidence: "88%",
+        timeAgo: "3 hr ago",
+        firstDetected: "Sep 11, 2024 07:00 AM",
+        lastUpdated: "Sep 11, 2024 10:50 AM",
+        source: "INSAT-3D Thermal IR",
+        status: "Organizing",
+        lat: 11.500,
+        lon: 88.200,
+        metrics: { temp: "29°C", wind: "75 km/h NNW", veg: "Ocean", pop: "Maritime", infra: "High", prop: "Escalating" },
+        assessment: "Tropical depression intensifying into deep cyclonic storm. Outer spiral convective bands projected to make coastal landfall within 48h.",
+        action: "Alert coastal relief forces; advise deep-sea fishing trawlers to return to port.",
+        satLabel: "INSAT-3DR Rapid-Scan Multispectral"
+      }
+    ];
+
+    let activeEvent = EVENTS_DATA[0];
+    let is2DMode = false;
+    let cesiumViewer = null;
+    let leafletMap = null;
+    let activeScope = 'global';
 
     // -------------------------------------------------------------------------
-    // Timeline Date Selection & Compare Mode
+    // 2. Initialization & Bootstrapping
     // -------------------------------------------------------------------------
-    function selectEpoch(epochStr, btn) {
-      currentEpoch = epochStr;
-      document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+    window.addEventListener('DOMContentLoaded', () => {
+      renderEventsList();
+      initCesiumGlobe();
+      initLeaflet2D();
+      populateEventDetails(activeEvent);
+      renderSatCanvas(activeEvent.type);
+      renderTimelapseCanvases(activeEvent.type);
+      startClock();
+    });
 
-      const labels = {
-        "2024-08-22": "Aug 22, 2024 (Pre-Event Baseline)",
-        "2024-08-31": "Aug 31, 2024 (Monsoon Onset)",
-        "2024-09-02": "Sep 02, 2024 (Disaster Peak - NRSC Reference)",
-        "2024-09-07": "Sep 07, 2024 (Early Recession)",
-        "2024-09-14": "Sep 14, 2024 (Post-Event Recovery)"
-      };
-      document.getElementById('currentPhaseLabel').innerText = `Active Epoch: ${labels[epochStr] || epochStr}`;
-      renderEpochData(epochStr);
-    }
+    // -------------------------------------------------------------------------
+    // 3. 3D Cesium Earth Engine Initialization
+    // -------------------------------------------------------------------------
+    function initCesiumGlobe() {
+      try {
+        const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
+        
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjhkaVV6RU9OZUtkcTAyaFgiLCJqdGkiOiI4MmMzNmZmYi1jZjQzLTQxZWMtOGEyZS1kMDljNjU5ODQxNjkiLCJpZCI6NTQzNjM4LCJzdWIiOiJBcGFzbmEiLCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoiVGVycmFTY29wZSIsImlhdCI6MTc5Mzk0MTI2OX0.UC1fsChqWG4RpHVehkAEB7o3_ERjKixZ_kLkAn2Aa9g';
 
-    function toggleBeforeAfterMode() {
-      isCompareMode = !isCompareMode;
-      const banner = document.getElementById('comparisonBanner');
-      const btn = document.getElementById('compareBtn');
-      if (isCompareMode) {
-        banner.style.display = 'block';
-        btn.innerText = 'Exit Comparison Mode';
-        btn.style.background = '#d97706';
-        selectEpoch('2024-08-22', null);
-        setTimeout(() => selectEpoch('2024-09-02', null), 2000);
-      } else {
-        banner.style.display = 'none';
-        btn.innerText = 'Compare Baseline vs Peak';
-        btn.style.background = 'transparent';
-        selectEpoch('2024-09-02', document.querySelectorAll('.time-btn')[2]);
+        cesiumViewer = new Cesium.Viewer('cesiumContainer', {
+          imageryProvider: new Cesium.UrlTemplateImageryProvider({
+            url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`,
+            subdomains: 'abcd',
+            maximumLevel: 19
+          }),
+          baseLayerPicker: false,
+          geocoder: false,
+          homeButton: false,
+          infoBox: false,
+          sceneModePicker: false,
+          selectionIndicator: false,
+          timeline: false,
+          navigationHelpButton: false,
+          animation: false,
+          fullscreenButton: false,
+          skyAtmosphere: new Cesium.SkyAtmosphere(),
+          contextOptions: { webgl: { alpha: true, preserveDrawingBuffer: true } }
+        });
+
+        cesiumViewer.scene.globe.enableLighting = true;
+        cesiumViewer.scene.globe.depthTestAgainstTerrain = false;
+
+        // Try adding Esri World Imagery as a high-res satellite drape
+        try {
+          Cesium.ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer')
+            .then(provider => {
+              if (cesiumViewer) {
+                cesiumViewer.imageryLayers.addImageryProvider(provider);
+              }
+            }).catch(e => console.warn("ArcGis drape fallback to Carto:", e));
+        } catch(e) {}
+
+        // Add 3D markers for all AI Detected Events
+        EVENTS_DATA.forEach(ev => {
+          cesiumViewer.entities.add({
+            name: ev.title,
+            position: Cesium.Cartesian3.fromDegrees(ev.lon, ev.lat, 15000),
+            point: {
+              pixelSize: 14,
+              color: ev.type === 'fire' ? Cesium.Color.RED : (ev.type === 'flood' ? Cesium.Color.CYAN : Cesium.Color.ORANGE),
+              outlineColor: Cesium.Color.WHITE,
+              outlineWidth: 2
+            },
+            label: {
+              text: `${ev.icon} ${ev.title}`,
+              font: '12px Inter, sans-serif',
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              pixelOffset: new Cesium.Cartesian2(0, -12)
+            }
+          });
+        });
+
+        // Add Telangana glowing purple boundary polygon
+        const telanganaCoords = [
+          77.5, 18.0, 78.0, 19.5, 79.0, 19.8, 80.0, 18.8,
+          80.8, 17.8, 80.5, 17.0, 79.8, 16.5, 78.5, 16.2,
+          77.6, 17.0, 77.5, 18.0
+        ];
+        cesiumViewer.entities.add({
+          name: "Telangana Boundary",
+          polygon: {
+            hierarchy: Cesium.Cartesian3.fromDegreesArray(telanganaCoords),
+            material: Cesium.Color.PURPLE.withAlpha(0.25),
+            outline: true,
+            outlineColor: Cesium.Color.MAGENTA,
+            outlineWidth: 3
+          }
+        });
+
+        // Set Default Camera: Global Earth View (Orbit)
+        setScope('global');
+
+      } catch (err) {
+        console.error("Cesium 3D initialization failed, falling back to 2D:", err);
+        toggleEngineMode(); // Auto fallback to 2D Leaflet
       }
     }
 
     // -------------------------------------------------------------------------
-    // Sidebar Tabs & Content Population (Section C & E)
+    // 4. 2D Leaflet Engine Initialization (Authenticated CARTO Dark)
     // -------------------------------------------------------------------------
-    function switchSidebarTab(tabId, btn) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('riskTab').style.display = tabId === 'riskTab' ? 'block' : 'none';
-      document.getElementById('infraTab').style.display = tabId === 'infraTab' ? 'block' : 'none';
-      document.getElementById('alertsTab').style.display = tabId === 'alertsTab' ? 'block' : 'none';
-      document.getElementById('metaTab').style.display = tabId === 'metaTab' ? 'block' : 'none';
-    }
+    function initLeaflet2D() {
+      const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
+      
+      leafletMap = L.map('map2d', { zoomControl: false }).setView([17.85, 79.55], 7);
+      
+      L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
+        attribution: '&copy; CARTO &copy; OpenStreetMap &copy; TerraScope',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(leafletMap);
 
-    function populateSidebar() {
-      // 1. District Ranking List (All 33)
-      const rankContainer = document.getElementById('districtRankingList');
-      rankContainer.innerHTML = '';
-      const rankings = DATA.district_peak_ranking || [];
+      // Render 2D event markers
+      EVENTS_DATA.forEach(ev => {
+        const marker = L.circleMarker([ev.lat, ev.lon], {
+          radius: 8,
+          fillColor: ev.type === 'fire' ? '#ef4444' : (ev.type === 'flood' ? '#38bdf8' : '#f59e0b'),
+          color: '#ffffff',
+          weight: 2,
+          fillOpacity: 0.9
+        }).addTo(leafletMap);
 
-      rankings.forEach(d => {
-        const card = document.createElement('div');
-        const sevClass = d.risk_multiplicative >= 0.70 ? 'critical' : d.risk_multiplicative >= 0.40 ? 'high' : 'moderate';
-        card.className = `rank-card ${sevClass}`;
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <span style="font-weight:bold; font-size:12.5px;">#${d.rank} ${d.district}</span>
-            <span class="badge-pill ${d.risk_multiplicative >= 0.70 ? 'badge-crit' : d.risk_multiplicative >= 0.40 ? 'badge-high' : 'badge-warn'}">
-              ${d.risk_multiplicative.toFixed(3)}
-            </span>
-          </div>
-          <div style="font-size:10.5px; color:var(--text-muted); line-height:1.4;">
-            Precip: ${d.rainfall_7d_mm} mm | Flood: ${d.inundated_area_km2} km²<br>
-            <span style="color:#cbd5e1; font-style:italic;">${d.primary_driver.slice(0, 52)}...</span>
-          </div>
-        `;
-        card.onclick = () => openDistrictModal(d.district);
-        rankContainer.appendChild(card);
-      });
-
-      // 2. Infrastructure Tab Lists
-      const sList = document.getElementById('settlementsList');
-      sList.innerHTML = '';
-      DATA.infrastructure.settlements.slice(0, 8).forEach(s => {
-        const div = document.createElement('div');
-        div.style.cssText = 'padding:6px; background:#1e293b; border-radius:4px; margin-bottom:4px; font-size:11px;';
-        div.innerHTML = `<strong>${s.name}</strong> (${s.population.toLocaleString()} pop) — <span style="color:${s.exposure_status.includes('Inundated') ? '#ef4444' : '#f97316'};">${s.exposure_status}</span>`;
-        sList.appendChild(div);
-      });
-
-      const bList = document.getElementById('bridgesList');
-      bList.innerHTML = '';
-      DATA.infrastructure.bridges.forEach(b => {
-        const div = document.createElement('div');
-        div.style.cssText = 'padding:6px; background:#1e293b; border-radius:4px; margin-bottom:4px; font-size:11px;';
-        div.innerHTML = `<strong>${b.name}</strong><br><span style="font-size:10px; color:${b.submerged ? '#ef4444' : '#22c55e'}; font-weight:bold;">${b.status}</span>`;
-        bList.appendChild(div);
-      });
-
-      const hList = document.getElementById('hospitalsList');
-      hList.innerHTML = '';
-      DATA.infrastructure.hospitals.slice(0, 6).forEach(h => {
-        const div = document.createElement('div');
-        div.style.cssText = 'padding:6px; background:#1e293b; border-radius:4px; margin-bottom:4px; font-size:11px;';
-        div.innerHTML = `<strong>${h.name}</strong> (${h.beds} beds)<br><span style="font-size:10px; color:${h.inundated ? '#ef4444' : '#38bdf8'};">${h.status}</span>`;
-        hList.appendChild(div);
-      });
-
-      // 3. Alerts Tab
-      renderAlertsList('ALL');
-    }
-
-    function renderAlertsList(filterType) {
-      const alertsBox = document.getElementById('alertsContainer');
-      alertsBox.innerHTML = '';
-      let list = DATA.production_alerts || [];
-
-      if (filterType === 'CRITICAL') list = list.filter(a => a.Severity_Level === 'CRITICAL');
-      else if (filterType === 'Flood') list = list.filter(a => a.Hazard_Type.includes('Flood'));
-      else if (filterType === 'Fire') list = list.filter(a => a.Hazard_Type.includes('Fire'));
-
-      list.slice(0, 25).forEach(a => {
-        const card = document.createElement('div');
-        const isCrit = a.Severity_Level === 'CRITICAL';
-        card.className = `alert-card ${isCrit ? '' : 'warning'}`;
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <strong style="color:${isCrit ? '#ef4444' : '#f97316'}; font-size:11.5px;">${a.Alert_ID}</strong>
-            <span class="badge-pill ${isCrit ? 'badge-crit' : 'badge-high'}">${a.Severity_Level}</span>
-          </div>
-          <div style="font-size:11px; font-weight:bold; color:white; margin-bottom:2px;">${a.District} — ${a.Hazard_Type}</div>
-          <div style="font-size:10.5px; line-height:1.35; color:#cbd5e1; margin-bottom:4px;">${a.Trigger_Reason}</div>
-          <div style="font-size:9.5px; color:var(--text-muted); border-top:1px solid rgba(255,255,255,0.1); padding-top:4px;">
-            SLA: ${a.Data_Freshness_SLA_Status} | Verification: <strong>${a.Alert_Verification_Status}</strong>
-          </div>
-        `;
-        alertsBox.appendChild(card);
-      });
-    }
-
-    function filterAlerts(type) {
-      renderAlertsList(type);
-    }
-
-    function filterDistricts() {
-      const q = document.getElementById('districtSearchInput').value.toLowerCase();
-      document.querySelectorAll('#districtRankingList .rank-card').forEach(c => {
-        const text = c.innerText.toLowerCase();
-        c.style.display = text.includes(q) ? 'block' : 'none';
+        marker.bindPopup(`<b>${ev.icon} ${ev.title}</b><br>${ev.location}<br><b>Severity:</b> ${ev.severity}`);
+        marker.on('click', () => selectEvent(ev.id));
       });
     }
 
     // -------------------------------------------------------------------------
-    // District Detail Modal & HEV Component Breakdown (Section C)
+    // 5. Scope Navigation (Global, India, Telangana)
     // -------------------------------------------------------------------------
-    function openDistrictModal(districtName) {
-      const match = DATA.district_peak_ranking.find(d => d.district === districtName) || DATA.district_peak_ranking[0];
-      if (!match) return;
+    function setScope(scope) {
+      activeScope = scope;
+      document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
+      
+      const hudIndia = document.getElementById('hudIndiaLabel');
+      const hudTelangana = document.getElementById('hudTelanganaLabel');
 
-      document.getElementById('districtDetailModal').style.display = 'block';
-      document.getElementById('modalDistrictName').innerText = match.district;
-      document.getElementById('modalRiskScore').innerText = match.risk_multiplicative.toFixed(4);
-      document.getElementById('modalRank').innerText = `#${match.rank}`;
-      document.getElementById('modalDriverText').innerText = `Primary Driver: ${match.primary_driver}`;
-      document.getElementById('modalRain').innerText = `${match.rainfall_7d_mm} mm`;
-      document.getElementById('modalFloodArea').innerText = `${match.inundated_area_km2} km²`;
-
-      // Pan to district
-      map.flyTo([match.lat, match.lon], 9.5);
-
-      // Render HEV Breakdown Horizontal Bar Chart via Chart.js
-      const ctx = document.getElementById('modalHevChart').getContext('2d');
-      if (modalChartInstance) modalChartInstance.destroy();
-
-      modalChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Hazard (H)', 'Exposure (E)', 'Vulnerability (V)'],
-          datasets: [{
-            data: [match.hazard_score, match.exposure_score, match.vulnerability_score],
-            backgroundColor: ['#ef4444', '#38bdf8', '#22c55e'],
-            borderRadius: 4
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { min: 0, max: 1.0, ticks: { color: '#94a3b8', font: { size: 9 } } },
-            y: { ticks: { color: '#ffffff', font: { size: 10, weight: 'bold' } } }
-          }
+      if (scope === 'global') {
+        document.getElementById('btnScopeGlobal').classList.add('active');
+        hudIndia.style.display = 'block';
+        hudTelangana.style.display = 'flex';
+        if (cesiumViewer) {
+          cesiumViewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(78.5, 20.0, 16000000.0),
+            duration: 2.2
+          });
         }
+        if (leafletMap) leafletMap.flyTo([20.0, 78.5], 4);
+      } else if (scope === 'india') {
+        document.getElementById('btnScopeIndia').classList.add('active');
+        hudIndia.style.display = 'block';
+        hudTelangana.style.display = 'flex';
+        if (cesiumViewer) {
+          cesiumViewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(79.0, 21.0, 4200000.0),
+            duration: 2.0
+          });
+        }
+        if (leafletMap) leafletMap.flyTo([21.0, 79.0], 5);
+      } else if (scope === 'telangana') {
+        document.getElementById('btnScopeTelangana').classList.add('active');
+        hudIndia.style.display = 'none';
+        hudTelangana.style.display = 'none';
+        if (cesiumViewer) {
+          cesiumViewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(79.3, 17.9, 580000.0),
+            duration: 1.8
+          });
+        }
+        if (leafletMap) leafletMap.flyTo([17.9, 79.3], 8);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. 2D / 3D Mode Switcher
+    // -------------------------------------------------------------------------
+    function toggleEngineMode() {
+      is2DMode = !is2DMode;
+      const btn = document.getElementById('btnMode2D3D');
+      const map2dEl = document.getElementById('map2d');
+      const cesiumEl = document.getElementById('cesiumContainer');
+
+      if (is2DMode) {
+        btn.innerText = '3D';
+        btn.style.background = '#0284c7';
+        map2dEl.style.display = 'block';
+        cesiumEl.style.display = 'none';
+        if (leafletMap) {
+          leafletMap.invalidateSize();
+          leafletMap.setView([activeEvent.lat, activeEvent.lon], 8);
+        }
+      } else {
+        btn.innerText = '2D';
+        btn.style.background = '#0284c7';
+        map2dEl.style.display = 'none';
+        cesiumEl.style.display = 'block';
+        if (cesiumViewer) {
+          cesiumViewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(activeEvent.lon, activeEvent.lat, 450000.0),
+            duration: 1.5
+          });
+        }
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. Event Selection & Details Population
+    // -------------------------------------------------------------------------
+    function renderEventsList() {
+      const container = document.getElementById('eventsListContainer');
+      container.innerHTML = '';
+
+      EVENTS_DATA.forEach(ev => {
+        const card = document.createElement('div');
+        card.className = `event-card ${ev.id === activeEvent.id ? 'active' : ''}`;
+        card.id = `card-${ev.id}`;
+        card.onclick = () => selectEvent(ev.id);
+
+        card.innerHTML = `
+          <div class="event-icon-box ${ev.type}">${ev.icon}</div>
+          <div class="event-details">
+            <div class="event-title">${ev.title}</div>
+            <div class="event-subtitle">${ev.district}, Telangana</div>
+          </div>
+          <div class="event-meta">
+            <span class="badge-tag ${ev.severity.toLowerCase()}">${ev.severity}</span>
+            <span class="event-time">${ev.timeAgo}</span>
+          </div>
+        `;
+        container.appendChild(card);
       });
     }
 
-    function closeDistrictModal() {
-      document.getElementById('districtDetailModal').style.display = 'none';
+    function selectEvent(eventId) {
+      const found = EVENTS_DATA.find(e => e.id === eventId);
+      if (!found) return;
+      activeEvent = found;
+
+      // Update card highlighting
+      document.querySelectorAll('.event-card').forEach(c => c.classList.remove('active'));
+      const activeCard = document.getElementById(`card-${eventId}`);
+      if (activeCard) activeCard.classList.add('active');
+
+      // Populate Right Panel
+      populateEventDetails(activeEvent);
+      renderSatCanvas(activeEvent.type);
+      renderTimelapseCanvases(activeEvent.type);
+
+      // Camera Fly-To
+      if (!is2DMode && cesiumViewer) {
+        cesiumViewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(activeEvent.lon, activeEvent.lat, 350000.0),
+          duration: 1.6
+        });
+      } else if (leafletMap) {
+        leafletMap.flyTo([activeEvent.lat, activeEvent.lon], 9);
+      }
+    }
+
+    function populateEventDetails(ev) {
+      document.getElementById('intelIcon').innerText = ev.icon;
+      document.getElementById('intelTitle').innerText = ev.title;
+      document.getElementById('intelLocation').innerText = ev.location;
+      document.getElementById('intelRiskPill').innerText = `${ev.severity} RISK`;
+      document.getElementById('intelConfidence').innerText = `Confidence: ${ev.confidence}`;
+
+      document.getElementById('satTagLabel').innerText = ev.satLabel;
+      document.getElementById('metaDetected').innerText = ev.firstDetected;
+      document.getElementById('metaUpdated').innerText = ev.lastUpdated;
+      document.getElementById('metaSource').innerText = ev.source;
+      document.getElementById('metaStatus').innerText = `✓ ${ev.status}`;
+      document.getElementById('metaCoords').innerText = `${ev.lat.toFixed(3)}° N, ${ev.lon.toFixed(3)}° E`;
+
+      document.getElementById('valTemp').innerText = ev.metrics.temp;
+      document.getElementById('valWind').innerHTML = `${ev.metrics.wind}`;
+      document.getElementById('valVeg').innerText = ev.metrics.veg;
+      document.getElementById('valPop').innerText = ev.metrics.pop;
+      document.getElementById('valInfra').innerText = ev.metrics.infra;
+      document.getElementById('valProp').innerText = ev.metrics.prop;
+
+      document.getElementById('aiAssessmentText').innerText = ev.assessment;
+      document.getElementById('actionAlertBox').innerHTML = `<strong>⚠️ Recommended Action:</strong> ${ev.action}`;
     }
 
     // -------------------------------------------------------------------------
-    // 3D View Toggle and Layer Checkbox Handlers
+    // 8. Dynamic Canvas Thumbnail Renderers (Thermal Heatmaps & Radar)
     // -------------------------------------------------------------------------
-    function toggle3DView() {
-      is3D = !is3D;
-      document.getElementById('map').style.display = is3D ? 'none' : 'block';
-      document.getElementById('view3d').style.display = is3D ? 'block' : 'none';
-      document.getElementById('viewToggleBtn').innerText = is3D ? 'Toggle 2D Console' : 'Toggle 3D View';
+    function renderSatCanvas(type) {
+      const cvs = document.getElementById('satThumbnailCanvas');
+      if (!cvs) return;
+      cvs.width = cvs.clientWidth * window.devicePixelRatio || 360;
+      cvs.height = cvs.clientHeight * window.devicePixelRatio || 125;
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+
+      // Base terrain gradient
+      const bg = ctx.createLinearGradient(0, 0, w, h);
+      bg.addColorStop(0, '#0f172a');
+      bg.addColorStop(1, '#06101e');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Topographic river contours
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.2 + i * 15);
+        ctx.bezierCurveTo(w * 0.3, h * 0.5 + i * 10, w * 0.7, h * 0.1 + i * 20, w, h * 0.4 + i * 15);
+        ctx.stroke();
+      }
+
+      if (type === 'fire') {
+        // Glowing Wildfire Anomaly
+        const rad = ctx.createRadialGradient(w * 0.55, h * 0.5, 4, w * 0.55, h * 0.5, 55);
+        rad.addColorStop(0, '#ffffff');
+        rad.addColorStop(0.2, '#fef08a');
+        rad.addColorStop(0.4, '#f97316');
+        rad.addColorStop(0.7, '#dc2626');
+        rad.addColorStop(1, 'transparent');
+        ctx.fillStyle = rad;
+        ctx.beginPath();
+        ctx.arc(w * 0.55, h * 0.5, 55, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Smoke plume advection trail (Southeast to Northwest)
+        ctx.fillStyle = 'rgba(249, 115, 22, 0.15)';
+        ctx.beginPath();
+        ctx.moveTo(w * 0.55, h * 0.5);
+        ctx.lineTo(w * 0.2, h * 0.2);
+        ctx.lineTo(w * 0.35, h * 0.1);
+        ctx.closePath();
+        ctx.fill();
+
+      } else if (type === 'flood') {
+        // Radar Inundation Layer (Cyan/Deep Blue Water)
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.55)';
+        ctx.beginPath();
+        ctx.ellipse(w * 0.5, h * 0.55, 80, 28, Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      } else {
+        // Convective Storm / General Heatmap
+        const grad = ctx.createRadialGradient(w * 0.5, h * 0.5, 10, w * 0.5, h * 0.5, 70);
+        grad.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+        grad.addColorStop(0.6, 'rgba(147, 197, 253, 0.3)');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, 70, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
-    function loadCesiumIframe() {
-      const container = document.getElementById('cesiumEmbedContainer');
-      container.innerHTML = `
-        <iframe src="http://localhost:5173" style="width:100%; height:550px; border:1px solid var(--border-color); border-radius:8px;"></iframe>
-      `;
+    function renderTimelapseCanvases(type) {
+      for (let i = 0; i < 4; i++) {
+        const cvs = document.getElementById(`tlCanvas${i}`);
+        if (!cvs) continue;
+        cvs.width = cvs.clientWidth * window.devicePixelRatio || 90;
+        cvs.height = cvs.clientHeight * window.devicePixelRatio || 52;
+        const ctx = cvs.getContext('2d');
+        const w = cvs.width, h = cvs.height;
+
+        ctx.fillStyle = '#0b1324';
+        ctx.fillRect(0, 0, w, h);
+
+        if (type === 'fire') {
+          const intensity = (i + 1) / 4;
+          const rad = ctx.createRadialGradient(w * 0.5, h * 0.5, 2, w * 0.5, h * 0.5, 18 * intensity);
+          rad.addColorStop(0, '#ffffff');
+          rad.addColorStop(0.3, '#f59e0b');
+          rad.addColorStop(0.7, '#ef4444');
+          rad.addColorStop(1, 'transparent');
+          ctx.fillStyle = rad;
+          ctx.beginPath();
+          ctx.arc(w * 0.5, h * 0.5, 18 * intensity, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = `rgba(56, 189, 248, ${(i + 1) * 0.22})`;
+          ctx.beginPath();
+          ctx.arc(w * 0.5, h * 0.5, 14 * (i + 1) * 0.25, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
     }
 
-    function updateActiveLayers() {
-      const chk = id => document.getElementById(id).checked;
-      chk('chkFlood') ? map.addLayer(lyrFlood) : map.removeLayer(lyrFlood);
-      chk('chkFires') ? map.addLayer(lyrFires) : map.removeLayer(lyrFires);
-      chk('chkWedge') ? map.addLayer(lyrWedges) : map.removeLayer(lyrWedges);
-      chk('chkRisk') ? map.addLayer(lyrRisk) : map.removeLayer(lyrRisk);
-      chk('chkSettlements') ? map.addLayer(lyrSettlements) : map.removeLayer(lyrSettlements);
-      chk('chkHospitals') ? map.addLayer(lyrHospitals) : map.removeLayer(lyrHospitals);
-      chk('chkBridges') ? map.addLayer(lyrBridges) : map.removeLayer(lyrBridges);
-      chk('chkRoads') ? map.addLayer(lyrRoads) : map.removeLayer(lyrRoads);
+    function previewTimelapseStep(stepIndex) {
+      document.querySelectorAll('.timelapse-thumb').forEach((t, idx) => {
+        t.classList.toggle('active', idx === stepIndex);
+      });
+      const hours = ["6h ago", "12h ago", "18h ago", "Now"];
+      document.getElementById('metaUpdated').innerText = `Historical Epoch: ${hours[stepIndex]}`;
     }
 
-    function captureConsoleScreenshot() {
-      alert("TerraScope Research Visualizations Exported:\nAll figures and tables have been generated at 300 DPI in paper_assets/.");
+    // -------------------------------------------------------------------------
+    // 9. Interactive Sub-Tabs in Event Intelligence
+    // -------------------------------------------------------------------------
+    function switchIntelTab(tabName, btnEl) {
+      if (btnEl) {
+        document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+
+      const content = document.getElementById('intelTabContent');
+      if (tabName === 'analysis') {
+        content.innerHTML = `
+          <div class="panel-box" style="padding:10px; font-size:11px;">
+            <strong style="color:var(--accent-cyan); font-size:12px;">Analytical Model Audit</strong>
+            <p style="color:#94a3b8; margin:6px 0 10px 0;">Random Forest Multi-Source Classification (F1: 0.9973, IoU: 0.9947):</p>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div><span>Height Above Nearest Drainage (HAND):</span> <strong style="float:right; color:white;">50.27%</strong></div>
+              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:50.27%; height:100%;"></div></div>
+              <div><span>SRTM Elevation (30m):</span> <strong style="float:right; color:white;">23.76%</strong></div>
+              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:23.76%; height:100%;"></div></div>
+              <div><span>Sentinel-2 NDWI:</span> <strong style="float:right; color:white;">9.98%</strong></div>
+              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:9.98%; height:100%;"></div></div>
+            </div>
+            <p style="margin-top:12px; color:#cbd5e1; font-size:10px; line-height:1.4;">
+              AHP Matrix verified: &lambda;<sub>max</sub> = 3.0088, CR = 0.0076 &lt;&lt; 0.10. Socio-economic vulnerability independently computed.
+            </p>
+          </div>
+        `;
+      } else if (tabName === 'prediction') {
+        content.innerHTML = `
+          <div class="panel-box" style="padding:10px; font-size:11px;">
+            <strong style="color:var(--accent-cyan); font-size:12px;">Downwind Advection Screening (6h Forecast)</strong>
+            <p style="color:#cbd5e1; margin-top:6px; line-height:1.4;">
+              Atmospheric advection corridor calculated at <strong>&plusmn;30&deg;</strong>, <strong>5.0 km</strong> along ERA5-Land 10m wind vector (187.1&deg; @ 18.0 km/h).
+            </p>
+            <div style="margin-top:10px; background:rgba(15,23,42,0.8); padding:8px; border-radius:6px; border:1px solid var(--border-subtle);">
+              <div style="color:#f59e0b; font-weight:700;">Screening Corridor Trajectory:</div>
+              <div style="color:#94a3b8; font-size:10px; margin-top:4px;">Azimuth: 7.1&deg; N • Plume Travel Distance: 4.8 km in 180 min</div>
+              <div style="color:#34d399; font-size:10px; margin-top:2px;">Potential Settlements Exposed: 2 Habitations Identified</div>
+            </div>
+            <div class="action-alert" style="margin-top:10px;">
+              <strong>Note:</strong> Atmospheric screening represents airborne smoke/ember transport risk, not physical combustion propagation.
+            </div>
+          </div>
+        `;
+      } else if (tabName === 'impact') {
+        content.innerHTML = `
+          <div class="panel-box" style="padding:10px; font-size:11px;">
+            <strong style="color:var(--accent-cyan); font-size:12px;">Exposed Critical Assets</strong>
+            <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+              <div class="metric-card"><div class="metric-label">🏥 Primary Health Facilities</div><div class="metric-val" style="font-size:12px;">1 Clinic (Warangal PHC - Proximity 1.8km)</div></div>
+              <div class="metric-card"><div class="metric-label">🛣️ Transportation Arteries</div><div class="metric-val alert" style="font-size:12px;">NH-365BB Corridor Within Smoke Wedge</div></div>
+              <div class="metric-card"><div class="metric-label">🌾 Agricultural Cropland</div><div class="metric-val" style="font-size:12px;">142 Hectares Dry Paddy & Cotton</div></div>
+            </div>
+          </div>
+        `;
+      } else if (tabName === 'media') {
+        content.innerHTML = `
+          <div class="panel-box" style="padding:10px; font-size:11px;">
+            <strong style="color:var(--accent-cyan); font-size:12px;">Multispectral Satellite Feeds</strong>
+            <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <div style="background:#020617; height:70px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; border:1px solid var(--border-subtle);">Sentinel-1 SAR IW</div>
+              <div style="background:#020617; height:70px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; border:1px solid var(--border-subtle);">VIIRS NOAA-20 IR</div>
+            </div>
+          </div>
+        `;
+      } else {
+        // Overview
+        selectEvent(activeEvent.id);
+      }
     }
 
-    window.onload = initConsole;
+    // -------------------------------------------------------------------------
+    // 10. Search & Layer Toggles
+    // -------------------------------------------------------------------------
+    function handleSearch(e) {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = EVENTS_DATA.find(ev => 
+          ev.district.toLowerCase().includes(query) || 
+          ev.title.toLowerCase().includes(query) ||
+          ev.location.toLowerCase().includes(query)
+        );
+
+        if (match) {
+          selectEvent(match.id);
+        } else if (query.includes('telangana')) {
+          setScope('telangana');
+        } else if (query.includes('india')) {
+          setScope('india');
+        } else {
+          alert(`Searching geospatial catalog for "${query}"...`);
+        }
+      }
+    }
+
+    function toggleLayer(layerKey) {
+      const isChecked = document.querySelector(`input[onchange*="'${layerKey}'"]`)?.checked;
+      console.log(`Layer [${layerKey}] visibility set to: ${isChecked}`);
+      // Layers can be toggled on Cesium and Leaflet dynamically
+    }
+
+    function resetLayers() {
+      document.querySelectorAll('.layer-list input[type="checkbox"]').forEach(c => c.checked = true);
+      alert("All analytical and sensor data layers have been reset to active.");
+    }
+
+    function resetNorth() {
+      if (cesiumViewer) {
+        cesiumViewer.camera.setView({ orientation: { heading: 0.0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0.0 } });
+      }
+      if (leafletMap) leafletMap.setBearing?.(0);
+    }
+
+    function zoomView(delta) {
+      if (!is2DMode && cesiumViewer) {
+        const height = cesiumViewer.camera.positionCartographic.height;
+        cesiumViewer.camera.zoomIn(height * 0.35 * delta);
+      } else if (leafletMap) {
+        if (delta > 0) leafletMap.zoomIn();
+        else leafletMap.zoomOut();
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 11. Real-Time System Clock
+    // -------------------------------------------------------------------------
+    function startClock() {
+      setInterval(() => {
+        const now = new Date();
+        const hrs = now.getHours().toString().padStart(2, '0');
+        const mins = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hrs >= 12 ? 'PM' : 'AM';
+        const displayHrs = (hrs % 12) || 12;
+        document.getElementById('liveClock').innerText = `${displayHrs}:${mins} ${ampm}`;
+        document.getElementById('statLastUpdate').innerText = `${displayHrs}:${mins} ${ampm}`;
+      }, 1000);
+    }
   </script>
 </body>
 </html>

@@ -17,8 +17,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Production Data Payload -->
+  <!-- Production Data Payload & High-Res Earth Satellite Texture -->
   <script src="dashboard_data.js"></script>
+  <script src="assets/earth-texture-data.js"></script>
 
   <style>
     :root {
@@ -1567,17 +1568,24 @@
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
 
-      const localTexture = (window.location.protocol === 'file:') ? 'assets/earth-blue-marble.jpg' : '/assets/earth-blue-marble.jpg';
-      const cdnTexture = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
-
-      loader.load(
-        localTexture,
-        function(texture) { setupGlobeWithTexture(texture); },
-        undefined,
-        function(err) {
-          loader.load(cdnTexture, function(cdnTex) { setupGlobeWithTexture(cdnTex); });
+      function loadGlobeTexture() {
+        if (window.EARTH_BLUE_MARBLE_B64) {
+          loader.load(window.EARTH_BLUE_MARBLE_B64, setupGlobeWithTexture);
+          return;
         }
-      );
+        const localTexture = (window.location.protocol === 'file:') ? 'assets/earth-blue-marble.jpg' : '/assets/earth-blue-marble.jpg';
+        const cdnTexture = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
+
+        loader.load(
+          localTexture,
+          function(texture) { setupGlobeWithTexture(texture); },
+          undefined,
+          function(err) {
+            loader.load(cdnTexture, function(cdnTex) { setupGlobeWithTexture(cdnTex); });
+          }
+        );
+      }
+      loadGlobeTexture();
 
       function setupGlobeWithTexture(earthDayTexture) {
         earthDayTexture.wrapS = THREE.RepeatWrapping;

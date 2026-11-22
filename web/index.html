@@ -66,216 +66,140 @@
       justify-content: space-between;
       padding: 0 16px;
       z-index: 1000;
+      flex-shrink: 0;
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-logo {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7 60%, #034875 100%);
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      position: relative;
-    }
-    .brand-logo::after {
-      content: '';
-      position: absolute;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px dashed rgba(56, 189, 248, 0.4);
-      animation: spinRing 25s linear infinite;
-    }
-    @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    .brand-title {
-      display: flex;
-      flex-direction: column;
-    }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .brand-logo { font-size: 20px; filter: drop-shadow(0 0 8px rgba(56,189,248,0.4)); }
     .brand-title h1 {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.2px;
-      color: #ffffff;
+      font-size: 15px; font-weight: 700; letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #ffffff, #93c5fd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       line-height: 1.1;
     }
     .brand-title p {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      letter-spacing: 0.2px;
-      font-weight: 500;
-      margin-top: 1px;
+      font-size: 9.5px; color: var(--text-muted);
+      letter-spacing: 0.8px; text-transform: uppercase;
     }
 
-    /* Scope View Selector Pills */
     .scope-pills {
-      display: flex;
-      background: #0d1527;
-      border: 1px solid var(--border-card);
-      border-radius: 18px;
-      padding: 2px;
+      display: flex; background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-card); border-radius: 6px; padding: 2px;
       gap: 2px;
-      margin-left: 14px;
     }
     .scope-btn {
-      padding: 4px 14px;
-      border-radius: 14px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: none; border: none; color: var(--text-secondary);
+      font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 4px;
+      cursor: pointer; transition: all 0.2s ease;
     }
-    .scope-btn:hover { color: white; }
-    .scope-btn.active {
-      background: var(--accent-blue);
-      color: white;
-      box-shadow: 0 1px 8px rgba(2, 132, 199, 0.5);
-    }
+    .scope-btn:hover { color: var(--text-main); }
+    .scope-btn.active { background: #0284c7; color: white; box-shadow: 0 0 10px rgba(2, 132, 199, 0.5); }
 
-    /* Central Search Box */
+    /* Center Search Bar with Autocomplete Dropdown */
+    .search-box-wrap {
+      position: relative;
+      width: 380px;
+    }
     .search-box {
-      width: 340px;
-      height: 34px;
-      background: #0d1527;
+      width: 100%;
+      background: rgba(13, 21, 38, 0.9);
       border: 1px solid var(--border-card);
-      border-radius: 17px;
+      border-radius: 6px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
-      padding: 0 12px;
       gap: 8px;
-      transition: all 0.2s;
+      transition: border-color 0.2s;
     }
-    .search-box:focus-within {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
-    }
+    .search-box:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(56, 189, 248, 0.25); }
     .search-box input {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: white;
-      font-size: 11.5px;
-      width: 100%;
+      background: none; border: none; outline: none;
+      color: var(--text-main); font-size: 11px; width: 100%;
     }
     .search-box input::placeholder { color: var(--text-muted); }
-
-    /* Right Controls */
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .kbd-hint {
+      font-size: 9px; font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, 0.08); padding: 2px 5px; border-radius: 3px;
+      color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .live-badge {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #34d399;
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 12px;
+    .search-dropdown {
+      position: absolute;
+      top: 36px; left: 0; right: 0;
+      background: rgba(8, 14, 28, 0.98);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      z-index: 3000;
+      display: none;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .search-dropdown-item {
+      padding: 8px 12px;
+      font-size: 11px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .search-dropdown-item:hover { background: rgba(56, 189, 248, 0.12); color: var(--accent-cyan); }
+    .search-item-tag { font-size: 9px; padding: 2px 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.06); color: var(--text-muted); }
+
+    .header-right { display: flex; align-items: center; gap: 14px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 20px; padding: 3px 9px; font-size: 10px; font-weight: 700; color: var(--accent-green);
       letter-spacing: 0.5px;
     }
     .live-dot {
-      width: 6px;
-      height: 6px;
-      background: #10b981;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
-      animation: pulseGlow 1.8s infinite;
+      width: 6px; height: 6px; background: var(--accent-green);
+      border-radius: 50%; box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 1.8s infinite;
     }
-    @keyframes pulseGlow { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.3); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
 
-    .time-badge {
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-secondary);
-      line-height: 1.25;
-    }
-    .time-badge strong { color: white; font-size: 11.5px; }
-
+    .time-badge { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-secondary); text-align: right; line-height: 1.2; }
     .icon-btn {
-      position: relative;
-      background: #111a2f;
-      border: 1px solid var(--border-card);
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-secondary);
-      font-size: 13px;
-      transition: all 0.15s;
+      position: relative; background: rgba(255,255,255,0.05); border: 1px solid var(--border-card);
+      border-radius: 6px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px; color: var(--text-secondary); transition: all 0.2s;
     }
-    .icon-btn:hover { color: white; background: #1c2a4c; }
+    .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
     .badge-num {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      background: var(--accent-red);
-      color: white;
-      font-size: 8.5px;
-      font-weight: bold;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid #080d1a;
+      position: absolute; top: -3px; right: -3px; background: var(--accent-red);
+      color: white; font-size: 8.5px; font-weight: 700; padding: 1px 4px; border-radius: 10px;
     }
 
     .user-pill {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #1e293b;
-      border: 1.5px solid #334155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      color: #94a3b8;
-      cursor: pointer;
+      background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; cursor: pointer; color: var(--accent-cyan);
     }
     .safer-tag {
-      font-size: 10.5px;
-      color: #34d399;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      font-size: 10px; font-weight: 600; color: #34d399; display: flex; align-items: center; gap: 4px;
+      background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.25);
+      padding: 3px 8px; border-radius: 4px; cursor: pointer;
     }
+    .safer-tag:hover { background: rgba(52, 211, 153, 0.2); }
 
     /* ------------------------------------------------------------------------- */
-    /* MAIN 3-COLUMN CONSOLE                                                     */
+    /* 3-COLUMN MAIN WORKSPACE                                                   */
     /* ------------------------------------------------------------------------- */
     main {
       flex: 1;
       display: grid;
-      grid-template-columns: 275px 1fr 375px;
+      grid-template-columns: 240px 1fr 370px;
+      height: calc(100vh - 52px - 42px);
       position: relative;
       overflow: hidden;
     }
 
     /* ------------------------------------------------------------------------- */
-    /* LEFT SIDEBAR: DATA LAYERS & AI DETECTED EVENTS                         */
+    /* LEFT SIDEBAR: DATA LAYERS & AI DETECTED EVENTS                            */
     /* ------------------------------------------------------------------------- */
     .sidebar-left {
       background: var(--bg-panel);
@@ -285,34 +209,36 @@
       padding: 10px;
       gap: 10px;
       overflow-y: auto;
-      z-index: 500;
-      backdrop-filter: blur(12px);
+      z-index: 50;
     }
+
     .card-box {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: 8px;
-      padding: 10px 12px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
     }
+
     .card-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       margin-bottom: 8px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     .card-title {
-      font-size: 12.5px;
+      font-size: 11.5px;
       font-weight: 700;
-      color: white;
+      letter-spacing: 0.3px;
+      color: #e2e8f0;
+      text-transform: uppercase;
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .link-action {
-      font-size: 11px;
+      font-size: 9.5px;
       color: var(--accent-cyan);
       cursor: pointer;
       text-decoration: none;
@@ -323,8 +249,8 @@
     .layers-container {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      max-height: 280px;
+      gap: 4px;
+      max-height: 250px;
       overflow-y: auto;
       padding-right: 2px;
     }
@@ -335,7 +261,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 3.5px 4px;
+      padding: 4px 6px;
       border-radius: 4px;
       transition: background 0.15s;
     }
@@ -344,8 +270,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 11.5px;
-      font-weight: 500;
+      font-size: 11px;
       color: #cbd5e1;
     }
     .layer-icon {
@@ -354,123 +279,103 @@
       text-align: center;
     }
 
-    /* iOS/Cyberpunk Toggle Switch */
+    /* Toggle Switch */
     .switch {
       position: relative;
       display: inline-block;
-      width: 30px;
-      height: 16px;
+      width: 28px;
+      height: 15px;
     }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider {
       position: absolute; cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #27354f;
+      background-color: #1e293b;
+      border: 1px solid #334155;
       transition: .2s;
-      border-radius: 16px;
+      border-radius: 15px;
     }
     .slider:before {
       position: absolute; content: "";
-      height: 10px; width: 10px;
-      left: 3px; bottom: 3px;
-      background-color: white;
+      height: 9px; width: 9px;
+      left: 2px; bottom: 2px;
+      background-color: #94a3b8;
       transition: .2s;
       border-radius: 50%;
     }
     input:checked + .slider {
-      background-color: #38bdf8;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+      background-color: #0284c7;
+      border-color: #38bdf8;
     }
-    input:checked + .slider:before { transform: translateX(14px); }
+    input:checked + .slider:before {
+      transform: translateX(13px);
+      background-color: white;
+    }
 
-    /* AI Detected Events List */
+    /* Event Items List */
     .event-items-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      overflow-y: auto;
+      flex: 1;
     }
     .event-item-card {
-      background: rgba(11, 17, 34, 0.7);
+      background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--border-card);
       border-radius: 6px;
       padding: 7px 9px;
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
     .event-item-card:hover {
       background: var(--bg-card-hover);
       border-color: rgba(56, 189, 248, 0.4);
-      transform: translateX(2px);
+      transform: translateY(-1px);
     }
     .event-item-card.active {
       border-color: var(--accent-cyan);
       background: rgba(2, 132, 199, 0.15);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+      box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.2);
     }
+
     .event-icon-badge {
-      width: 26px;
-      height: 26px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0;
     }
-    .event-icon-badge.flood { background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); }
-    .event-icon-badge.rain { background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4); }
-    .event-icon-badge.quake { background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.4); }
-    .event-icon-badge.cyclone { background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); }
+    .event-icon-badge.fire { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); }
+    .event-icon-badge.flood { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); }
+    .event-icon-badge.rain { background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.4); }
+    .event-icon-badge.quake { background: rgba(234, 88, 12, 0.15); border: 1px solid rgba(234, 88, 12, 0.4); }
+    .event-icon-badge.cyclone { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); }
 
     .event-item-info { flex: 1; min-width: 0; }
-    .event-item-name {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: white;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .event-item-sub {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
-    .event-item-side {
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-    }
+    .event-item-name { font-size: 11px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .event-item-sub { font-size: 9.5px; color: var(--text-muted); }
+    .event-item-side { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
     .tag-badge {
-      font-size: 8.5px;
-      font-weight: 800;
-      padding: 1px 5px;
-      border-radius: 3px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      font-size: 8px; font-weight: 700; padding: 1.5px 4px; border-radius: 3px; text-transform: uppercase;
     }
-    .tag-badge.high { background: #b91c1c; color: #fee2e2; border: 1px solid #ef4444; }
-    .tag-badge.medium { background: #b45309; color: #fef3c7; border: 1px solid #f59e0b; }
-    .tag-badge.low { background: #1e3a8a; color: #dbeafe; border: 1px solid #3b82f6; }
-    .tag-badge.watch { background: #78350f; color: #ffedd5; border: 1px solid #f97316; }
+    .tag-badge.high { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .tag-badge.medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .tag-badge.low { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .tag-badge.watch { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
     .event-item-time { font-size: 8.5px; color: var(--text-muted); }
 
     /* ------------------------------------------------------------------------- */
-    /* CENTER 3D GLOBE / 2D MAP VIEWPORT                                         */
+    /* CENTER COLUMN: 3D EARTH GLOBE & 2D LEAFLET ENGINE                         */
     /* ------------------------------------------------------------------------- */
     .viewport-center {
       position: relative;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 50% 50%, #0d162a 0%, #030611 100%);
+      background: var(--bg-space);
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     #globeCanvas, #map2dContainer {
@@ -484,129 +389,95 @@
     /* Atmospheric Glow Halo Ring around 3D Earth */
     .earth-atmosphere-glow {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 590px;
-      height: 590px;
+      width: 580px; height: 580px;
       border-radius: 50%;
-      box-shadow: 0 0 130px 45px rgba(56, 189, 248, 0.28), inset 0 0 90px 25px rgba(56, 189, 248, 0.20);
       pointer-events: none;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 55%, rgba(56, 189, 248, 0.25) 70%, rgba(2, 132, 199, 0) 75%);
+      box-shadow: 0 0 100px rgba(56, 189, 248, 0.22);
       z-index: 5;
     }
 
-    /* Floating View Controls (Top-Right) */
-    .view-controls {
+    /* Live Cursor Coordinate HUD Overlay */
+    .hud-coords {
       position: absolute;
-      top: 14px;
-      right: 14px;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      align-items: center;
-    }
-    .ctrl-btn {
-      width: 32px;
-      height: 32px;
-      background: rgba(13, 20, 38, 0.85);
-      border: 1px solid var(--border-card);
-      border-radius: 6px;
-      color: white;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-      transition: all 0.15s;
-    }
-    .ctrl-btn:hover {
-      background: rgba(22, 33, 62, 0.95);
-      border-color: var(--accent-cyan);
-    }
-    .compass-icon {
-      border-radius: 50%;
+      bottom: 42px; left: 16px;
+      background: rgba(8, 14, 28, 0.85);
+      border: 1px solid var(--border-panel);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
       color: var(--accent-cyan);
-      font-size: 14px;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
-    .mode-pill {
-      background: var(--accent-blue);
+
+    /* Floating Historical Epoch Scrub Toolbar */
+    .epoch-toolbar {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8, 14, 28, 0.88);
+      border: 1px solid var(--border-panel);
+      border-radius: 20px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+    }
+    .epoch-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .epoch-btns { display: flex; gap: 4px; }
+    .epoch-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: #cbd5e1;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .epoch-btn:hover { background: rgba(56, 189, 248, 0.2); color: white; }
+    .epoch-btn.active {
+      background: #0284c7;
+      color: white;
       border-color: #38bdf8;
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
-    /* Floating Historical Epoch Scrub Toolbar (From Paper Section IV-C & V) */
-    .epoch-toolbar {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      z-index: 100;
-      background: rgba(13, 20, 38, 0.9);
-      border: 1px solid var(--border-card);
-      border-radius: 8px;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-    }
-    .epoch-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .epoch-btns { display: flex; gap: 3px; }
-    .epoch-btn {
-      background: #111a2f;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-card);
-      padding: 3px 7px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .epoch-btn:hover { color: white; background: #1c2a4c; }
-    .epoch-btn.active {
-      background: var(--accent-blue);
-      color: white;
-      border-color: #38bdf8;
-    }
-
-    /* Floating HUD Country & State Labels */
+    /* Overlaid HUD Labels on Globe */
     .hud-india {
       position: absolute;
-      top: 41%;
-      left: 45%;
-      transform: translate(-50%, -50%);
-      color: rgba(255, 255, 255, 0.92);
       font-weight: 800;
-      font-size: 19px;
-      letter-spacing: 2.5px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.7);
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9), 0 0 14px rgba(56, 189, 248, 0.8);
       pointer-events: none;
       z-index: 20;
     }
     .hud-telangana {
       position: absolute;
-      top: 48%;
-      left: 46.5%;
-      background: rgba(168, 85, 247, 0.35);
+      background: rgba(147, 51, 234, 0.25);
       border: 1.5px solid #c084fc;
-      box-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
-      color: #f3e8ff;
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-size: 11px;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 9.5px;
       font-weight: 700;
+      color: white;
+      box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
       pointer-events: none;
       z-index: 20;
       display: flex;
@@ -614,54 +485,66 @@
       gap: 4px;
     }
 
-    /* Floating Markers on 3D Earth Globe */
+    /* Floating Hazard & Vehicle Entities */
     .globe-marker-fire {
+      position: absolute; font-size: 18px; filter: drop-shadow(0 0 8px #ef4444);
+      z-index: 25; cursor: pointer; animation: flameBounce 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes flameBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-3px) scale(1.1); } }
+
+    .globe-marker-rain { position: absolute; font-size: 16px; filter: drop-shadow(0 0 6px #38bdf8); z-index: 25; }
+    .globe-marker-plane { position: absolute; font-size: 14px; filter: drop-shadow(0 0 4px white); z-index: 25; transform: rotate(-35deg); }
+    .globe-marker-ship { position: absolute; font-size: 14px; filter: drop-shadow(0 0 4px #38bdf8); z-index: 25; }
+    .globe-marker-cyclone { position: absolute; font-size: 20px; filter: drop-shadow(0 0 10px #f59e0b); z-index: 25; cursor: pointer; }
+
+    /* Top-Right Globe Action Controls */
+    .view-controls {
       position: absolute;
-      top: 44%;
-      left: 48%;
-      font-size: 16px;
-      filter: drop-shadow(0 0 8px #ef4444);
+      top: 14px; right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 30;
+    }
+    .ctrl-btn {
+      width: 28px; height: 28px;
+      background: rgba(13, 20, 38, 0.85);
+      border: 1px solid var(--border-panel);
+      border-radius: 5px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      z-index: 25;
-      animation: bounceMarker 2s infinite ease-in-out;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
     }
-    .globe-marker-rain {
+    .ctrl-btn:hover { background: rgba(56, 189, 248, 0.2); color: white; border-color: var(--accent-cyan); }
+    .ctrl-btn.compass-icon { font-size: 14px; color: var(--accent-cyan); }
+    .ctrl-btn.mode-pill { font-weight: 700; font-size: 10px; color: var(--accent-cyan); }
+
+    /* Floating Layer Legend Widget */
+    .layer-legend-panel {
       position: absolute;
-      top: 55%;
-      left: 44%;
-      font-size: 16px;
-      filter: drop-shadow(0 0 8px #38bdf8);
-      z-index: 25;
+      top: 14px; left: 14px;
+      background: rgba(8, 14, 28, 0.92);
+      border: 1px solid var(--border-panel);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 10px;
+      color: #cbd5e1;
+      z-index: 30;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-width: 220px;
     }
-    .globe-marker-plane {
-      position: absolute;
-      top: 62%;
-      left: 42%;
-      font-size: 15px;
-      color: white;
-      transform: rotate(-35deg);
-      filter: drop-shadow(0 0 6px white);
-      z-index: 25;
-    }
-    .globe-marker-ship {
-      position: absolute;
-      top: 68%;
-      left: 36%;
-      font-size: 15px;
-      filter: drop-shadow(0 0 6px #38bdf8);
-      z-index: 25;
-    }
-    .globe-marker-cyclone {
-      position: absolute;
-      top: 38%;
-      left: 56%;
-      font-size: 26px;
-      filter: drop-shadow(0 0 16px #f97316);
-      z-index: 25;
-      animation: spinStorm 12s linear infinite;
-    }
-    @keyframes spinStorm { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes bounceMarker { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .legend-title { font-weight: 700; font-size: 10.5px; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .legend-row { display: flex; align-items: center; gap: 6px; }
+    .legend-color-box { width: 12px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
     /* ------------------------------------------------------------------------- */
     /* RIGHT SIDEBAR: EVENT INTELLIGENCE                                         */
@@ -674,248 +557,199 @@
       padding: 12px;
       gap: 9px;
       overflow-y: auto;
-      z-index: 500;
-      backdrop-filter: blur(12px);
+      z-index: 50;
     }
+
     .intel-top-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      justify-content: space-between;
     }
     .intel-heading {
       font-size: 13.5px;
       font-weight: 700;
-      color: white;
+      color: #f1f5f9;
+      letter-spacing: 0.3px;
     }
     .verified-pill {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
       font-size: 9.5px;
       font-weight: 700;
-      padding: 2.5px 7px;
-      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+      padding: 2.5px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.4px;
     }
 
-    /* Event Headline Banner */
     .intel-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(13, 20, 38, 0.7);
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-card);
     }
     .banner-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
+      font-size: 22px;
+      width: 36px; height: 36px;
       background: rgba(239, 68, 68, 0.2);
-      border: 1px solid #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
       flex-shrink: 0;
     }
-    .banner-text h2 {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: white;
-    }
-    .banner-text p {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
-    .banner-right {
-      margin-left: auto;
-      text-align: right;
-    }
+    .banner-text h2 { font-size: 13.5px; font-weight: 700; color: white; }
+    .banner-text p { font-size: 10px; color: #94a3b8; }
+    .banner-right { margin-left: auto; text-align: right; }
     .pill-risk-main {
-      background: #dc2626;
-      color: white;
-      font-size: 8.5px;
+      font-size: 9.5px;
       font-weight: 800;
-      padding: 2px 5px;
-      border-radius: 3px;
-      display: inline-block;
-      margin-bottom: 1px;
+      background: rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(239, 68, 68, 0.5);
     }
     .pill-confidence {
-      font-size: 8.5px;
-      color: #94a3b8;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      display: inline-block;
     }
 
-    /* Subtabs */
+    /* Subtabs Bar */
     .intel-subtabs {
       display: flex;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(13, 20, 38, 0.8);
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 2px;
       gap: 2px;
     }
     .intel-tab {
       flex: 1;
-      padding: 5px 0;
       background: none;
       border: none;
-      color: var(--text-muted);
-      font-size: 11px;
+      color: var(--text-secondary);
+      font-size: 10.5px;
       font-weight: 600;
+      padding: 5px 0;
+      border-radius: 4px;
       cursor: pointer;
+      transition: all 0.15s ease;
       text-align: center;
-      position: relative;
-      transition: color 0.15s;
     }
     .intel-tab:hover { color: white; }
-    .intel-tab.active { color: var(--accent-cyan); }
-    .intel-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0; right: 0;
-      height: 2px;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
-    }
+    .intel-tab.active { background: #0284c7; color: white; }
 
-    /* Satellite Imagery Thumbnail */
+    /* Satellite Thermal Canvas Thumbnail */
     .sat-preview-box {
-      width: 100%;
       height: 120px;
-      background: #020617;
       border-radius: 6px;
+      overflow: hidden;
       border: 1px solid var(--border-card);
       position: relative;
-      overflow: hidden;
+      background: #020617;
     }
     .sat-canvas { width: 100%; height: 100%; display: block; }
     .sat-tag-badge {
       position: absolute;
-      bottom: 5px;
-      left: 6px;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 2px 5px;
+      top: 6px; left: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 6px;
       border-radius: 3px;
       font-size: 8.5px;
-      color: #94a3b8;
-      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(4px);
     }
 
-    /* Metadata Table */
+    /* Key-Value Metadata Grid */
     .meta-table {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      row-gap: 3.5px;
-      column-gap: 10px;
-      background: rgba(13, 20, 38, 0.6);
-      padding: 7px 9px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      gap: 4px 8px;
       font-size: 10.5px;
+      background: rgba(13, 20, 38, 0.6);
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 8px 10px;
     }
     .meta-cell { display: flex; justify-content: space-between; }
     .meta-lbl { color: var(--text-muted); }
-    .meta-v { color: #f1f5f9; font-weight: 500; font-family: 'JetBrains Mono', monospace; }
-    .meta-v.verified { color: #34d399; font-weight: 600; }
+    .meta-v { color: #f1f5f9; font-weight: 500; }
+    .meta-v.verified { color: #34d399; }
 
-    /* 6 Metrics Grid (2x3) */
+    /* 6 Metrics Badges */
     .metrics-row-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
+      gap: 6px;
     }
     .mini-metric-card {
-      background: rgba(13, 20, 38, 0.75);
+      background: rgba(13, 20, 38, 0.85);
       border: 1px solid var(--border-card);
       border-radius: 6px;
-      padding: 5px 7px;
+      padding: 6px 7px;
+      text-align: left;
     }
-    .mini-metric-lbl {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .mini-metric-val {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: white;
-      margin-top: 2px;
-    }
+    .mini-metric-lbl { font-size: 9px; color: var(--text-muted); margin-bottom: 2px; }
+    .mini-metric-val { font-size: 12px; font-weight: 700; color: #f1f5f9; }
     .mini-metric-val.red { color: #f87171; }
-    .mini-metric-val.amber { color: #fbbf24; }
 
-    /* AI Assessment Box */
+    /* AI Assessment Card */
     .ai-card {
-      background: rgba(13, 20, 38, 0.7);
+      background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: 6px;
-      padding: 9px;
+      padding: 9px 11px;
     }
     .ai-card-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 5px;
+      justify-content: space-between;
+      margin-bottom: 4px;
     }
-    .ai-card-top h3 { font-size: 11px; font-weight: 700; color: white; }
-    .ai-body-text {
-      font-size: 10.5px;
-      color: #cbd5e1;
-      line-height: 1.35;
-    }
+    .ai-card-top h3 { font-size: 11px; font-weight: 700; color: #e2e8f0; }
+    .ai-body-text { font-size: 10px; color: #cbd5e1; line-height: 1.45; }
     .ai-action-box {
-      margin-top: 7px;
-      background: rgba(220, 38, 38, 0.15);
+      margin-top: 6px;
+      background: rgba(220, 38, 38, 0.12);
       border-left: 3px solid #ef4444;
-      padding: 5px 7px;
-      border-radius: 4px;
+      padding: 5px 8px;
       font-size: 9.5px;
       color: #fca5a5;
+      border-radius: 0 4px 4px 0;
       line-height: 1.35;
     }
 
-    /* Time-Lapse Strip */
-    .timelapse-block h3 {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 5px;
-    }
+    /* 24h Time-Lapse Strip */
+    .timelapse-block h3 { font-size: 10.5px; font-weight: 700; color: #94a3b8; margin-bottom: 6px; }
     .timelapse-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 5px;
     }
     .timelapse-card {
+      position: relative;
       background: #020617;
       border: 1px solid var(--border-card);
       border-radius: 4px;
       height: 48px;
-      position: relative;
       overflow: hidden;
       cursor: pointer;
-      transition: all 0.15s;
     }
-    .timelapse-card:hover, .timelapse-card.active {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
-    }
-    .timelapse-canvas { width: 100%; height: 100%; }
+    .timelapse-card.active { border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+    .timelapse-canvas { width: 100%; height: 100%; display: block; }
     .timelapse-badge {
-      position: absolute;
-      bottom: 2px;
-      left: 3px;
-      font-size: 8px;
-      color: #e2e8f0;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 1px 3px;
-      border-radius: 2px;
-      font-weight: 600;
+      position: absolute; bottom: 2px; right: 2px;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 7.5px; color: #e2e8f0;
+      padding: 1px 4px; border-radius: 2px;
     }
 
     /* ------------------------------------------------------------------------- */
@@ -923,47 +757,32 @@
     /* ------------------------------------------------------------------------- */
     footer {
       height: 42px;
-      background: rgba(6, 10, 20, 0.98);
+      background: var(--bg-header);
       border-top: 1px solid var(--border-panel);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 16px;
-      font-size: 11px;
-      z-index: 1000;
-    }
-    .ticker-left-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      color: #cbd5e1;
-    }
-    .ticker-left-info strong { color: white; display: flex; align-items: center; gap: 6px; }
-    .ticker-numbers {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-size: 10.5px;
       color: var(--text-secondary);
-      font-size: 11px;
+      z-index: 1000;
+      flex-shrink: 0;
     }
-    .stat-item strong { color: white; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .ticker-left-info { display: flex; align-items: center; gap: 8px; color: var(--accent-cyan); }
+    .ticker-numbers { display: flex; align-items: center; gap: 16px; }
+    .stat-item { display: flex; align-items: center; gap: 4px; }
+    .stat-item strong { color: white; }
 
     /* ------------------------------------------------------------------------- */
-    /* MODALS & DRAWERS (DISTRICT RANKING, ALERTS DRAWER, DATA PROVENANCE)       */
+    /* MODALS & DRAWERS (DISTRICT DOSSIER, HEV RANKING, ALERTS, DATA PROVENANCE) */
     /* ------------------------------------------------------------------------- */
     .drawer-overlay {
       position: fixed;
       top: 52px; bottom: 42px; right: 0;
-      width: 440px;
-      background: rgba(8, 14, 28, 0.96);
+      width: 480px;
+      background: rgba(8, 14, 28, 0.98);
       border-left: 1px solid var(--border-panel);
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(16px);
       z-index: 2000;
       display: none;
@@ -978,11 +797,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: rgba(13, 20, 38, 0.6);
     }
     .drawer-title { font-size: 13.5px; font-weight: 700; color: white; display: flex; align-items: center; gap: 6px; }
     .close-btn { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
     .close-btn:hover { color: white; }
-    .drawer-content { flex: 1; overflow-y: auto; padding: 14px; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 
     /* District Table Styling */
     .district-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -991,14 +811,45 @@
     .district-table tr:hover { background: rgba(56, 189, 248, 0.08); cursor: pointer; }
 
     /* Alert Items */
+    .alert-filter-bar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      font-size: 9.5px; font-weight: 700; padding: 3px 8px; border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-card);
+      color: #94a3b8; cursor: pointer;
+    }
+    .filter-pill.active { background: #0284c7; color: white; border-color: #38bdf8; }
+    
     .alert-entry {
-      background: rgba(220, 38, 38, 0.1);
+      background: rgba(220, 38, 38, 0.08);
       border: 1px solid rgba(239, 68, 68, 0.35);
       border-radius: 6px;
       padding: 9px 11px;
       margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .alert-entry.acknowledged {
+      opacity: 0.6;
+      border-color: rgba(148, 163, 184, 0.25);
+      background: rgba(148, 163, 184, 0.05);
     }
     .alert-entry-header { display: flex; justify-content: space-between; font-weight: 700; font-size: 11.5px; }
+    .ack-btn {
+      background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 3px;
+      cursor: pointer;
+    }
+    .ack-btn:hover { background: #0284c7; color: white; }
+
+    /* Dossier Grid Cards */
+    .dossier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dossier-card {
+      background: rgba(13, 20, 38, 0.85);
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .dossier-card-lbl { font-size: 9.5px; color: var(--text-muted); }
+    .dossier-card-val { font-size: 14px; font-weight: 700; color: white; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -1022,10 +873,14 @@
       </div>
     </div>
 
-    <!-- Center Search Bar -->
-    <div class="search-box">
-      <span style="color: var(--accent-cyan); font-size: 12px;">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search location, event, or coordinates..." onkeydown="handleSearchKey(event)">
+    <!-- Center Search Bar with Dropdown -->
+    <div class="search-box-wrap">
+      <div class="search-box">
+        <span style="color: var(--accent-cyan); font-size: 12px;">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search country, state, district, or coordinates (lat, lon)..." oninput="handleSearchInput(this.value)" onkeydown="handleSearchKey(event)">
+        <span class="kbd-hint">Ctrl K</span>
+      </div>
+      <div class="search-dropdown" id="searchDropdown"></div>
     </div>
 
     <!-- Right Controls -->
@@ -1038,7 +893,7 @@
         <span id="clockDate">Sep 11, 2024</span>
       </div>
       <div class="icon-btn" title="Open Real-Time Alerts Drawer" onclick="toggleAlertsDrawer()">
-        🔔<span class="badge-num" id="alertCountBadge">8</span>
+        🔔<span class="badge-num" id="alertCountBadge">66</span>
       </div>
       <div class="user-pill" title="View 33-District HEV Risk Rankings" onclick="toggleDistrictsDrawer()">📊</div>
       <div class="safer-tag" title="View Data Provenance (Paper Table I)" onclick="toggleProvenanceDrawer()">
@@ -1048,7 +903,7 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- MAIN 3-COLUMN CONSOLE                                                     -->
+  <!-- 3-COLUMN MAIN WORKSPACE                                                   -->
   <!-- ========================================================================= -->
   <main>
     <!-- --------------------------------------------------------------------- -->
@@ -1095,8 +950,8 @@
             <label class="switch"><input type="checkbox" id="tglFloods" checked onchange="handleLayerToggle('floods')"><span class="slider"></span></label>
           </div>
           <div class="layer-item">
-            <div class="layer-label"><span class="layer-icon">🌋</span> Earthquakes</div>
-            <label class="switch"><input type="checkbox" id="tglQuakes" onchange="handleLayerToggle('quakes')"><span class="slider"></span></label>
+            <div class="layer-label"><span class="layer-icon">🏛️</span> District Boundaries</div>
+            <label class="switch"><input type="checkbox" id="tglDistricts" checked onchange="handleLayerToggle('districts')"><span class="slider"></span></label>
           </div>
           <div class="layer-item">
             <div class="layer-label"><span class="layer-icon">👥</span> Population Density</div>
@@ -1141,7 +996,7 @@
     <!-- --------------------------------------------------------------------- -->
     <!-- CENTER COLUMN: 3D EARTH GLOBE & 2D LEAFLET ENGINE                     -->
     <!-- --------------------------------------------------------------------- -->
-    <section class="viewport-center">
+    <section class="viewport-center" id="viewportCenter">
       <!-- 3D Three.js Globe Canvas -->
       <canvas id="globeCanvas"></canvas>
       
@@ -1151,7 +1006,23 @@
       <!-- 2D Leaflet Container (Toggled via 2D button) -->
       <div id="map2dContainer"></div>
 
-      <!-- Floating Historical Epoch Scrub Toolbar (From Paper Section IV-C & V) -->
+      <!-- Live Cursor Coordinates HUD Overlay -->
+      <div class="hud-coords" id="cursorCoords">Lat: 17.850° N, Lon: 79.550° E</div>
+
+      <!-- Floating Layer Legend Box -->
+      <div class="layer-legend-panel" id="layerLegendPanel">
+        <div class="legend-title">
+          <span>Active Layer Legend</span>
+          <span style="font-size:9px; color:#38bdf8;">LIVE</span>
+        </div>
+        <div id="legendItemsContainer">
+          <div class="legend-row"><div class="legend-color-box" style="background:#ef4444;"></div><span>Critical Risk / Fire FRP &gt; 20 MW</span></div>
+          <div class="legend-row"><div class="legend-color-box" style="background:#0284c7;"></div><span>Flooded Inundation Extent</span></div>
+          <div class="legend-row"><div class="legend-color-box" style="background:#38bdf8;"></div><span>Rainfall Accumulation &gt; 100mm</span></div>
+        </div>
+      </div>
+
+      <!-- Floating Historical Epoch Scrub Toolbar -->
       <div class="epoch-toolbar">
         <span class="epoch-label">🗓️ Event Epoch:</span>
         <div class="epoch-btns">
@@ -1179,6 +1050,7 @@
       <!-- Top-Right Globe Action Controls -->
       <div class="view-controls">
         <button class="ctrl-btn compass-icon" title="Reset North" onclick="resetGlobeView()">🧭</button>
+        <button class="ctrl-btn" id="btnRotation" title="Pause/Resume Continuous Rotation" onclick="toggleGlobeRotation()">⏸️</button>
         <button class="ctrl-btn" title="Zoom In" onclick="zoomGlobe(1)">+</button>
         <button class="ctrl-btn" title="Zoom Out" onclick="zoomGlobe(-1)">−</button>
         <button class="ctrl-btn mode-pill" id="btn2D3D" title="Toggle 2D / 3D Engine" onclick="toggleEngine2D3D()">2D</button>
@@ -1186,7 +1058,7 @@
     </section>
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- RIGHT SIDEBAR: EVENT INTELLIGENCE                                      -->
+    <!-- RIGHT SIDEBAR: EVENT INTELLIGENCE                                         -->
     <!-- --------------------------------------------------------------------- -->
     <aside class="sidebar-right">
       <!-- Header -->
@@ -1214,7 +1086,7 @@
         <button class="intel-tab" onclick="switchTab('analysis', this)">Analysis</button>
         <button class="intel-tab" onclick="switchTab('prediction', this)">Prediction</button>
         <button class="intel-tab" onclick="switchTab('impact', this)">Impact</button>
-        <button class="intel-tab" onclick="switchTab('media', this)">Media</button>
+        <button class="intel-tab" onclick="switchTab('history', this)">History</button>
       </div>
 
       <!-- Dynamic Subtab Content -->
@@ -1325,7 +1197,7 @@
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 1: 33-DISTRICT HEV RISK RANKINGS DRAWER (PAPER SECTION IV-E)        -->
+  <!-- MODAL 1: 33-DISTRICT HEV RISK RANKINGS DRAWER                             -->
   <!-- ========================================================================= -->
   <div class="drawer-overlay" id="districtsDrawer">
     <div class="drawer-header">
@@ -1333,14 +1205,14 @@
       <button class="close-btn" onclick="toggleDistrictsDrawer()">✕</button>
     </div>
     <div class="drawer-content">
-      <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:10px;">
-        AHP Pairwise Criteria Weights: Hazard (0.540), Exposure (0.297), Vulnerability (0.163). Consistency Ratio <strong>CR = 0.0076 &lt;&lt; 0.10</strong>.
+      <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:8px;">
+        AHP Criteria Weights: Hazard (0.540), Exposure (0.297), Vulnerability (0.163). Consistency Ratio <strong>CR = 0.0076 &lt;&lt; 0.10</strong>.
       </div>
-      <input type="text" id="filterDistrictInput" placeholder="Filter district..." onkeyup="filterDistrictsTable()" style="width:100%; padding:5px 8px; font-size:11px; background:#0d1527; border:1px solid var(--border-card); color:white; border-radius:4px; margin-bottom:10px;">
+      <input type="text" id="filterDistrictInput" placeholder="Filter district..." onkeyup="filterDistrictsTable()" style="width:100%; padding:6px 10px; font-size:11px; background:#0d1527; border:1px solid var(--border-card); color:white; border-radius:4px; margin-bottom:10px;">
       <table class="district-table" id="districtTable">
         <thead>
           <tr>
-            <th>District</th>
+            <th>Rank & District</th>
             <th>Hazard</th>
             <th>Exposure</th>
             <th>Vuln</th>
@@ -1348,24 +1220,44 @@
           </tr>
         </thead>
         <tbody id="districtTableBody">
-          <!-- Populated dynamically from dashboard_data.js -->
+          <!-- Populated dynamically -->
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 2: REAL-TIME ALERT DISPATCH DRAWER (PAPER SECTION IV-G & VI)        -->
+  <!-- MODAL 2: DISTRICT INTELLIGENCE DOSSIER                                    -->
+  <!-- ========================================================================= -->
+  <div class="drawer-overlay" id="districtIntelDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="dossierTitle">📍 District Intelligence Dossier</div>
+      <button class="close-btn" onclick="toggleDossierDrawer()">✕</button>
+    </div>
+    <div class="drawer-content" id="dossierContent">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: PRODUCTION ALERTS DRAWER                                         -->
   <!-- ========================================================================= -->
   <div class="drawer-overlay" id="alertsDrawer">
     <div class="drawer-header">
-      <div class="drawer-title">🔔 Production Alert Dispatch Log (66 Alerts)</div>
+      <div class="drawer-title">🔔 Production Alert Dispatch Log</div>
       <button class="close-btn" onclick="toggleAlertsDrawer()">✕</button>
     </div>
     <div class="drawer-content">
-      <div style="font-size:10px; color:#34d399; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:6px; border-radius:4px; margin-bottom:12px;">
+      <div style="font-size:10px; color:#34d399; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:6px; border-radius:4px; margin-bottom:8px;">
         ⚡ In-Memory Processing Latency: <strong>6.07 ms</strong> (SLA &lt; 50 ms)<br>
         🛰️ Satellite Revisit Latency: 1.8h – 2.5h (FIRMS) | 6.0h – 12.0h (Sentinel-1)
+      </div>
+      <div class="alert-filter-bar">
+        <button class="filter-pill active" onclick="filterAlertsBySeverity('ALL', this)">ALL</button>
+        <button class="filter-pill" onclick="filterAlertsBySeverity('CRITICAL', this)">CRITICAL</button>
+        <button class="filter-pill" onclick="filterAlertsBySeverity('HIGH', this)">HIGH</button>
+        <button class="filter-pill" onclick="filterAlertsBySeverity('MEDIUM', this)">MEDIUM</button>
+        <button class="filter-pill" onclick="filterAlertsBySeverity('LOW', this)">LOW</button>
       </div>
       <div id="alertsLogContainer">
         <!-- Populated dynamically -->
@@ -1374,7 +1266,7 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 3: DATA PROVENANCE (PAPER TABLE I)                                  -->
+  <!-- MODAL 4: DATA PROVENANCE (PAPER TABLE I)                                  -->
   <!-- ========================================================================= -->
   <div class="drawer-overlay" id="provenanceDrawer">
     <div class="drawer-header">
@@ -1414,11 +1306,11 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT ENGINE                                                         -->
+  <!-- JAVASCRIPT ENGINE & GEOSPATIAL INTELLIGENCE CORE                          -->
   <!-- ========================================================================= -->
   <script>
     // -------------------------------------------------------------------------
-    // 1. Core Event Intelligence Catalog
+    // 1. Core Event Catalog
     // -------------------------------------------------------------------------
     const EVENT_CATALOG = [
       {
@@ -1447,21 +1339,21 @@
         type: "flood",
         icon: "🌊",
         title: "Flood Risk",
-        district: "Nizamabad",
-        location: "Nizamabad, Telangana, India",
-        severity: "MEDIUM",
-        confidence: "98%",
-        timeAgo: "18 min ago",
-        firstDetected: "Sep 11, 2024 09:30 AM",
-        lastUpdated: "Sep 11, 2024 10:45 AM",
-        source: "Sentinel-1A SAR Dual-Pol",
+        district: "Khammam",
+        location: "Khammam (Munneru Basin), Telangana",
+        severity: "CRITICAL",
+        confidence: "99.5%",
+        timeAgo: "15 min ago",
+        firstDetected: "Sep 02, 2024 06:15 AM",
+        lastUpdated: "Sep 02, 2024 09:30 AM",
+        source: "Sentinel-1A SAR Dual-Pol (VV/VH)",
         status: "Escalating",
-        lat: 18.672,
-        lon: 78.094,
-        metrics: { temp: "24°C", wind: "12 km/h NW", veg: "Flooded", pop: "94,300", infra: "Critical", prop: "Active" },
-        narrative: "Sentinel-1 SAR backscatter decay (-18.4 dB) reveals 28.4 km² inundation across lower Godavari agricultural floodplains with rising river gauge levels.",
-        action: "Deploy flood barriers and evacuate low-lying riparian settlements.",
-        satLabel: "Copernicus Sentinel-1 SAR IW GRD"
+        lat: 17.247,
+        lon: 80.151,
+        metrics: { temp: "23°C", wind: "14 km/h NW", veg: "Flooded", pop: "118,400", infra: "Critical", prop: "Severe" },
+        narrative: "Sentinel-1 SAR backscatter drop below -18 dB reveals 48.6 km² flood inundation along Munneru River corridor. Multiple bridge approaches overtopped.",
+        action: "Evacuate low-lying riparian habitations and enforce bridge closures.",
+        satLabel: "Sentinel-1A SAR IW GRD 30m"
       },
       {
         id: "ev3",
@@ -1469,7 +1361,7 @@
         icon: "🌧️",
         title: "Heavy Rainfall",
         district: "Hyderabad",
-        location: "Hyderabad, Telangana, India",
+        location: "Hyderabad Urban Core, Telangana",
         severity: "MEDIUM",
         confidence: "91%",
         timeAgo: "32 min ago",
@@ -1530,13 +1422,35 @@
 
     let currentEvent = EVENT_CATALOG[0];
     let is2DActive = false;
-    let leafletMapInstance = null;
+    let isContinuousRotating = true;
     let activeHistoricalEpoch = '2024-09-02';
+    let currentAlertSeverityFilter = 'ALL';
+    let activeSubtabKey = 'overview';
+    let selectedDistrictName = null;
 
     // -------------------------------------------------------------------------
-    // 2. Three.js Authentic NASA Blue Marble Earth Globe
+    // 2. Leaflet Layer Instances
+    // -------------------------------------------------------------------------
+    let leafletMapInstance = null;
+    const MAP_LAYERS = {
+      districts: null,
+      floods: null,
+      fires: null,
+      rain: null,
+      temp: null,
+      wind: null,
+      infra: null,
+      water: null,
+      pop: null,
+      weather: null
+    };
+
+    // -------------------------------------------------------------------------
+    // 3. Three.js Photorealistic NASA Blue Marble 3D Globe
     // -------------------------------------------------------------------------
     let scene, camera, renderer, globeMesh, cloudsMesh;
+    let raycaster = new THREE.Raycaster();
+    let mouseVector = new THREE.Vector2();
     let targetRotationY = -1.38;
     let targetRotationX = 0.32;
     let isDragging = false;
@@ -1549,15 +1463,15 @@
       const height = container.clientHeight || window.innerHeight;
 
       scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
       camera.position.z = 2.45;
 
       renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Sun Directional Lighting
-      const sunLight = new THREE.DirectionalLight(0xffffff, 1.35);
+      // Lighting
+      const sunLight = new THREE.DirectionalLight(0xffffff, 1.25);
       sunLight.position.set(-3, 2, 2.5);
       scene.add(sunLight);
 
@@ -1628,6 +1542,25 @@
       });
       window.addEventListener('mouseup', () => isDragging = false);
       window.addEventListener('mousemove', (e) => {
+        // Update Cursor Coordinates via Raycasting
+        const rect = canvas.getBoundingClientRect();
+        mouseVector.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouseVector.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        if (globeMesh) {
+          raycaster.setFromCamera(mouseVector, camera);
+          const intersects = raycaster.intersectObject(globeMesh);
+          if (intersects.length > 0) {
+            const point = intersects[0].point;
+            // Convert Cartesian to Spherical Lat/Lon
+            const radius = 0.85;
+            const lat = 90 - (Math.acos(point.y / radius) * 180 / Math.PI);
+            let lon = ((Math.atan2(point.x, point.z) - globeMesh.rotation.y) * 180 / Math.PI);
+            lon = ((lon + 180) % 360) - 180;
+            document.getElementById('cursorCoords').innerText = `Lat: ${lat.toFixed(3)}° N, Lon: ${lon.toFixed(3)}° E`;
+          }
+        }
+
         if (!isDragging) return;
         const deltaX = e.clientX - prevMouseX;
         const deltaY = e.clientY - prevMouseY;
@@ -1654,10 +1587,13 @@
         renderer.setSize(w, h);
       });
 
-      // Animation Loop
+      // Animation Loop with Play/Pause support
       function animate() {
         requestAnimationFrame(animate);
         if (globeMesh) {
+          if (isContinuousRotating && !isDragging) {
+            targetRotationY += 0.00045;
+          }
           globeMesh.rotation.y += (targetRotationY - globeMesh.rotation.y) * 0.08;
           globeMesh.rotation.x += (targetRotationX - globeMesh.rotation.x) * 0.08;
           if (cloudsMesh) {
@@ -1668,6 +1604,13 @@
         renderer.render(scene, camera);
       }
       animate();
+    }
+
+    function toggleGlobeRotation() {
+      isContinuousRotating = !isContinuousRotating;
+      const btn = document.getElementById('btnRotation');
+      btn.innerText = isContinuousRotating ? '⏸️' : '▶️';
+      btn.title = isContinuousRotating ? 'Pause Continuous Rotation' : 'Resume Continuous Rotation';
     }
 
     // Dynamic Cloud Layer Canvas
@@ -1686,7 +1629,7 @@
         ctx.fill();
       }
 
-      // Swirling Tropical Cyclone Spiral (East Asia / Western Pacific)
+      // Swirling Tropical Cyclone Spiral
       const cx = 820, cy = 190;
       for (let r = 8; r < 65; r += 7) {
         ctx.strokeStyle = `rgba(255, 255, 255, ${0.85 - r / 80})`;
@@ -1695,12 +1638,11 @@
         ctx.arc(cx, cy, r, r * 0.12, r * 0.12 + Math.PI * 1.55);
         ctx.stroke();
       }
-
       return c;
     }
 
     // -------------------------------------------------------------------------
-    // 3. 2D Leaflet Engine (CARTO Dark Matter Authenticated)
+    // 4. 2D Leaflet Engine & Real Geospatial Layers
     // -------------------------------------------------------------------------
     function initLeafletEngine() {
       const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
@@ -1713,38 +1655,267 @@
         maxZoom: 19
       }).addTo(leafletMapInstance);
 
-      // Render 33 Districts Polygons if available
-      if (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.district_peak_ranking) {
-        window.TERRASCOPE_DATA.district_peak_ranking.forEach(d => {
-          const m = L.circleMarker([d.lat, d.lon], {
-            radius: 6,
-            fillColor: d.risk_score > 0.6 ? '#ef4444' : (d.risk_score > 0.4 ? '#f59e0b' : '#38bdf8'),
+      // Track cursor coords on 2D Map
+      leafletMapInstance.on('mousemove', (e) => {
+        document.getElementById('cursorCoords').innerText = `Lat: ${e.latlng.lat.toFixed(3)}° N, Lon: ${e.latlng.lng.toFixed(3)}° E`;
+      });
+
+      const data = window.TERRASCOPE_DATA || {};
+
+      // 1. Layer: 33 Telangana Administrative District Polygons
+      if (data.districts_geojson) {
+        MAP_LAYERS.districts = L.geoJSON(data.districts_geojson, {
+          style: function(feat) {
+            const props = feat.properties;
+            const color = props.risk_tier === 'CRITICAL' ? '#c084fc' : (props.risk_tier === 'HIGH' ? '#ef4444' : (props.risk_tier === 'MEDIUM' ? '#f59e0b' : '#38bdf8'));
+            return {
+              color: color,
+              weight: 1.5,
+              opacity: 0.85,
+              fillColor: color,
+              fillOpacity: 0.22
+            };
+          },
+          onEachFeature: function(feat, layer) {
+            const p = feat.properties;
+            layer.bindTooltip(`
+              <strong>${p.district} District</strong><br>
+              Risk Tier: <b style="color:${p.risk_tier === 'CRITICAL' ? '#c084fc' : '#38bdf8'};">${p.risk_tier}</b> (Score: ${p.risk_multiplicative.toFixed(3)})<br>
+              7d Rainfall: ${p.rainfall_7d_mm} mm | Active Fires: ${p.active_fires}<br>
+              <span style="font-size:9px; color:#38bdf8;">Click to open District Dossier</span>
+            `, { sticky: true });
+
+            layer.on('mouseover', function(e) {
+              const l = e.target;
+              l.setStyle({ weight: 2.8, fillOpacity: 0.55, color: '#ffffff' });
+            });
+            layer.on('mouseout', function(e) {
+              MAP_LAYERS.districts.resetStyle(e.target);
+            });
+            layer.on('click', function() {
+              openDistrictDossier(p.district);
+            });
+          }
+        }).addTo(leafletMapInstance);
+      }
+
+      // 2. Layer: Flood Inundation Extent (Sentinel-1 SAR / NRSC)
+      if (data.flood_geojson) {
+        MAP_LAYERS.floods = L.geoJSON(data.flood_geojson, {
+          style: {
+            color: '#38bdf8',
+            weight: 2,
+            fillColor: '#0284c7',
+            fillOpacity: 0.65
+          },
+          onEachFeature: function(feat, layer) {
+            const p = feat.properties || {};
+            layer.bindPopup(`
+              <div style="font-size:11px;">
+                <strong style="color:#38bdf8;">🌊 ${p.name || 'Flood Inundation Extent'}</strong><br>
+                <b>Area:</b> ${p.area_km2 || '48.6'} km²<br>
+                <b>Sensor:</b> ${p.sensor || 'Sentinel-1A SAR Dual-Pol (VV/VH)'}<br>
+                <b>Validation:</b> ${p.confidence || '99.47% IoU'}<br>
+                <b>Severity:</b> <span style="color:#ef4444; font-weight:700;">${p.severity || 'CRITICAL'}</span>
+              </div>
+            `);
+          }
+        }).addTo(leafletMapInstance);
+      }
+
+      // 3. Layer: NASA FIRMS Active Fires & Downwind Wedges
+      MAP_LAYERS.fires = L.layerGroup();
+      if (data.active_fire_clusters) {
+        data.active_fire_clusters.forEach(fc => {
+          // Downwind exposure wedge polygon
+          if (fc.wedge_polygon) {
+            L.polygon(fc.wedge_polygon, {
+              color: '#ef4444',
+              weight: 1,
+              dashArray: '3, 4',
+              fillColor: '#f97316',
+              fillOpacity: 0.22
+            }).bindTooltip(`<b>Downwind Hazard Wedge:</b> ${fc.district} (Azimuth: ${fc.downwind_azimuth.toFixed(1)}°)`).addTo(MAP_LAYERS.fires);
+          }
+
+          // Fire Cluster Circle
+          const marker = L.circleMarker([fc.lat, fc.lon], {
+            radius: Math.max(5, Math.min(12, fc.frp_total * 0.4)),
             color: '#ffffff',
             weight: 1.5,
-            fillOpacity: 0.85
-          }).addTo(leafletMapInstance);
+            fillColor: fc.frp_peak > 20 ? '#dc2626' : (fc.frp_peak > 8 ? '#f97316' : '#facc15'),
+            fillOpacity: 0.95
+          }).addTo(MAP_LAYERS.fires);
 
-          m.bindPopup(`
-            <strong>${d.district}</strong><br>
-            Risk Score: <b>${d.risk_score.toFixed(3)}</b> (${d.risk_category})<br>
-            Hazard: ${d.hazard_score.toFixed(3)} | Exposure: ${d.exposure_score.toFixed(3)} | Vuln: ${d.vulnerability_score.toFixed(3)}
+          marker.bindPopup(`
+            <div style="font-size:11px;">
+              <strong style="color:#ef4444;">🔥 Active Fire Incident: ${fc.incident_id}</strong><br>
+              <b>District:</b> ${fc.district}<br>
+              <b>Peak FRP:</b> ${fc.frp_peak.toFixed(1)} MW (Total: ${fc.frp_total.toFixed(1)} MW)<br>
+              <b>Wind:</b> ${fc.wind_spd_kmh.toFixed(1)} km/h @ ${fc.wind_dir_deg.toFixed(1)}°<br>
+              <b>Satellites:</b> ${fc.instruments}<br>
+              <b>Confidence:</b> ${fc.confidence}
+            </div>
           `);
         });
       }
+      MAP_LAYERS.fires.addTo(leafletMapInstance);
 
-      // Event Markers
-      EVENT_CATALOG.forEach(ev => {
-        const m = L.circleMarker([ev.lat, ev.lon], {
-          radius: 9,
-          fillColor: ev.type === 'fire' ? '#ef4444' : (ev.type === 'flood' ? '#38bdf8' : '#f59e0b'),
-          color: '#ffffff',
-          weight: 2,
-          fillOpacity: 0.95
+      // 4. Layer: Critical Infrastructure (Hospitals, Bridges, Severed Roads)
+      MAP_LAYERS.infra = L.layerGroup();
+      if (data.infrastructure) {
+        // Hospitals
+        (data.infrastructure.hospitals || []).forEach(h => {
+          const m = L.circleMarker([h.lat, h.lon], {
+            radius: 6,
+            color: h.inundated ? '#ef4444' : '#10b981',
+            fillColor: h.inundated ? '#dc2626' : '#059669',
+            weight: 2,
+            fillOpacity: 0.9
+          }).addTo(MAP_LAYERS.infra);
+          m.bindPopup(`<strong>🏥 ${h.name}</strong><br>Type: ${h.type} (${h.beds} beds)<br><b>Status:</b> ${h.status}`);
+        });
+
+        // Bridges
+        (data.infrastructure.bridges || []).forEach(b => {
+          const bm = L.circleMarker([b.lat, b.lon], {
+            radius: 7,
+            color: b.submerged ? '#ef4444' : '#38bdf8',
+            fillColor: b.submerged ? '#991b1b' : '#0284c7',
+            weight: 2,
+            fillOpacity: 0.9
+          }).addTo(MAP_LAYERS.infra);
+          bm.bindPopup(`<strong>🌉 ${b.name}</strong><br>Road: ${b.road}<br>Span: ${b.span_m} m<br><b>Status:</b> ${b.status}`);
+        });
+
+        // Highways
+        (data.infrastructure.transportation_corridors || []).forEach(c => {
+          L.polyline(c.coordinates, {
+            color: '#38bdf8',
+            weight: 3,
+            opacity: 0.75
+          }).addTo(MAP_LAYERS.infra);
+
+          if (c.severed_stretch && c.severed_stretch.length > 0) {
+            L.polyline(c.severed_stretch, {
+              color: '#ef4444',
+              weight: 5,
+              opacity: 0.95,
+              dashArray: '5, 5'
+            }).bindPopup(`<strong>⚠️ SEVERED HIGHWAY STRETCH</strong><br>${c.name}<br>${c.status}`).addTo(MAP_LAYERS.infra);
+          }
+        });
+      }
+      MAP_LAYERS.infra.addTo(leafletMapInstance);
+
+      // 5. Layer: Major Water Bodies & Rivers
+      if (data.water_bodies_geojson) {
+        MAP_LAYERS.water = L.geoJSON(data.water_bodies_geojson, {
+          style: function(feat) {
+            return {
+              color: '#06b6d4',
+              weight: feat.geometry.type === 'LineString' ? 3.5 : 1.5,
+              fillColor: '#0284c7',
+              fillOpacity: 0.45
+            };
+          },
+          onEachFeature: function(feat, layer) {
+            layer.bindTooltip(`<b>💧 ${feat.properties.name}</b> (${feat.properties.type})`);
+          }
         }).addTo(leafletMapInstance);
+      }
 
-        m.bindPopup(`<b>${ev.icon} ${ev.title}</b><br>${ev.location}<br><b>Risk:</b> ${ev.severity}`);
-        m.on('click', () => selectEventById(ev.id));
+      // 6. Layer: 10m Wind Vectors
+      MAP_LAYERS.wind = L.layerGroup();
+      if (data.wind_stations) {
+        data.wind_stations.forEach(ws => {
+          const arrowHtml = `
+            <div style="transform: rotate(${ws.wind_direction_deg}deg); font-size:14px; color:#38bdf8; text-shadow:0 0 4px rgba(0,0,0,0.8);">
+              ⬆
+            </div>
+          `;
+          const icon = L.divIcon({ html: arrowHtml, className: 'wind-arrow-icon', iconSize: [16, 16] });
+          L.marker([ws.lat, ws.lon], { icon: icon }).bindTooltip(`
+            <strong>${ws.district}</strong><br>
+            Wind: ${ws.wind_speed_kmh} km/h @ ${ws.wind_direction_deg}°
+          `).addTo(MAP_LAYERS.wind);
+        });
+      }
+      MAP_LAYERS.wind.addTo(leafletMapInstance);
+    }
+
+    function handleLayerToggle(layerKey) {
+      const checkbox = document.getElementById(`tgl${capitalize(layerKey)}`);
+      const isChecked = checkbox ? checkbox.checked : true;
+
+      if (!leafletMapInstance) return;
+
+      if (layerKey === 'sat') {
+        // Toggle satellite imagery tiles vs carto
+      } else if (MAP_LAYERS[layerKey]) {
+        if (isChecked) {
+          leafletMapInstance.addLayer(MAP_LAYERS[layerKey]);
+        } else {
+          leafletMapInstance.removeLayer(MAP_LAYERS[layerKey]);
+        }
+      } else if (layerKey === 'rain') {
+        if (isChecked && MAP_LAYERS.districts) {
+          MAP_LAYERS.districts.setStyle(function(f) {
+            const r = f.properties.rainfall_7d_mm;
+            const c = r > 175 ? '#34d399' : (r > 100 ? '#38bdf8' : (r > 50 ? '#0284c7' : '#1e3a8a'));
+            return { fillColor: c, fillOpacity: 0.55, color: '#38bdf8', weight: 1.5 };
+          });
+        } else if (MAP_LAYERS.districts) {
+          resetDistrictStyle();
+        }
+      } else if (layerKey === 'temp') {
+        if (isChecked && MAP_LAYERS.districts) {
+          MAP_LAYERS.districts.setStyle(function(f) {
+            const t = f.properties.temp_2m_c;
+            const c = t > 35 ? '#ef4444' : (t > 30 ? '#f97316' : (t > 25 ? '#facc15' : '#38bdf8'));
+            return { fillColor: c, fillOpacity: 0.55, color: '#f97316', weight: 1.5 };
+          });
+        } else if (MAP_LAYERS.districts) {
+          resetDistrictStyle();
+        }
+      }
+      updateLegendDisplay();
+    }
+
+    function resetDistrictStyle() {
+      if (MAP_LAYERS.districts) {
+        MAP_LAYERS.districts.setStyle(function(feat) {
+          const props = feat.properties;
+          const color = props.risk_tier === 'CRITICAL' ? '#c084fc' : (props.risk_tier === 'HIGH' ? '#ef4444' : (props.risk_tier === 'MEDIUM' ? '#f59e0b' : '#38bdf8'));
+          return { color: color, weight: 1.5, opacity: 0.85, fillColor: color, fillOpacity: 0.22 };
+        });
+      }
+    }
+
+    function resetLayerToggles() {
+      document.querySelectorAll('.layers-container input[type="checkbox"]').forEach(c => c.checked = true);
+      Object.keys(MAP_LAYERS).forEach(k => {
+        if (MAP_LAYERS[k] && leafletMapInstance) leafletMapInstance.addLayer(MAP_LAYERS[k]);
       });
+      resetDistrictStyle();
+      updateLegendDisplay();
+    }
+
+    function updateLegendDisplay() {
+      const container = document.getElementById('legendItemsContainer');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="legend-row"><div class="legend-color-box" style="background:#c084fc;"></div><span>Critical HEV Risk (R &ge; 0.25)</span></div>
+        <div class="legend-row"><div class="legend-color-box" style="background:#ef4444;"></div><span>High Risk / Fires (FRP &gt; 20 MW)</span></div>
+        <div class="legend-row"><div class="legend-color-box" style="background:#0284c7;"></div><span>SAR Flood Inundation Extent</span></div>
+        <div class="legend-row"><div class="legend-color-box" style="background:#38bdf8;"></div><span>7-Day Rainfall &gt; 100mm</span></div>
+        <div class="legend-row"><div class="legend-color-box" style="background:#10b981;"></div><span>Operational Health Facilities</span></div>
+      `;
+    }
+
+    function capitalize(s) {
+      if (!s) return '';
+      return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
     function toggleEngine2D3D() {
@@ -1786,7 +1957,7 @@
     }
 
     // -------------------------------------------------------------------------
-    // 4. Scope View Navigation (Global, India, Telangana)
+    // 5. Scope Navigation (Global, India, Telangana)
     // -------------------------------------------------------------------------
     function setScope(scope) {
       document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
@@ -1824,6 +1995,9 @@
       targetRotationY = -1.38;
       targetRotationX = 0.32;
       camera.position.z = 2.45;
+      if (leafletMapInstance && is2DActive) {
+        leafletMapInstance.flyTo([17.85, 79.55], 7);
+      }
     }
 
     function zoomGlobe(delta) {
@@ -1836,7 +2010,115 @@
     }
 
     // -------------------------------------------------------------------------
-    // 5. Event Selection & Details Population
+    // 6. Global Search Autocomplete & Navigation
+    // -------------------------------------------------------------------------
+    function handleSearchInput(query) {
+      const dropdown = document.getElementById('searchDropdown');
+      if (!query || query.trim().length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      const q = query.trim().toLowerCase();
+      const results = [];
+
+      // Check coordinates e.g. "17.5, 79.5"
+      if (q.includes(',') || q.includes(' ')) {
+        const parts = q.replace(',', ' ').split(/\s+/);
+        if (parts.length >= 2) {
+          const lat = parseFloat(parts[0]);
+          const lon = parseFloat(parts[1]);
+          if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+            results.push({
+              name: `Coordinates (${lat.toFixed(3)}, ${lon.toFixed(3)})`,
+              tag: 'COORDINATES',
+              lat: lat, lon: lon, zoom: 10
+            });
+          }
+        }
+      }
+
+      // Check Telangana 33 Districts
+      if (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.district_peak_ranking) {
+        window.TERRASCOPE_DATA.district_peak_ranking.forEach(d => {
+          if (d.district.toLowerCase().includes(q)) {
+            results.push({
+              name: `${d.district}, Telangana`,
+              district: d.district,
+              tag: `DISTRICT (${d.risk_category})`,
+              lat: d.lat, lon: d.lon, zoom: 9
+            });
+          }
+        });
+      }
+
+      // Predefined Indian States & Regions
+      const places = [
+        { name: "Telangana, India", tag: "STATE", lat: 17.85, lon: 79.55, zoom: 7.5 },
+        { name: "Andhra Pradesh, India", tag: "STATE", lat: 15.91, lon: 79.74, zoom: 6.5 },
+        { name: "Maharashtra, India", tag: "STATE", lat: 19.75, lon: 75.71, zoom: 6.0 },
+        { name: "Karnataka, India", tag: "STATE", lat: 15.31, lon: 75.71, zoom: 6.0 },
+        { name: "India (Subcontinent)", tag: "COUNTRY", lat: 20.59, lon: 78.96, zoom: 5.0 },
+        { name: "Hyderabad, Telangana", tag: "CAPITAL", lat: 17.385, lon: 78.486, zoom: 10.0 },
+        { name: "Khammam, Telangana", tag: "HOTSPOT", lat: 17.247, lon: 80.151, zoom: 10.0 }
+      ];
+      places.forEach(p => {
+        if (p.name.toLowerCase().includes(q)) results.push(p);
+      });
+
+      if (results.length === 0) {
+        dropdown.innerHTML = `<div style="padding:10px; font-size:11px; color:#64748b;">No matching location found</div>`;
+        dropdown.style.display = 'block';
+        return;
+      }
+
+      dropdown.innerHTML = '';
+      results.slice(0, 8).forEach(res => {
+        const item = document.createElement('div');
+        item.className = 'search-dropdown-item';
+        item.innerHTML = `
+          <span>📍 ${res.name}</span>
+          <span class="search-item-tag">${res.tag}</span>
+        `;
+        item.onclick = () => {
+          dropdown.style.display = 'none';
+          document.getElementById('searchInput').value = res.name;
+          navigateToLocation(res);
+        };
+        dropdown.appendChild(item);
+      });
+      dropdown.style.display = 'block';
+    }
+
+    function handleSearchKey(e) {
+      if (e.key === 'Enter') {
+        const first = document.querySelector('.search-dropdown-item');
+        if (first) first.click();
+      }
+    }
+
+    function navigateToLocation(res) {
+      if (res.district) {
+        openDistrictDossier(res.district);
+      }
+      if (leafletMapInstance && is2DActive) {
+        leafletMapInstance.flyTo([res.lat, res.lon], res.zoom || 9);
+      } else {
+        setScope('telangana');
+      }
+    }
+
+    // Keyboard shortcut Ctrl + K
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const inp = document.getElementById('searchInput');
+        if (inp) { inp.focus(); inp.select(); }
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // 7. Event Selection & Details Population
     // -------------------------------------------------------------------------
     function renderEventList() {
       const container = document.getElementById('eventsContainer');
@@ -1868,17 +2150,14 @@
       if (!match) return;
       currentEvent = match;
 
-      // Update card highlighting
       document.querySelectorAll('.event-item-card').forEach(c => c.classList.remove('active'));
       const activeCard = document.getElementById(`card-${eventId}`);
       if (activeCard) activeCard.classList.add('active');
 
-      // Populate Right Sidebar
       populateEventDetails(currentEvent);
       drawSatThumbnail(currentEvent.type);
       drawTimelapseThumbnails(currentEvent.type);
 
-      // Camera Adjustment
       if (!is2DActive) {
         targetRotationY = -1.38;
         targetRotationX = 0.35;
@@ -1914,139 +2193,36 @@
     }
 
     // -------------------------------------------------------------------------
-    // 6. Dynamic Satellite & Time-Lapse Thumbnails
-    // -------------------------------------------------------------------------
-    function drawSatThumbnail(type) {
-      const cvs = document.getElementById('satCanvas');
-      if (!cvs) return;
-      cvs.width = cvs.clientWidth * window.devicePixelRatio || 350;
-      cvs.height = cvs.clientHeight * window.devicePixelRatio || 120;
-      const ctx = cvs.getContext('2d');
-      const w = cvs.width, h = cvs.height;
-
-      // Dark Terrain
-      const grad = ctx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, '#0f172a');
-      grad.addColorStop(1, '#050a16');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Topographic contours
-      ctx.strokeStyle = '#1e293b';
-      ctx.lineWidth = 1.5;
-      for (let i = 0; i < 4; i++) {
-        ctx.beginPath();
-        ctx.moveTo(0, h * 0.2 + i * 20);
-        ctx.bezierCurveTo(w * 0.4, h * 0.4 + i * 15, w * 0.6, h * 0.15 + i * 15, w, h * 0.35 + i * 20);
-        ctx.stroke();
-      }
-
-      if (type === 'fire') {
-        const rad = ctx.createRadialGradient(w * 0.55, h * 0.5, 3, w * 0.55, h * 0.5, 50);
-        rad.addColorStop(0, '#ffffff');
-        rad.addColorStop(0.2, '#fef08a');
-        rad.addColorStop(0.45, '#f97316');
-        rad.addColorStop(0.7, '#dc2626');
-        rad.addColorStop(1, 'transparent');
-        ctx.fillStyle = rad;
-        ctx.beginPath();
-        ctx.arc(w * 0.55, h * 0.5, 50, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = 'rgba(249, 115, 22, 0.16)';
-        ctx.beginPath();
-        ctx.moveTo(w * 0.55, h * 0.5);
-        ctx.lineTo(w * 0.22, h * 0.2);
-        ctx.lineTo(w * 0.36, h * 0.1);
-        ctx.closePath();
-        ctx.fill();
-      } else if (type === 'flood') {
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.55)';
-        ctx.beginPath();
-        ctx.ellipse(w * 0.5, h * 0.55, 75, 26, Math.PI / 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      } else {
-        const r = ctx.createRadialGradient(w * 0.5, h * 0.5, 5, w * 0.5, h * 0.5, 60);
-        r.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
-        r.addColorStop(1, 'transparent');
-        ctx.fillStyle = r;
-        ctx.beginPath();
-        ctx.arc(w * 0.5, h * 0.5, 60, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function drawTimelapseThumbnails(type) {
-      for (let i = 0; i < 4; i++) {
-        const cvs = document.getElementById(`cvsTL${i}`);
-        if (!cvs) continue;
-        cvs.width = cvs.clientWidth * window.devicePixelRatio || 80;
-        cvs.height = cvs.clientHeight * window.devicePixelRatio || 48;
-        const ctx = cvs.getContext('2d');
-        const w = cvs.width, h = cvs.height;
-
-        ctx.fillStyle = '#0a1020';
-        ctx.fillRect(0, 0, w, h);
-
-        if (type === 'fire') {
-          const intensity = (i + 1) / 4;
-          const rad = ctx.createRadialGradient(w * 0.5, h * 0.5, 2, w * 0.5, h * 0.5, 16 * intensity);
-          rad.addColorStop(0, '#ffffff');
-          rad.addColorStop(0.3, '#f59e0b');
-          rad.addColorStop(0.7, '#ef4444');
-          rad.addColorStop(1, 'transparent');
-          ctx.fillStyle = rad;
-          ctx.beginPath();
-          ctx.arc(w * 0.5, h * 0.5, 16 * intensity, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.fillStyle = `rgba(56, 189, 248, ${(i + 1) * 0.22})`;
-          ctx.beginPath();
-          ctx.arc(w * 0.5, h * 0.5, 12 * (i + 1) * 0.25, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    }
-
-    function selectTimelapseFrame(frameIdx) {
-      document.querySelectorAll('.timelapse-card').forEach((c, i) => {
-        c.classList.toggle('active', i === frameIdx);
-      });
-      const times = ["6h ago", "12h ago", "18h ago", "Now"];
-      document.getElementById('lblUpdated').innerText = `Historical Epoch: ${times[frameIdx]}`;
-    }
-
-    // -------------------------------------------------------------------------
-    // 7. Research Paper Features: Subtabs Navigation
+    // 8. Dynamic Subtabs (Overview, Analysis, Prediction, Impact, History)
     // -------------------------------------------------------------------------
     function switchTab(tabKey, btnEl) {
+      activeSubtabKey = tabKey;
       if (btnEl) {
         document.querySelectorAll('.intel-tab').forEach(b => b.classList.remove('active'));
         btnEl.classList.add('active');
       }
 
       const body = document.getElementById('intelBody');
+      const data = window.TERRASCOPE_DATA || {};
+      const mlModel = data.ml_flood_model || {};
+
       if (tabKey === 'analysis') {
+        const featList = mlModel.features || [];
+        const featBars = featList.map(f => `
+          <div><span>${f.Feature}:</span> <strong style="float:right; color:white;">${(f.Importance * 100).toFixed(1)}%</strong></div>
+          <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:${f.Importance * 100}%; height:100%;"></div></div>
+        `).join('');
+
         body.innerHTML = `
           <div class="card-box" style="padding:10px; font-size:11px;">
-            <strong style="color:var(--accent-cyan); font-size:12px;">Random Forest Model Audit (Section IV-F)</strong>
+            <strong style="color:var(--accent-cyan); font-size:12px;">Random Forest Model Audit (Paper Section IV-F)</strong>
             <p style="color:#94a3b8; margin:6px 0 10px 0;">Model: 200 Trees • Features: 7 • Spatial Block CV (70/30)</p>
             <div style="display:flex; flex-direction:column; gap:6px;">
-              <div><span>Height Above Nearest Drainage (HAND):</span> <strong style="float:right; color:white;">50.27%</strong></div>
-              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:50.27%; height:100%;"></div></div>
-              <div><span>SRTM Elevation (30m):</span> <strong style="float:right; color:white;">23.76%</strong></div>
-              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:23.76%; height:100%;"></div></div>
-              <div><span>Sentinel-2 NDWI (B03/B08):</span> <strong style="float:right; color:white;">9.98%</strong></div>
-              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:9.98%; height:100%;"></div></div>
-              <div><span>Sentinel-1 SAR VH Backscatter:</span> <strong style="float:right; color:white;">5.58%</strong></div>
-              <div style="background:#1e293b; height:5px; border-radius:3px; overflow:hidden;"><div style="background:#38bdf8; width:5.58%; height:100%;"></div></div>
+              ${featBars}
             </div>
             <div style="margin-top:12px; background:rgba(15,23,42,0.8); padding:8px; border-radius:6px; border:1px solid var(--border-card);">
               <div style="color:white; font-weight:700;">Spatial Validation Benchmark:</div>
-              <div style="color:#34d399; font-size:10px; margin-top:3px;">• Random Forest: F1 = 0.9973, IoU = 0.9947</div>
+              <div style="color:#34d399; font-size:10px; margin-top:3px;">• Random Forest: F1 = 0.9973, IoU = 0.9947, Recall = 1.0000</div>
               <div style="color:#94a3b8; font-size:10px;">• Optical NDWI Baseline: F1 = 0.1385, IoU = 0.0744</div>
               <div style="color:#94a3b8; font-size:10px;">• SAR Otsu Baseline: F1 = 0.0362, IoU = 0.0184</div>
             </div>
@@ -2074,56 +2250,210 @@
           <div class="card-box" style="padding:10px; font-size:11px;">
             <strong style="color:var(--accent-cyan); font-size:12px;">Critical Infrastructure Exposure (Section IV-E)</strong>
             <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
-              <div class="mini-metric-card"><div class="mini-metric-lbl">🏥 Primary Health Facilities</div><div class="mini-metric-val" style="font-size:11.5px;">1 Clinic (Warangal PHC - Proximity 1.8km)</div></div>
-              <div class="mini-metric-card"><div class="mini-metric-lbl">🛣️ Transportation Arteries</div><div class="mini-metric-val red" style="font-size:11.5px;">NH-365BB Corridor Within Smoke Wedge</div></div>
-              <div class="mini-metric-card"><div class="mini-metric-lbl">🌾 Agricultural Cropland</div><div class="mini-metric-val" style="font-size:11.5px;">142 Hectares Dry Paddy & Cotton</div></div>
+              <div class="mini-metric-card"><div class="mini-metric-lbl">🏥 Primary Health Facilities</div><div class="mini-metric-val" style="font-size:11.5px;">2 Inundated Clinics (Prakashnagar & Kalvoddu)</div></div>
+              <div class="mini-metric-card"><div class="mini-metric-lbl">🛣️ Transportation Arteries</div><div class="mini-metric-val red" style="font-size:11.5px;">NH-365A Severed (Prakashnagar Bridge Overtopped)</div></div>
+              <div class="mini-metric-card"><div class="mini-metric-lbl">🌾 Agricultural Cropland</div><div class="mini-metric-val" style="font-size:11.5px;">142 Hectares Lowland Paddy Saturated</div></div>
             </div>
           </div>
         `;
-      } else if (tabKey === 'media') {
+      } else if (tabKey === 'history') {
+        const historyList = (data.historical_timeline || []).map(h => `
+          <div style="padding:6px; background:rgba(15,23,42,0.8); border:1px solid var(--border-card); border-radius:4px; font-size:10px; margin-bottom:5px;">
+            <strong style="color:#38bdf8;">${h.date} (${h.phase || 'Epoch'})</strong><br>
+            <span>Rainfall: ${h.cumulative_rain_mm || 0} mm • Inundation: ${h.inundation_area_km2 || 0} km²</span>
+          </div>
+        `).join('');
+
         body.innerHTML = `
           <div class="card-box" style="padding:10px; font-size:11px;">
-            <strong style="color:var(--accent-cyan); font-size:12px;">Multispectral Satellite Feeds (Table I)</strong>
-            <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-              <div style="background:#020617; height:65px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; border:1px solid var(--border-card);">Sentinel-1 SAR IW</div>
-              <div style="background:#020617; height:65px; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:10px; border:1px solid var(--border-card);">VIIRS NOAA-20 IR</div>
-            </div>
+            <strong style="color:var(--accent-cyan); font-size:12px;">Multi-Epoch Observation History (Section IV-C)</strong>
+            <p style="color:#94a3b8; margin:6px 0 10px 0;">Sentinel-1A SAR temporal progression (Orbits 041 & 143):</p>
+            ${historyList}
           </div>
         `;
       } else {
+        // Overview tab
         selectEventById(currentEvent.id);
       }
     }
 
     // -------------------------------------------------------------------------
-    // 8. Historical Epoch Selection (Paper Section IV-C & V)
+    // 9. District Intelligence Dossier Modal
     // -------------------------------------------------------------------------
-    function selectHistoricalEpoch(dateStr, btnEl) {
-      activeHistoricalEpoch = dateStr;
-      document.querySelectorAll('.epoch-btn').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
+    function openDistrictDossier(districtName) {
+      selectedDistrictName = districtName;
+      const data = window.TERRASCOPE_DATA || {};
+      const dInfo = (data.district_peak_ranking || []).find(d => d.district.toLowerCase() === districtName.toLowerCase());
+      if (!dInfo) return;
 
-      if (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.historical_timeline) {
-        const found = window.TERRASCOPE_DATA.historical_timeline.find(t => t.date === dateStr);
-        if (found) {
-          document.getElementById('lblUpdated').innerText = `${found.date} (Inundation: ${found.inundation_area_km2} km²)`;
+      const drawer = document.getElementById('districtIntelDrawer');
+      const title = document.getElementById('dossierTitle');
+      const content = document.getElementById('dossierContent');
+
+      title.innerHTML = `📍 ${dInfo.district} District Dossier <span class="tag-badge ${dInfo.risk_category.toLowerCase()}">${dInfo.risk_category} RISK</span>`;
+
+      // Temporal history for this district
+      const temporalRecords = (data.district_temporal_records || []).filter(t => t.District.toLowerCase() === districtName.toLowerCase());
+      const temporalRows = temporalRecords.map(t => `
+        <tr>
+          <td>${t.Observation_Date}</td>
+          <td>${t.Rainfall_7Day_mm} mm</td>
+          <td>${t.Inundated_Area_km2} km²</td>
+          <td><strong>${t.Risk_Index_Multiplicative.toFixed(3)}</strong></td>
+        </tr>
+      `).join('');
+
+      content.innerHTML = `
+        <div class="dossier-grid">
+          <div class="dossier-card">
+            <div class="dossier-card-lbl">Peak Disaster Rank</div>
+            <div class="dossier-card-val" style="color:#38bdf8;">#${dInfo.rank} / 33</div>
+          </div>
+          <div class="dossier-card">
+            <div class="dossier-card-lbl">Multiplicative HEV (R)</div>
+            <div class="dossier-card-val" style="color:${dInfo.risk_multiplicative >= 0.25 ? '#c084fc' : '#ef4444'};">${dInfo.risk_multiplicative.toFixed(3)}</div>
+          </div>
+          <div class="dossier-card">
+            <div class="dossier-card-lbl">7-Day Rainfall Accum.</div>
+            <div class="dossier-card-val">${dInfo.rainfall_7d_mm} mm</div>
+          </div>
+          <div class="dossier-card">
+            <div class="dossier-card-lbl">Flood Inundation Extent</div>
+            <div class="dossier-card-val">${dInfo.inundated_area_km2} km²</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(13,20,38,0.85); border:1px solid var(--border-card); border-radius:6px; padding:9px 11px;">
+          <strong style="color:var(--accent-cyan); font-size:11px;">AHP Criteria Factor Decomposition:</strong>
+          <div style="margin-top:6px; font-size:10.5px; display:flex; justify-content:space-between;">
+            <span>Hazard (H): <b>${dInfo.hazard_score.toFixed(3)}</b></span>
+            <span>Exposure (E): <b>${dInfo.exposure_score.toFixed(3)}</b></span>
+            <span>Vuln (V): <b>${dInfo.vulnerability_score.toFixed(3)}</b></span>
+          </div>
+          <div style="margin-top:4px; font-size:10px; color:#94a3b8;">
+            Primary Risk Driver: <span style="color:#fca5a5;">${dInfo.primary_driver}</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(13,20,38,0.85); border:1px solid var(--border-card); border-radius:6px; padding:9px 11px;">
+          <strong style="color:var(--accent-cyan); font-size:11px;">Multi-Epoch Progression (Aug 22 - Sep 14):</strong>
+          <table class="district-table" style="margin-top:6px;">
+            <thead>
+              <tr><th>Date</th><th>Rain</th><th>Flood Extent</th><th>Risk (R)</th></tr>
+            </thead>
+            <tbody>
+              ${temporalRows || '<tr><td colspan="4" style="color:#64748b;">No temporal data</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button style="flex:1; padding:8px; background:#0284c7; border:none; border-radius:4px; color:white; font-size:11px; font-weight:700; cursor:pointer;" onclick="focusOnDistrictMap('${dInfo.district}')">🎯 Focus on Map / Globe</button>
+        </div>
+      `;
+
+      drawer.style.display = 'flex';
+    }
+
+    function toggleDossierDrawer() {
+      const d = document.getElementById('districtIntelDrawer');
+      d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function focusOnDistrictMap(districtName) {
+      toggleDossierDrawer();
+      const data = window.TERRASCOPE_DATA || {};
+      const dInfo = (data.district_peak_ranking || []).find(d => d.district.toLowerCase() === districtName.toLowerCase());
+      if (dInfo) {
+        if (leafletMapInstance && is2DActive) {
+          leafletMapInstance.flyTo([dInfo.lat, dInfo.lon], 9);
+        } else {
+          setScope('telangana');
         }
       }
     }
 
     // -------------------------------------------------------------------------
-    // 9. Drawers: 33-Districts, Alerts Log, Data Provenance
+    // 10. Real-Time Alert Management System
     // -------------------------------------------------------------------------
-    function toggleDistrictsDrawer() {
-      const d = document.getElementById('districtsDrawer');
-      d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
-      if (d.style.display === 'flex') populateDistrictsTable();
+    function populateAlertsLog() {
+      const container = document.getElementById('alertsLogContainer');
+      container.innerHTML = '';
+      const data = window.TERRASCOPE_DATA || {};
+      const alerts = data.production_alerts || [];
+
+      const filtered = alerts.filter(a => {
+        if (currentAlertSeverityFilter === 'ALL') return true;
+        return (a.Severity_Tier || '').toUpperCase() === currentAlertSeverityFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="padding:15px; text-align:center; color:#64748b; font-size:11px;">No alerts match filter '${currentAlertSeverityFilter}'</div>`;
+        return;
+      }
+
+      filtered.forEach(a => {
+        const div = document.createElement('div');
+        div.className = `alert-entry ${a.acknowledged ? 'acknowledged' : ''}`;
+        div.id = `alert-${a.Alert_ID}`;
+        div.innerHTML = `
+          <div class="alert-entry-header">
+            <span style="color:#ef4444;">${a.Hazard_Type === 'Flood' ? '🌊' : '🔥'} ${a.Alert_ID}: ${a.District}</span>
+            <span class="tag-badge ${a.Severity_Tier.toLowerCase()}">${a.Severity_Tier}</span>
+          </div>
+          <div style="font-size:10px; color:#cbd5e1; margin-top:4px;">
+            ${a.Trigger_Condition}
+          </div>
+          <div style="font-size:9.5px; color:#94a3b8; margin-top:2px;">
+            Target: ${a.Target_Coordinates} • Latency: ${a.Processing_Latency_ms || 6.07} ms
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+            <button class="ack-btn" onclick="acknowledgeAlert('${a.Alert_ID}')">${a.acknowledged ? '✓ Acknowledged' : 'Acknowledge'}</button>
+            <button class="link-action" style="font-size:10px;" onclick="locateAlertOnMap('${a.District}')">Locate ↗</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterAlertsBySeverity(sev, btn) {
+      currentAlertSeverityFilter = sev;
+      document.querySelectorAll('.alert-filter-bar .filter-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      populateAlertsLog();
+    }
+
+    function acknowledgeAlert(alertId) {
+      const data = window.TERRASCOPE_DATA || {};
+      const match = (data.production_alerts || []).find(a => a.Alert_ID === alertId);
+      if (match) {
+        match.acknowledged = true;
+      }
+
+      // Try FastAPI backend if online
+      fetch(`http://127.0.0.1:8000/api/alerts/${alertId}/ack`, { method: 'POST' }).catch(() => {});
+
+      // Decrement badge count
+      const unack = (data.production_alerts || []).filter(a => !a.acknowledged).length;
+      document.getElementById('alertCountBadge').innerText = unack;
+      populateAlertsLog();
+    }
+
+    function locateAlertOnMap(districtName) {
+      toggleAlertsDrawer();
+      focusOnDistrictMap(districtName);
     }
 
     function toggleAlertsDrawer() {
       const d = document.getElementById('alertsDrawer');
       d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
       if (d.style.display === 'flex') populateAlertsLog();
+    }
+
+    function toggleDistrictsDrawer() {
+      const d = document.getElementById('districtsDrawer');
+      d.style.display = (d.style.display === 'flex') ? 'none' : 'flex';
+      if (d.style.display === 'flex') populateDistrictsTable();
     }
 
     function toggleProvenanceDrawer() {
@@ -2140,83 +2470,123 @@
         const tr = document.createElement('tr');
         tr.onclick = () => {
           toggleDistrictsDrawer();
-          if (leafletMapInstance && is2DActive) {
-            leafletMapInstance.flyTo([row.lat, row.lon], 9);
-          } else {
-            setScope('telangana');
-          }
+          openDistrictDossier(row.district);
         };
         tr.innerHTML = `
           <td><strong>#${idx + 1} ${row.district}</strong></td>
-          <td>${row.hazard_score.toFixed(2)}</td>
-          <td>${row.exposure_score.toFixed(2)}</td>
-          <td>${row.vulnerability_score.toFixed(2)}</td>
-          <td><strong style="color:${row.risk_score > 0.6 ? '#f87171' : (row.risk_score > 0.4 ? '#fbbf24' : '#38bdf8')};">${row.risk_score.toFixed(3)}</strong></td>
+          <td>${row.hazard_score.toFixed(3)}</td>
+          <td>${row.exposure_score.toFixed(3)}</td>
+          <td>${row.vulnerability_score.toFixed(3)}</td>
+          <td><strong style="color:${row.risk_multiplicative >= 0.25 ? '#c084fc' : (row.risk_multiplicative >= 0.18 ? '#ef4444' : '#38bdf8')}">${row.risk_multiplicative.toFixed(3)}</strong></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
     function filterDistrictsTable() {
-      const q = document.getElementById('filterDistrictInput').value.toLowerCase();
+      const q = (document.getElementById('filterDistrictInput').value || '').toLowerCase();
       document.querySelectorAll('#districtTableBody tr').forEach(tr => {
         tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
       });
     }
 
-    function populateAlertsLog() {
-      const container = document.getElementById('alertsLogContainer');
-      container.innerHTML = '';
-      if (!window.TERRASCOPE_DATA || !window.TERRASCOPE_DATA.production_alerts) return;
-
-      const alerts = window.TERRASCOPE_DATA.production_alerts.slice(0, 15);
-      alerts.forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'alert-entry';
-        div.innerHTML = `
-          <div class="alert-entry-header">
-            <span>${a.hazard_type === 'FLOOD' ? '🌊' : '🔥'} ${a.district} (${a.hazard_type})</span>
-            <span style="color:#f87171;">${a.severity}</span>
-          </div>
-          <div style="font-size:10px; color:#cbd5e1; margin-top:3px;">${a.trigger_reason}</div>
-          <div style="font-size:9px; color:var(--text-muted); margin-top:2px;">ID: ${a.alert_id} • Latency: ${a.processing_latency_ms} ms</div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
     // -------------------------------------------------------------------------
-    // 10. Search & Utilities
+    // 11. Historical Epoch Exploration
     // -------------------------------------------------------------------------
-    function handleSearchKey(e) {
-      if (e.key === 'Enter') {
-        const q = e.target.value.trim().toLowerCase();
-        if (!q) return;
-        const match = EVENT_CATALOG.find(ev => 
-          ev.district.toLowerCase().includes(q) || 
-          ev.title.toLowerCase().includes(q) ||
-          ev.location.toLowerCase().includes(q)
-        );
-        if (match) selectEventById(match.id);
-        else if (q.includes('telangana')) setScope('telangana');
-        else if (q.includes('india')) setScope('india');
-        else if (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.district_peak_ranking) {
-          const distMatch = window.TERRASCOPE_DATA.district_peak_ranking.find(d => d.district.toLowerCase().includes(q));
-          if (distMatch) {
-            setScope('telangana');
-            if (leafletMapInstance && is2DActive) leafletMapInstance.flyTo([distMatch.lat, distMatch.lon], 9);
-          }
-        }
+    function selectHistoricalEpoch(dateStr, btnEl) {
+      activeHistoricalEpoch = dateStr;
+      document.querySelectorAll('.epoch-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      const data = window.TERRASCOPE_DATA || {};
+      const found = (data.historical_timeline || []).find(t => t.date === dateStr);
+      if (found) {
+        document.getElementById('lblUpdated').innerText = `${found.date} (Inundation: ${found.inundation_area_km2 || 48.6} km²)`;
+        document.getElementById('statFloods').innerText = (dateStr === '2024-09-02') ? '7' : ((dateStr === '2024-08-31') ? '4' : '1');
       }
     }
 
-    function handleLayerToggle(key) {
-      console.log(`Layer toggle changed: ${key}`);
+    // -------------------------------------------------------------------------
+    // 12. Dynamic Satellite & Time-Lapse Thumbnails
+    // -------------------------------------------------------------------------
+    function drawSatThumbnail(type) {
+      const cvs = document.getElementById('satCanvas');
+      if (!cvs) return;
+      cvs.width = cvs.clientWidth * window.devicePixelRatio || 350;
+      cvs.height = cvs.clientHeight * window.devicePixelRatio || 120;
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+
+      // Dark Terrain
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#050a16');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, h * 0.2 + i * 20);
+        ctx.bezierCurveTo(w * 0.4, h * 0.4 + i * 15, w * 0.6, h * 0.15 + i * 15, w, h * 0.35 + i * 20);
+        ctx.stroke();
+      }
+
+      if (type === 'fire') {
+        const rad = ctx.createRadialGradient(w * 0.55, h * 0.5, 3, w * 0.55, h * 0.5, 50);
+        rad.addColorStop(0, '#ffffff');
+        rad.addColorStop(0.2, '#fef08a');
+        rad.addColorStop(0.45, '#f97316');
+        rad.addColorStop(0.7, '#dc2626');
+        rad.addColorStop(1, 'transparent');
+        ctx.fillStyle = rad;
+        ctx.beginPath();
+        ctx.arc(w * 0.55, h * 0.5, 50, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (type === 'flood') {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 12;
+        ctx.beginPath();
+        ctx.moveTo(w * 0.1, h * 0.1);
+        ctx.bezierCurveTo(w * 0.3, h * 0.6, w * 0.7, h * 0.4, w * 0.9, h * 0.85);
+        ctx.stroke();
+      }
     }
 
-    function resetLayerToggles() {
-      document.querySelectorAll('.layers-container input[type="checkbox"]').forEach(c => c.checked = true);
-      alert("All analytical and sensor data layers have been reset to active.");
+    function drawTimelapseThumbnails(type) {
+      ['cvsTL0', 'cvsTL1', 'cvsTL2', 'cvsTL3'].forEach((id, idx) => {
+        const cvs = document.getElementById(id);
+        if (!cvs) return;
+        cvs.width = cvs.clientWidth * window.devicePixelRatio || 90;
+        cvs.height = cvs.clientHeight * window.devicePixelRatio || 50;
+        const ctx = cvs.getContext('2d');
+        const w = cvs.width, h = cvs.height;
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        if (type === 'fire') {
+          const intensity = (idx + 1) * 3;
+          ctx.fillStyle = idx === 3 ? '#ef4444' : '#f97316';
+          ctx.beginPath();
+          ctx.arc(w * 0.55, h * 0.5, intensity, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = (idx + 1) * 2;
+          ctx.beginPath();
+          ctx.moveTo(0, h * 0.5);
+          ctx.lineTo(w, h * 0.5);
+          ctx.stroke();
+        }
+      });
+    }
+
+    function selectTimelapseFrame(frameIdx) {
+      document.querySelectorAll('.timelapse-card').forEach((c, i) => {
+        c.classList.toggle('active', i === frameIdx);
+      });
     }
 
     function startLiveClock() {
@@ -2232,16 +2602,27 @@
     }
 
     // -------------------------------------------------------------------------
-    // 11. Startup Bootstrapping
+    // 13. System Initialization
     // -------------------------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
       renderEventList();
-      initThreeGlobe();
-      initLeafletEngine();
       populateEventDetails(currentEvent);
       drawSatThumbnail(currentEvent.type);
       drawTimelapseThumbnails(currentEvent.type);
+      initThreeGlobe();
+      initLeafletEngine();
+      updateLegendDisplay();
       startLiveClock();
+
+      // Probe live FastAPI backend status
+      fetch('http://127.0.0.1:8000/api/health')
+        .then(res => res.json())
+        .then(health => {
+          console.log("TerraScope FastAPI backend connected:", health);
+        })
+        .catch(() => {
+          console.log("Running in offline mode with pre-compiled TerraScope data payload.");
+        });
     });
   </script>
 </body>

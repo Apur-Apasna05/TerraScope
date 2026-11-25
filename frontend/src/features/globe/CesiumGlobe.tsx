@@ -72,6 +72,7 @@ export function CesiumGlobe() {
 
     const viewer = new Cesium.Viewer(el, {
       animation: false,
+      baseLayer: false,
       baseLayerPicker: false,
       fullscreenButton: false,
       geocoder: false,

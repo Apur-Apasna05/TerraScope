@@ -1,6 +1,45 @@
-import { defineConfig, loadEnv } from "vite";
+import fs from "node:fs";
+import path from "node:path";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+
+const MIME_TYPES: Record<string, string> = {
+  ".js": "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".wasm": "application/wasm",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".xml": "application/xml",
+};
+
+function serveCesiumDevPlugin(): Plugin {
+  const cesiumBuildDir = path.resolve(process.cwd(), "node_modules/cesium/Build/Cesium");
+  return {
+    name: "serve-cesium-dev",
+    configureServer(server) {
+      server.middlewares.use("/cesium", (req, res, next) => {
+        const cleanUrl = (req.url || "/").split("?")[0].replace(/^\/+/, "");
+        const filePath = path.resolve(cesiumBuildDir, cleanUrl);
+        if (
+          !filePath.startsWith(cesiumBuildDir) ||
+          !fs.existsSync(filePath) ||
+          fs.statSync(filePath).isDirectory()
+        ) {
+          next();
+          return;
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        res.setHeader("Content-Type", MIME_TYPES[ext] || "application/octet-stream");
+        fs.createReadStream(filePath).pipe(res);
+      });
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "..", "");
@@ -11,6 +50,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
+      serveCesiumDevPlugin(),
       viteStaticCopy({
         targets: [
           { src: "node_modules/cesium/Build/Cesium/Workers", dest: "cesium" },

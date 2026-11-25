@@ -43,7 +43,7 @@ export async function initializeBasemapWithFallback(
       googleTileset = options?.createGoogleTileset
         ? await options.createGoogleTileset(googleKey)
         : await Cesium.createGooglePhotorealistic3DTileset(
-            { key: googleKey },
+            { key: googleKey, onlyUsingWithGoogleGeocoder: true },
             { maximumScreenSpaceError: 2, cacheBytes: 512 * 1024 * 1024 },
           );
       if (!viewer.isDestroyed()) {

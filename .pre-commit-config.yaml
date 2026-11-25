@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: terrascope-secret-scan
+        name: TerraScope Secret Scanner
+        entry: python scripts/check_secrets.py
+        language: system
+        pass_filenames: true

@@ -3,8 +3,9 @@ import react from "@vitejs/plugin-react";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, ".", "");
+  const env = loadEnv(mode, "..", "");
   return {
+    envDir: "..",
     define: {
       CESIUM_BASE_URL: JSON.stringify("/cesium"),
     },

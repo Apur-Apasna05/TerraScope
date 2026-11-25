@@ -2,10 +2,22 @@
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
+import pytest
 
+from app.core.config import Settings, get_settings
 from app.main import app
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def _isolate_offline_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure geo unit tests run deterministically without hitting live Google APIs."""
+    monkeypatch.setattr(
+        "app.api.geo.get_settings",
+        lambda: Settings(_env_file=None, google_maps_server_key="", nasa_firms_api_key="", cesium_ion_token=""),
+    )
+    get_settings.cache_clear()
 
 
 def test_global_search_finds_world_cities() -> None:

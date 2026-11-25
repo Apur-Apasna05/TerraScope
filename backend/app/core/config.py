@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     """Runtime settings loaded from environment variables and .env."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(_default_repo_root() / ".env", ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )

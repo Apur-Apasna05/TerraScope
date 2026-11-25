@@ -1,4 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import { Activity, ChevronDown, ChevronUp, Satellite } from "lucide-react";
+import {
+  fetchTelanganaAlerts,
+  fetchTelanganaExposure,
+  fetchTelanganaFires,
+  fetchTelanganaRisk,
+} from "../services/telanganaApi";
 import { useAppStore } from "../store/useAppStore";
 import type { HealthResponse } from "../types/terrascope";
 import { SeverityBadge } from "./SeverityBadge";
@@ -9,9 +16,34 @@ interface BottomPanelProps {
 
 export function BottomPanel({ health }: BottomPanelProps) {
   const mode = useAppStore((s) => s.mode);
+  const district = useAppStore((s) => s.selectedDistrict);
   const bottomPanelOpen = useAppStore((s) => s.bottomPanelOpen);
   const togglePanel = useAppStore((s) => s.togglePanel);
   const basemapStatus = useAppStore((s) => s.basemapStatus);
+
+  const riskQ = useQuery({
+    queryKey: ["telangana", "risk", null],
+    queryFn: ({ signal }) => fetchTelanganaRisk(mode, null, signal),
+    enabled: mode === "TELANGANA",
+  });
+  const fireQ = useQuery({
+    queryKey: ["telangana", "fire", district],
+    queryFn: ({ signal }) => fetchTelanganaFires(mode, district, signal),
+    enabled: mode === "TELANGANA",
+  });
+  const exposureQ = useQuery({
+    queryKey: ["telangana", "exposure", district],
+    queryFn: ({ signal }) => fetchTelanganaExposure(mode, district, signal),
+    enabled: mode === "TELANGANA",
+  });
+  const alertsQ = useQuery({
+    queryKey: ["telangana", "alerts", null],
+    queryFn: ({ signal }) => fetchTelanganaAlerts(mode, {}, signal),
+    enabled: mode === "TELANGANA",
+  });
+
+  const top3 = (riskQ.data?.data.rankings ?? []).slice(0, 3);
+  const unreadLive = alertsQ.data?.data.unread_live_count ?? 0;
 
   return (
     <section
@@ -50,32 +82,48 @@ export function BottomPanel({ health }: BottomPanelProps) {
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ts-border/70 py-2.5 text-xs">
           {mode === "TELANGANA" ? (
             <>
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-5">
                 <div>
-                  <span className="text-[10px] uppercase text-slate-400">District Ranking</span>
-                  <p className="font-mono text-slate-200">Data unavailable (Phase 8)</p>
+                  <span className="text-[10px] uppercase text-slate-400">Top Risk Districts</span>
+                  <p className="font-mono text-slate-200">
+                    {top3.length > 0
+                      ? top3
+                          .map((r) => `#${r.rank} ${r.district} (${r.risk_score.toFixed(2)})`)
+                          .join(" · ")
+                      : "Loading..."}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-slate-400">Active Fires</span>
-                  <p className="font-mono text-slate-200">—</p>
+                  <span className="text-[10px] uppercase text-slate-400">Fire Incidents</span>
+                  <p className="font-mono text-orange-300">
+                    {fireQ.data ? fireQ.data.data.cluster_count : "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-slate-400">Flood Area</span>
-                  <p className="font-mono text-slate-200">— km²</p>
+                  <span className="text-[10px] uppercase text-slate-400">Live Flood Raster</span>
+                  <p className="font-mono text-amber-300">Unavailable</p>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-slate-400">Exposed Pop.</span>
-                  <p className="font-mono text-slate-200">—</p>
+                  <span className="text-[10px] uppercase text-slate-400">Potentially Exposed</span>
+                  <p className="font-mono text-slate-200">
+                    {exposureQ.data
+                      ? `${exposureQ.data.data.potentially_exposed_count} OSM assets`
+                      : "—"}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-slate-400">Active Alerts</span>
+                  <span className="text-[10px] uppercase text-slate-400">Live Alerts</span>
                   <div className="mt-0.5">
-                    <SeverityBadge tier="low" label="0 Unread" />
+                    <SeverityBadge
+                      tier={unreadLive > 0 ? "high" : "low"}
+                      label={`${unreadLive} Unread`}
+                    />
                   </div>
                 </div>
               </div>
               <div className="font-mono text-[11px] text-slate-400">
-                Freshness: awaiting ingestion
+                Freshness: {riskQ.data?.meta.freshness ?? "—"} (
+                {riskQ.data?.meta.observed_at ?? "archive"})
               </div>
             </>
           ) : (

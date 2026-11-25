@@ -3,7 +3,7 @@ import { BottomPanel } from "../components/BottomPanel";
 import { LeftPanel } from "../components/LeftPanel";
 import { RightPanel } from "../components/RightPanel";
 import { TopNav } from "../components/TopNav";
-import { GlobeViewportShell } from "../features/globe/GlobeViewportShell";
+import { CesiumGlobe } from "../features/globe/CesiumGlobe";
 import { fetchHealth } from "../services/apiClient";
 import { useAppStore } from "../store/useAppStore";
 
@@ -27,7 +27,7 @@ export function AppShell() {
 
       <div className="relative flex min-h-0 flex-1 flex-col md:flex-row">
         <LeftPanel />
-        <GlobeViewportShell />
+        <CesiumGlobe />
         <RightPanel />
       </div>
 

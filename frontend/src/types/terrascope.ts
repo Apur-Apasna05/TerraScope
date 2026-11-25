@@ -52,3 +52,74 @@ export interface HealthResponse {
     scope_label: string;
   }>;
 }
+
+export interface SearchResult {
+  name: string;
+  place_type: string;
+  lat: number;
+  lon: number;
+  country?: string | null;
+  region?: string | null;
+  zoom_height_m: number;
+  source: string;
+}
+
+export interface SearchResponse {
+  query: string;
+  mode: AppMode;
+  provider: string;
+  results: SearchResult[];
+}
+
+export interface CameraTarget {
+  lat: number;
+  lon: number;
+  heightM: number;
+  headingDeg?: number;
+  pitchDeg?: number;
+  nonce: number;
+}
+
+export interface CoverageStatus {
+  photorealistic3d: boolean;
+  terrain: boolean;
+  streetView: "unknown" | "available" | "unavailable";
+  streetViewCaptureDate?: string | null;
+  providerLabel: string;
+}
+
+export interface StreetViewStatusResponse {
+  available: boolean;
+  status: string;
+  lat: number;
+  lon: number;
+  pano_id?: string | null;
+  capture_date?: string | null;
+  copyright?: string | null;
+  imagery_label: string;
+  reason?: string | null;
+}
+
+export interface BoundaryPayload {
+  source: string;
+  crs: string;
+  date?: string;
+  license?: string;
+  analytics_enabled: boolean;
+  geojson: {
+    type: "FeatureCollection";
+    features: Array<{
+      type: "Feature";
+      properties: Record<string, unknown>;
+      geometry: unknown;
+    }>;
+  };
+}
+
+export interface IndiaDataset {
+  id: string;
+  name: string;
+  source: string;
+  resolution: string;
+  purpose: string;
+}

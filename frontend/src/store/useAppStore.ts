@@ -1,6 +1,12 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { create } from "zustand";
-import type { AppMode, LayerConfig, TelanganaTab } from "../types/terrascope";
+import type {
+  AppMode,
+  CameraTarget,
+  CoverageStatus,
+  LayerConfig,
+  TelanganaTab,
+} from "../types/terrascope";
 
 function buildDefaultLayers(): Record<AppMode, LayerConfig[]> {
   return {
@@ -27,7 +33,7 @@ function buildDefaultLayers(): Record<AppMode, LayerConfig[]> {
         id: "country-boundaries",
         name: "Country Boundaries & Labels",
         category: "Geography",
-        source: "Natural Earth / Cesium Vector",
+        source: "Natural Earth / OSM Vector",
         description: "Sovereign borders, oceans, and major place labels.",
         visible: true,
         opacity: 0.85,
@@ -121,12 +127,25 @@ function buildDefaultLayers(): Record<AppMode, LayerConfig[]> {
   };
 }
 
+export const MODE_CAMERA_TARGETS: Record<AppMode, Omit<CameraTarget, "nonce">> = {
+  GLOBAL: { lat: 18.0, lon: 35.0, heightM: 18_500_000, headingDeg: 0, pitchDeg: -90 },
+  INDIA: { lat: 21.5, lon: 78.96, heightM: 4_200_000, headingDeg: 0, pitchDeg: -88 },
+  TELANGANA: { lat: 17.85, lon: 79.35, heightM: 620_000, headingDeg: 0, pitchDeg: -85 },
+};
+
 export interface SelectedPlace {
   name: string;
   lat: number;
   lon: number;
   elevationM?: number | null;
-  region?: string;
+  region?: string | null;
+  placeType?: string;
+}
+
+export interface CursorCoords {
+  lat: number;
+  lon: number;
+  elevationM: number | null;
 }
 
 interface AppState {
@@ -134,22 +153,32 @@ interface AppState {
   layersByMode: Record<AppMode, LayerConfig[]>;
   activeTelanganaTab: TelanganaTab;
   selectedDistrict: string | null;
+  selectedState: string | null;
   selectedPlace: SelectedPlace | null;
+  cursorCoords: CursorCoords | null;
+  flyToTarget: CameraTarget | null;
+  sceneDimension: "3D" | "2D";
   searchQuery: string;
   leftPanelOpen: boolean;
   rightPanelOpen: boolean;
   bottomPanelOpen: boolean;
   basemapStatus: string;
+  coverageStatus: CoverageStatus;
   setMode: (nextMode: AppMode, queryClient?: QueryClient) => void;
   toggleLayer: (layerId: string) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
   resetLayersForCurrentMode: () => void;
   setActiveTelanganaTab: (tab: TelanganaTab) => void;
   setSelectedDistrict: (district: string | null) => void;
+  setSelectedState: (stateName: string | null) => void;
   setSelectedPlace: (place: SelectedPlace | null) => void;
+  setCursorCoords: (coords: CursorCoords | null) => void;
+  flyTo: (target: Omit<CameraTarget, "nonce">) => void;
+  setSceneDimension: (dim: "3D" | "2D") => void;
   setSearchQuery: (q: string) => void;
   togglePanel: (panel: "left" | "right" | "bottom") => void;
   setBasemapStatus: (status: string) => void;
+  setCoverageStatus: (status: Partial<CoverageStatus>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -157,21 +186,35 @@ export const useAppStore = create<AppState>((set) => ({
   layersByMode: buildDefaultLayers(),
   activeTelanganaTab: "overview",
   selectedDistrict: null,
+  selectedState: null,
   selectedPlace: null,
+  cursorCoords: null,
+  flyToTarget: null,
+  sceneDimension: "3D",
   searchQuery: "",
   leftPanelOpen: true,
   rightPanelOpen: true,
   bottomPanelOpen: true,
-  basemapStatus: "Command-centre shell ready (Cesium globe mounts in Phase 3)",
+  basemapStatus: "Initializing 3D globe...",
+  coverageStatus: {
+    photorealistic3d: false,
+    terrain: false,
+    streetView: "unknown",
+    streetViewCaptureDate: null,
+    providerLabel: "OpenStreetMap Ellipsoid",
+  },
 
   setMode: (nextMode, queryClient) => {
     if (nextMode !== "TELANGANA" && queryClient) {
       void queryClient.cancelQueries({ queryKey: ["telangana"] });
       queryClient.removeQueries({ queryKey: ["telangana"] });
     }
+    const cam = MODE_CAMERA_TARGETS[nextMode];
     set((state) => ({
       mode: nextMode,
       selectedDistrict: nextMode === "TELANGANA" ? state.selectedDistrict : null,
+      selectedState: nextMode === "INDIA" ? state.selectedState : null,
+      flyToTarget: { ...cam, nonce: Date.now() + Math.random() },
     }));
   },
 
@@ -212,7 +255,11 @@ export const useAppStore = create<AppState>((set) => ({
 
   setActiveTelanganaTab: (tab) => set({ activeTelanganaTab: tab }),
   setSelectedDistrict: (district) => set({ selectedDistrict: district }),
+  setSelectedState: (selectedState) => set({ selectedState }),
   setSelectedPlace: (place) => set({ selectedPlace: place }),
+  setCursorCoords: (cursorCoords) => set({ cursorCoords }),
+  flyTo: (target) => set({ flyToTarget: { ...target, nonce: Date.now() + Math.random() } }),
+  setSceneDimension: (sceneDimension) => set({ sceneDimension }),
   setSearchQuery: (q) => set({ searchQuery: q }),
   togglePanel: (panel) =>
     set((state) => {
@@ -221,4 +268,6 @@ export const useAppStore = create<AppState>((set) => ({
       return { bottomPanelOpen: !state.bottomPanelOpen };
     }),
   setBasemapStatus: (basemapStatus) => set({ basemapStatus }),
+  setCoverageStatus: (partial) =>
+    set((state) => ({ coverageStatus: { ...state.coverageStatus, ...partial } })),
 }));

@@ -32,7 +32,7 @@ export function LeftPanel() {
   return (
     <aside
       aria-label="Data Layers Panel"
-      className="pointer-events-auto z-20 flex h-full w-72 shrink-0 flex-col border-r border-ts-border bg-ts-panel/95 backdrop-blur-md transition-all duration-300"
+      className="pointer-events-auto absolute inset-y-0 left-0 z-20 flex h-full w-72 shrink-0 flex-col border-r border-ts-border bg-ts-panel/95 backdrop-blur-md transition-all duration-300 md:static"
     >
       <div className="flex items-center justify-between border-b border-ts-border px-3.5 py-2.5">
         <div className="flex items-center gap-2">

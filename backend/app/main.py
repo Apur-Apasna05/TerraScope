@@ -4,8 +4,9 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.geo import router as geo_router
 from app.api.health import router as health_router
-from app.api.telangana_stub import router as telangana_stub_router
+from app.api.telangana import router as telangana_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -32,7 +33,8 @@ def create_app() -> FastAPI:
     )
 
     application.include_router(health_router)
-    application.include_router(telangana_stub_router)
+    application.include_router(geo_router)
+    application.include_router(telangana_router)
     return application
 
 

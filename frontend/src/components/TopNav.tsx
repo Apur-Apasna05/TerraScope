@@ -1,7 +1,10 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { Bell, Globe2, Map, Radar, Search, ShieldCheck, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bell, Globe2, Map, MapPin, Radar, Search, ShieldCheck, User } from "lucide-react";
+import { searchPlaces } from "../services/geoApi";
+import { fetchTelanganaAlerts } from "../services/telanganaApi";
 import { useAppStore } from "../store/useAppStore";
-import type { AppMode, HealthResponse } from "../types/terrascope";
+import type { AppMode, HealthResponse, SearchResult } from "../types/terrascope";
 
 interface TopNavProps {
   health?: HealthResponse;
@@ -23,6 +26,68 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
   const setSearchQuery = useAppStore((s) => s.setSearchQuery);
   const basemapStatus = useAppStore((s) => s.basemapStatus);
   const setActiveTelanganaTab = useAppStore((s) => s.setActiveTelanganaTab);
+  const setSelectedPlace = useAppStore((s) => s.setSelectedPlace);
+  const setSelectedDistrict = useAppStore((s) => s.setSelectedDistrict);
+  const flyTo = useAppStore((s) => s.flyTo);
+
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim());
+    }, 280);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const searchQ = useQuery({
+    queryKey: ["geo-search", mode, debouncedQuery],
+    queryFn: ({ signal }) => searchPlaces(debouncedQuery, mode, signal),
+    enabled: debouncedQuery.length >= 2,
+    staleTime: 60_000,
+  });
+
+  const alertsBadgeQ = useQuery({
+    queryKey: ["telangana", "alerts", "badge"],
+    queryFn: ({ signal }) => fetchTelanganaAlerts(mode, {}, signal),
+    enabled: mode === "TELANGANA",
+    staleTime: 60_000,
+  });
+  const unreadAlerts = mode === "TELANGANA" ? (alertsBadgeQ.data?.data.unread_live_count ?? 0) : 0;
+
+  const handleSelectResult = (item: SearchResult) => {
+    setDropdownOpen(false);
+    setSearchQuery(item.name);
+    setSelectedPlace({
+      name: item.name,
+      lat: item.lat,
+      lon: item.lon,
+      region: item.region,
+      placeType: item.place_type,
+    });
+    if (mode === "TELANGANA" && item.place_type === "Telangana District") {
+      setSelectedDistrict(item.name.split(",")[0].trim());
+    }
+    flyTo({
+      lat: item.lat,
+      lon: item.lon,
+      heightM: item.zoom_height_m,
+      pitchDeg: -65,
+    });
+  };
 
   const searchPlaceholder =
     mode === "TELANGANA"
@@ -30,6 +95,8 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
       : mode === "INDIA"
         ? "Search Indian states, cities, districts..."
         : "Search countries, cities, landmarks, lat/lon...";
+
+  const results = searchQ.data?.results ?? [];
 
   return (
     <header className="z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-ts-border bg-ts-surface/95 px-4 backdrop-blur-md">
@@ -74,17 +141,29 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
         </nav>
       </div>
 
-      {/* Location Search Shell (Phase 4 wires Google Geocoding/Places) */}
-      <div className="hidden max-w-md flex-1 md:block">
+      {/* Location Search with Autocomplete */}
+      <div className="relative hidden max-w-md flex-1 md:block">
         <label className="relative flex items-center">
           <Search
             className="pointer-events-none absolute left-3 h-3.5 w-3.5 text-slate-400"
             aria-hidden="true"
           />
           <input
+            ref={inputRef}
             type="search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setDropdownOpen(true)}
+            onBlur={() => window.setTimeout(() => setDropdownOpen(false), 180)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setDropdownOpen(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && results.length > 0) {
+                e.preventDefault();
+                handleSelectResult(results[0]);
+              }
+            }}
             placeholder={searchPlaceholder}
             aria-label="Location search"
             className="w-full rounded-lg border border-ts-border bg-ts-bg/90 py-1.5 pl-9 pr-14 text-xs text-slate-100 placeholder:text-slate-500 focus:border-ts-cyan focus:outline-none focus:ring-1 focus:ring-ts-cyan/40"
@@ -93,6 +172,38 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
             Ctrl+K
           </span>
         </label>
+
+        {dropdownOpen && debouncedQuery.length >= 2 && (
+          <div
+            role="listbox"
+            className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 overflow-y-auto rounded-xl border border-ts-border bg-ts-panel/95 p-1 shadow-2xl backdrop-blur-md"
+          >
+            {searchQ.isLoading && (
+              <div className="px-3 py-2 text-xs text-slate-400">Searching places...</div>
+            )}
+            {!searchQ.isLoading && results.length === 0 && (
+              <div className="px-3 py-2 text-xs text-slate-400">
+                No matching places found in {mode} scope.
+              </div>
+            )}
+            {results.map((item) => (
+              <button
+                key={`${item.name}-${item.lat}-${item.lon}`}
+                type="button"
+                onMouseDown={() => handleSelectResult(item)}
+                className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-xs text-slate-100 transition hover:bg-ts-elevated"
+              >
+                <span className="flex items-center gap-2 truncate">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 text-ts-cyan" aria-hidden="true" />
+                  <span className="truncate">{item.name}</span>
+                </span>
+                <span className="shrink-0 rounded border border-ts-border bg-ts-bg px-1.5 py-0.5 text-[10px] uppercase text-slate-400">
+                  {item.place_type}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Right Status, Notifications, Profile */}
@@ -111,12 +222,12 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
             }`}
           />
           <ShieldCheck className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
-          <span className="text-slate-200">
+          <span className="max-w-44 truncate text-slate-200">
             {healthError
               ? "API Offline"
               : healthLoading
                 ? "Checking API..."
-                : `${health?.service ?? "TerraScope"} API OK`}
+                : `${health?.service ?? "TerraScope"} · ${basemapStatus}`}
           </span>
         </div>
 
@@ -137,7 +248,7 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
         >
           <Bell className="h-4 w-4" aria-hidden="true" />
           <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-700 px-1 text-[10px] font-bold text-slate-200">
-            0
+            {unreadAlerts}
           </span>
         </button>
 

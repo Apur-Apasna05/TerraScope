@@ -123,3 +123,47 @@ export interface IndiaDataset {
   resolution: string;
   purpose: string;
 }
+
+export interface FlightTrack {
+  icao24: string;
+  callsign: string;
+  origin_country: string;
+  lat: number;
+  lon: number;
+  altitude_m: number | null;
+  speed_mps: number | null;
+  heading_deg: number | null;
+  vertical_rate_mps: number | null;
+  on_ground: boolean;
+  position_age_s: number | null;
+  aircraft_type?: string | null;
+  trail: number[][];
+}
+
+export interface FlightsPayload {
+  flights: FlightTrack[];
+  count: number;
+  provider: string;
+  bbox: number[];
+  notice: string;
+  rate_limited: boolean;
+  retry_after_seconds: number;
+  cached: boolean;
+  status_message?: string | null;
+}
+
+export interface FlightFilters {
+  callsign: string;
+  minAltM: number | null;
+  onGroundOnly: boolean | null;
+}
+
+export interface FlightRuntimeStatus {
+  count: number;
+  provider: string;
+  notice: string;
+  rateLimited: boolean;
+  retryAfterSeconds: number;
+  available: boolean;
+  statusMessage?: string | null;
+}

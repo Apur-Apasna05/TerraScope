@@ -4,6 +4,9 @@ import type {
   AppMode,
   CameraTarget,
   CoverageStatus,
+  FlightFilters,
+  FlightRuntimeStatus,
+  FlightTrack,
   LayerConfig,
   TelanganaTab,
 } from "../types/terrascope";
@@ -165,6 +168,10 @@ interface AppState {
   bottomPanelOpen: boolean;
   basemapStatus: string;
   coverageStatus: CoverageStatus;
+  flightsEnabled: boolean;
+  selectedFlight: FlightTrack | null;
+  flightFilters: FlightFilters;
+  flightStatus: FlightRuntimeStatus;
   setMode: (nextMode: AppMode, queryClient?: QueryClient) => void;
   toggleLayer: (layerId: string) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
@@ -181,6 +188,11 @@ interface AppState {
   togglePanel: (panel: "left" | "right" | "bottom") => void;
   setBasemapStatus: (status: string) => void;
   setCoverageStatus: (status: Partial<CoverageStatus>) => void;
+  toggleFlights: () => void;
+  setFlightsEnabled: (enabled: boolean) => void;
+  setSelectedFlight: (flight: FlightTrack | null) => void;
+  setFlightFilters: (filters: Partial<FlightFilters>) => void;
+  setFlightStatus: (status: Partial<FlightRuntimeStatus>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -205,6 +217,22 @@ export const useAppStore = create<AppState>((set) => ({
     streetView: "unknown",
     streetViewCaptureDate: null,
     providerLabel: "ArcGIS World Imagery (initializing...)",
+  },
+  flightsEnabled: true,
+  selectedFlight: null,
+  flightFilters: {
+    callsign: "",
+    minAltM: null,
+    onGroundOnly: null,
+  },
+  flightStatus: {
+    count: 0,
+    provider: "OpenSky / Community ADS-B",
+    notice: "Community ADS-B data, coverage varies, not every flight is shown.",
+    rateLimited: false,
+    retryAfterSeconds: 0,
+    available: true,
+    statusMessage: null,
   },
 
   setMode: (nextMode, queryClient) => {
@@ -274,4 +302,19 @@ export const useAppStore = create<AppState>((set) => ({
   setBasemapStatus: (basemapStatus) => set({ basemapStatus }),
   setCoverageStatus: (partial) =>
     set((state) => ({ coverageStatus: { ...state.coverageStatus, ...partial } })),
+  toggleFlights: () =>
+    set((state) => ({
+      flightsEnabled: !state.flightsEnabled,
+      selectedFlight: !state.flightsEnabled ? state.selectedFlight : null,
+    })),
+  setFlightsEnabled: (flightsEnabled) =>
+    set((state) => ({
+      flightsEnabled,
+      selectedFlight: flightsEnabled ? state.selectedFlight : null,
+    })),
+  setSelectedFlight: (selectedFlight) => set({ selectedFlight }),
+  setFlightFilters: (partial) =>
+    set((state) => ({ flightFilters: { ...state.flightFilters, ...partial } })),
+  setFlightStatus: (partial) =>
+    set((state) => ({ flightStatus: { ...state.flightStatus, ...partial } })),
 }));

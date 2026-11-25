@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     google_maps_server_key: str = Field(default="")
     nasa_firms_api_key: str = Field(default="")
     cesium_ion_token: str = Field(default="")
+    opensky_client_id: str = Field(default="")
+    opensky_client_secret: str = Field(default="")
+    weather_api_key: str = Field(default="")
+    flight_default_provider: str = Field(default="opensky")
 
     @property
     def cors_origin_list(self) -> list[str]:

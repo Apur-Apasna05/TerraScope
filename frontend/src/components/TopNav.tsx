@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, Globe2, Map, MapPin, Radar, Search, User } from "lucide-react";
+import { Bell, Globe2, Map, MapPin, Plane, Radar, Search, User } from "lucide-react";
 import { searchPlaces } from "../services/geoApi";
 import { fetchTelanganaAlerts } from "../services/telanganaApi";
 import { useAppStore } from "../store/useAppStore";
@@ -25,6 +25,9 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
   const searchQuery = useAppStore((s) => s.searchQuery);
   const setSearchQuery = useAppStore((s) => s.setSearchQuery);
   const basemapStatus = useAppStore((s) => s.basemapStatus);
+  const flightsEnabled = useAppStore((s) => s.flightsEnabled);
+  const flightStatus = useAppStore((s) => s.flightStatus);
+  const toggleFlights = useAppStore((s) => s.toggleFlights);
   const setActiveTelanganaTab = useAppStore((s) => s.setActiveTelanganaTab);
   const setSelectedPlace = useAppStore((s) => s.setSelectedPlace);
   const setSelectedDistrict = useAppStore((s) => s.setSelectedDistrict);
@@ -214,8 +217,29 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
         )}
       </div>
 
-      {/* Right Status, Live Clock, Notifications, Profile */}
-      <div className="flex items-center gap-2.5">
+      {/* Right Flights Toggle, Status, Live Clock, Notifications, Profile */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={toggleFlights}
+          aria-pressed={flightsEnabled}
+          data-testid="toggle-flights-btn"
+          title={`${flightStatus.notice} (${flightStatus.provider})`}
+          className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
+            flightsEnabled
+              ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.2)]"
+              : "border-cyan-500/20 bg-[#0B162C]/90 text-slate-400 hover:text-white"
+          }`}
+        >
+          <Plane className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="hidden sm:inline">Flights</span>
+          {flightsEnabled && (
+            <span className="rounded-full bg-cyan-500/25 px-1.5 py-0.2 font-mono text-[10px] text-cyan-100">
+              {flightStatus.count}
+            </span>
+          )}
+        </button>
+
         <div
           className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-[#0B162C]/90 px-3 py-1 text-[11px] lg:flex"
           title={`${health?.service ?? "TerraScope"} · ${basemapStatus}`}

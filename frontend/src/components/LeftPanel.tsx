@@ -10,6 +10,7 @@ import {
   Layers,
   Layers3,
   Map as MapIcon,
+  Plane,
   RotateCcw,
   Satellite,
   ShieldAlert,
@@ -38,6 +39,11 @@ export function LeftPanel() {
   const layers = useAppStore((s) => s.layersByMode[s.mode]);
   const leftPanelOpen = useAppStore((s) => s.leftPanelOpen);
   const coverageStatus = useAppStore((s) => s.coverageStatus);
+  const flightsEnabled = useAppStore((s) => s.flightsEnabled);
+  const flightFilters = useAppStore((s) => s.flightFilters);
+  const flightStatus = useAppStore((s) => s.flightStatus);
+  const toggleFlights = useAppStore((s) => s.toggleFlights);
+  const setFlightFilters = useAppStore((s) => s.setFlightFilters);
   const togglePanel = useAppStore((s) => s.togglePanel);
   const toggleLayer = useAppStore((s) => s.toggleLayer);
   const setLayerOpacity = useAppStore((s) => s.setLayerOpacity);
@@ -195,6 +201,93 @@ export function LeftPanel() {
             </div>
           );
         })}
+
+        {/* Worldwide Live Flights Card (Exploration Layer — Active in All Modes) */}
+        <div className="rounded-xl border border-cyan-500/15 bg-[#0F1B33]/85 px-2.5 py-2 transition hover:border-cyan-400/35">
+          <div className="flex items-center justify-between gap-2">
+            <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-xs">
+              <Plane
+                className={`h-3.5 w-3.5 shrink-0 ${flightsEnabled ? "text-cyan-300" : "text-slate-500"}`}
+                aria-hidden="true"
+              />
+              <span className="truncate font-medium text-slate-100">
+                Live Flights (Global ADS-B)
+              </span>
+              <input
+                type="checkbox"
+                checked={flightsEnabled}
+                onChange={toggleFlights}
+                className="sr-only"
+              />
+              <span
+                aria-hidden="true"
+                className={`ml-auto inline-flex h-4 w-8 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+                  flightsEnabled
+                    ? "bg-sky-500 shadow-[0_0_8px_rgba(56,189,248,0.45)]"
+                    : "bg-slate-700"
+                }`}
+              >
+                <span
+                  className={`h-3 w-3 rounded-full bg-white transition-transform ${
+                    flightsEnabled ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </span>
+            </label>
+          </div>
+
+          {flightsEnabled && (
+            <div className="mt-2 space-y-1.5 border-t border-ts-border/60 pt-2 text-[10px]">
+              <input
+                type="search"
+                value={flightFilters.callsign}
+                onChange={(e) => setFlightFilters({ callsign: e.target.value })}
+                placeholder="Filter callsign / ICAO24..."
+                aria-label="Filter flights by callsign"
+                className="w-full rounded border border-ts-border bg-ts-bg px-2 py-1 text-[11px] text-slate-100 placeholder:text-slate-500 focus:border-ts-cyan focus:outline-none"
+              />
+              <div className="flex flex-wrap gap-1">
+                {[
+                  { label: "All", minAltM: null, onGroundOnly: null },
+                  { label: "Cruise ≥8km", minAltM: 8000, onGroundOnly: false },
+                  { label: "Airborne", minAltM: null, onGroundOnly: false },
+                  { label: "Ground", minAltM: null, onGroundOnly: true },
+                ].map((preset) => {
+                  const active =
+                    flightFilters.minAltM === preset.minAltM &&
+                    flightFilters.onGroundOnly === preset.onGroundOnly;
+                  return (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() =>
+                        setFlightFilters({
+                          minAltM: preset.minAltM,
+                          onGroundOnly: preset.onGroundOnly,
+                        })
+                      }
+                      className={`rounded px-1.5 py-0.5 font-medium transition ${
+                        active
+                          ? "bg-cyan-500/25 text-cyan-200 border border-cyan-400/40"
+                          : "bg-ts-bg text-slate-400 hover:text-white border border-ts-border"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="leading-snug text-slate-400">{flightStatus.notice}</p>
+              {(!flightStatus.available || flightStatus.rateLimited) && (
+                <p className="rounded border border-amber-500/35 bg-amber-500/10 px-1.5 py-1 text-amber-300">
+                  {flightStatus.rateLimited
+                    ? `ADS-B feed rate limited (retry ~${flightStatus.retryAfterSeconds}s).`
+                    : (flightStatus.statusMessage ?? "ADS-B feed temporarily unavailable.")}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Lower Left Card (Honest Scope / Observed Telangana Events) */}

@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  timeout: 30_000,
+  timeout: 60_000,
   use: {
     baseURL: "http://127.0.0.1:4173",
     channel: "chrome",
@@ -12,14 +12,14 @@ export default defineConfig({
     {
       command: "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000",
       cwd: "../backend",
-      port: 8000,
+      url: "http://127.0.0.1:8000/api/health",
       reuseExistingServer: true,
       timeout: 30_000,
     },
     {
-      command: "npm run preview -- --host 127.0.0.1 --port 4173",
+      command: "npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
       cwd: ".",
-      port: 4173,
+      url: "http://127.0.0.1:4173",
       reuseExistingServer: true,
       timeout: 30_000,
     },

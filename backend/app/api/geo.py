@@ -316,6 +316,15 @@ async def check_street_view_status(
         )
 
     sv_status = str(payload.get("status", "UNKNOWN"))
+    if sv_status in {"REQUEST_DENIED", "OVER_QUERY_LIMIT"}:
+        err_msg = str(payload.get("error_message") or "Enable Street View Static API / check key restrictions.")
+        return StreetViewStatusResponse(
+            available=False,
+            status=sv_status,
+            lat=lat,
+            lon=lon,
+            reason=f"Google Street View metadata API returned {sv_status}: {err_msg}",
+        )
     if sv_status != "OK":
         return StreetViewStatusResponse(
             available=False,

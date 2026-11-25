@@ -30,6 +30,8 @@ export function BottomPanel({ health }: BottomPanelProps) {
   const bottomPanelOpen = useAppStore((s) => s.bottomPanelOpen);
   const togglePanel = useAppStore((s) => s.togglePanel);
   const basemapStatus = useAppStore((s) => s.basemapStatus);
+  const flightsEnabled = useAppStore((s) => s.flightsEnabled);
+  const flightStatus = useAppStore((s) => s.flightStatus);
 
   const riskQ = useQuery({
     queryKey: ["telangana", "risk", null],
@@ -167,6 +169,14 @@ export function BottomPanel({ health }: BottomPanelProps) {
                   {health?.capabilities.google_server_key_configured
                     ? "Configured"
                     : "Fallback Active"}
+                </span>
+                <span className="px-3">
+                  <strong className="text-slate-100">Flights:</strong>{" "}
+                  {flightsEnabled
+                    ? flightStatus.available
+                      ? `${flightStatus.count} tracks (${flightStatus.provider})`
+                      : "ADS-B Unavailable"
+                    : "Paused"}
                 </span>
                 <span className="pl-3">
                   <strong className="text-slate-100">Cesium ion:</strong>{" "}

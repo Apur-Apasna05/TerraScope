@@ -24,6 +24,7 @@ Thresholds defined in `config/terrascope.yaml`:
 | **Open-Meteo / ERA5-Land** | Telangana mode | Open-Meteo / ECMWF C3S (Open) | District centroids (`0.10°` reanalysis / forecast) | Historical Sept 2024 archive tagged `historical` |
 | **OSM Critical Infrastructure** | Telangana mode | OpenStreetMap Overpass API (ODbL) | 3,649 mapped nodes (2,655 hospitals, 857 schools, 137 towns/cities) | Coverage varies across rural mandals |
 | **Sentinel-1 / NRSC Benchmark** | Telangana Audit | ESA Copernicus / ISRO NRSC (`2024/FL/TS/03/01092024`) | 30 m (`EPSG:32644`) synthetic benchmark grid | Live SAR unavailable; benchmark gated as simulation |
+| **Live Global Flights** | All modes (exploration only) | OpenSky Network REST OAuth2 (default) + `adsb.lol` non-commercial fallback | Visible viewport bounding box (18s shared 2° tile cache) | Non-commercial/research use per OpenSky terms; coverage varies, not all flights shown; never feeds disaster models |
 
 ---
 

@@ -3,6 +3,7 @@ import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { ArrowUpDown, Compass, Layers3, Minus, Plus, RotateCcw } from "lucide-react";
 import { initializeBasemapWithFallback } from "../../services/basemapFallback";
+import { fetchLiveFlights } from "../../services/flightsApi";
 import { fetchCountryBoundaries, fetchIndiaStateBoundaries } from "../../services/geoApi";
 import {
   fetchTelanganaDistricts,
@@ -11,13 +12,14 @@ import {
   fetchTelanganaRisk,
 } from "../../services/telanganaApi";
 import { MODE_CAMERA_TARGETS, useAppStore } from "../../store/useAppStore";
-import type { SeverityTier } from "../../types/terrascope";
+import type { FlightTrack, SeverityTier } from "../../types/terrascope";
 import {
   createBoundaryLayer,
   findGeoJsonFeatureAtPoint,
   type BoundaryLayerHandle,
   type GeoJsonCollection,
 } from "./borderRenderer";
+import { computeVisibleFlightBbox, syncFlightsLayer } from "./flightLayer";
 
 function hasWebGLSupport(): boolean {
   if (typeof window === "undefined" || !("WebGLRenderingContext" in window)) {
@@ -52,12 +54,18 @@ export function CesiumGlobe() {
   const telanganaFireWedgesRef = useRef<Cesium.Primitive | null>(null);
   const telanganaFiresDsRef = useRef<Cesium.CustomDataSource | null>(null);
   const telanganaExposureDsRef = useRef<Cesium.CustomDataSource | null>(null);
+  const flightsDsRef = useRef<Cesium.CustomDataSource | null>(null);
+  const flightTrailRef = useRef<Cesium.PolylineCollection | null>(null);
+  const lastFlightsRef = useRef<FlightTrack[]>([]);
 
   const [webglAvailable] = useState<boolean>(() => hasWebGLSupport());
 
   const mode = useAppStore((s) => s.mode);
   const layers = useAppStore((s) => s.layersByMode[s.mode]);
   const selectedDistrict = useAppStore((s) => s.selectedDistrict);
+  const flightsEnabled = useAppStore((s) => s.flightsEnabled);
+  const selectedFlight = useAppStore((s) => s.selectedFlight);
+  const flightFilters = useAppStore((s) => s.flightFilters);
   const cursorCoords = useAppStore((s) => s.cursorCoords);
   const flyToTarget = useAppStore((s) => s.flyToTarget);
   const sceneDimension = useAppStore((s) => s.sceneDimension);
@@ -66,6 +74,8 @@ export function CesiumGlobe() {
   const setSelectedPlace = useAppStore((s) => s.setSelectedPlace);
   const setSelectedState = useAppStore((s) => s.setSelectedState);
   const setSelectedDistrict = useAppStore((s) => s.setSelectedDistrict);
+  const setSelectedFlight = useAppStore((s) => s.setSelectedFlight);
+  const setFlightStatus = useAppStore((s) => s.setFlightStatus);
   const setBasemapStatus = useAppStore((s) => s.setBasemapStatus);
   const setCoverageStatus = useAppStore((s) => s.setCoverageStatus);
   const setSceneDimension = useAppStore((s) => s.setSceneDimension);
@@ -158,6 +168,18 @@ export function CesiumGlobe() {
     handler.setInputAction((click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
       if (viewer.isDestroyed()) return;
 
+      const picked = viewer.scene.pick(click.position) as { id?: Cesium.Entity } | undefined;
+      const pickedEntity = picked?.id;
+      if (pickedEntity?.properties?.hasProperty("flightData")) {
+        const flightData = pickedEntity.properties.getValue(Cesium.JulianDate.now())?.flightData as
+          FlightTrack | undefined;
+        if (flightData) {
+          setSelectedFlight(flightData);
+          return;
+        }
+      }
+      setSelectedFlight(null);
+
       const activeMode = useAppStore.getState().mode;
       const cartesian = viewer.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid);
       if (!cartesian) return;
@@ -233,6 +255,8 @@ export function CesiumGlobe() {
       telanganaFireWedgesRef.current = null;
       telanganaFiresDsRef.current = null;
       telanganaExposureDsRef.current = null;
+      flightsDsRef.current = null;
+      flightTrailRef.current = null;
     };
   }, [
     webglAvailable,
@@ -243,6 +267,7 @@ export function CesiumGlobe() {
     setSelectedPlace,
     setSelectedState,
     setSelectedDistrict,
+    setSelectedFlight,
   ]);
 
   const countryVisible = layers.find((l) => l.id === "country-boundaries")?.visible ?? false;
@@ -521,6 +546,85 @@ export function CesiumGlobe() {
     tgFireOpacity,
     tgExpVisible,
   ]);
+
+  // Global live flights tracker (active in GLOBAL, INDIA, and TELANGANA exploration modes)
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed()) return;
+
+    if (!flightsEnabled) {
+      if (flightsDsRef.current) {
+        viewer.dataSources.remove(flightsDsRef.current, true);
+        flightsDsRef.current = null;
+      }
+      if (flightTrailRef.current) {
+        viewer.scene.primitives.remove(flightTrailRef.current);
+        flightTrailRef.current = null;
+      }
+      lastFlightsRef.current = [];
+      setFlightStatus({ count: 0, available: true, rateLimited: false, statusMessage: null });
+      return;
+    }
+
+    let cancelled = false;
+    let activeController: AbortController | null = null;
+    let moveTimer: number | null = null;
+
+    const refreshFlights = () => {
+      if (cancelled || viewer.isDestroyed()) return;
+      activeController?.abort();
+      const ctrl = new AbortController();
+      activeController = ctrl;
+      const bbox = computeVisibleFlightBbox(viewer);
+
+      void fetchLiveFlights(mode, bbox, flightFilters, ctrl.signal)
+        .then((env) => {
+          if (cancelled || ctrl.signal.aborted || viewer.isDestroyed()) return;
+          lastFlightsRef.current = env.data.flights;
+          const activeSel = useAppStore.getState().selectedFlight;
+          const updatedSel = activeSel
+            ? (env.data.flights.find((f) => f.icao24 === activeSel.icao24) ?? activeSel)
+            : null;
+          if (activeSel && updatedSel && updatedSel !== activeSel) {
+            setSelectedFlight(updatedSel);
+          }
+          syncFlightsLayer(viewer, flightsDsRef, flightTrailRef, env.data.flights, updatedSel);
+          setFlightStatus({
+            count: env.data.count,
+            provider: env.data.provider,
+            notice: env.data.notice,
+            rateLimited: env.data.rate_limited,
+            retryAfterSeconds: env.data.retry_after_seconds,
+            available: env.meta.available,
+            statusMessage: env.data.status_message ?? env.meta.unavailable_reason ?? null,
+          });
+        })
+        .catch(() => {});
+    };
+
+    const initTimer = window.setTimeout(refreshFlights, 250);
+    const pollInterval = window.setInterval(refreshFlights, 20_000);
+    const removeMoveEnd = viewer.camera.moveEnd.addEventListener(() => {
+      if (moveTimer !== null) window.clearTimeout(moveTimer);
+      moveTimer = window.setTimeout(refreshFlights, 550);
+    });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(initTimer);
+      window.clearInterval(pollInterval);
+      if (moveTimer !== null) window.clearTimeout(moveTimer);
+      removeMoveEnd();
+      activeController?.abort();
+    };
+  }, [mode, flightsEnabled, flightFilters, setFlightStatus, setSelectedFlight]);
+
+  // Re-render flight trail highlight immediately when selectedFlight changes
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed() || !flightsEnabled) return;
+    syncFlightsLayer(viewer, flightsDsRef, flightTrailRef, lastFlightsRef.current, selectedFlight);
+  }, [selectedFlight, flightsEnabled]);
 
   // Smooth camera flights on mode or search changes
   useEffect(() => {

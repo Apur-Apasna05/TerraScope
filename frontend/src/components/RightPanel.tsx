@@ -1,8 +1,9 @@
 import { Suspense, lazy, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Camera, ChevronLeft, ChevronRight, Compass, MapPin, Radar } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Compass, MapPin, Plane, Radar, X } from "lucide-react";
 import { StreetViewModal } from "../features/globe/StreetViewModal";
 import { checkStreetViewStatus, fetchIndiaDatasets } from "../services/geoApi";
+import { getBrowserGoogleKey, loadGoogleMapsStreetView } from "../services/streetViewLoader";
 import { fetchTelanganaDistricts } from "../services/telanganaApi";
 import { useAppStore } from "../store/useAppStore";
 import type { TelanganaTab } from "../types/terrascope";
@@ -60,6 +61,10 @@ export function RightPanel() {
   const rightPanelOpen = useAppStore((s) => s.rightPanelOpen);
   const togglePanel = useAppStore((s) => s.togglePanel);
   const selectedPlace = useAppStore((s) => s.selectedPlace);
+  const setSelectedPlace = useAppStore((s) => s.setSelectedPlace);
+  const selectedFlight = useAppStore((s) => s.selectedFlight);
+  const setSelectedFlight = useAppStore((s) => s.setSelectedFlight);
+  const flightStatus = useAppStore((s) => s.flightStatus);
   const selectedState = useAppStore((s) => s.selectedState);
   const selectedDistrict = useAppStore((s) => s.selectedDistrict);
   const setSelectedDistrict = useAppStore((s) => s.setSelectedDistrict);
@@ -76,6 +81,43 @@ export function RightPanel() {
       checkStreetViewStatus(selectedPlace!.lat, selectedPlace!.lon, mode, signal),
     enabled: Boolean(selectedPlace),
     staleTime: 60_000,
+  });
+
+  // Fallback browser-side StreetViewService probe if server metadata API returned REQUEST_DENIED
+  const browserSvQuery = useQuery({
+    queryKey: ["streetview-browser-check", selectedPlace?.lat, selectedPlace?.lon],
+    queryFn: async () => {
+      const maps = await loadGoogleMapsStreetView();
+      return await new Promise<{
+        available: boolean;
+        capture_date: string | null;
+        reason?: string;
+      }>((resolve) => {
+        const svc = new maps.StreetViewService();
+        svc.getPanorama(
+          { location: { lat: selectedPlace!.lat, lng: selectedPlace!.lon }, radius: 150 },
+          (data, status) => {
+            if (status === "OK") {
+              resolve({ available: true, capture_date: data?.imageDate ?? null });
+            } else {
+              resolve({
+                available: false,
+                capture_date: null,
+                reason: `Browser StreetViewService returned ${status}.`,
+              });
+            }
+          },
+        );
+      });
+    },
+    enabled:
+      Boolean(selectedPlace) &&
+      Boolean(getBrowserGoogleKey()) &&
+      svQuery.isSuccess &&
+      !svQuery.data.available &&
+      svQuery.data.status === "REQUEST_DENIED",
+    staleTime: 60_000,
+    retry: false,
   });
 
   const indiaDatasetsQuery = useQuery({
@@ -108,7 +150,10 @@ export function RightPanel() {
     );
   }
 
-  const svAvailable = Boolean(svQuery.data?.available);
+  const svAvailable = Boolean(svQuery.data?.available || browserSvQuery.data?.available);
+  const svDate = svQuery.data?.capture_date ?? browserSvQuery.data?.capture_date ?? null;
+  const svReason =
+    browserSvQuery.data?.reason ?? svQuery.data?.reason ?? "Street View not available here.";
   const isTelanganaSelectedInIndia =
     mode === "INDIA" &&
     (selectedState?.toLowerCase() === "telangana" ||
@@ -146,6 +191,89 @@ export function RightPanel() {
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
+
+      {selectedFlight && (
+        <div
+          aria-label="Selected Aircraft Telemetry"
+          className="border-b border-cyan-500/20 bg-[#0D1A34]/95 p-3 text-xs"
+        >
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-400/40 bg-amber-500/15 text-amber-300">
+                <Plane className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <div>
+                <p className="font-mono text-sm font-bold text-amber-200">
+                  {selectedFlight.callsign || selectedFlight.icao24.toUpperCase()}
+                </p>
+                <p className="text-[10px] text-slate-400">
+                  ICAO24: {selectedFlight.icao24} · {selectedFlight.origin_country}
+                  {selectedFlight.aircraft_type ? ` · ${selectedFlight.aircraft_type}` : ""}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedFlight(null)}
+              aria-label="Close aircraft details"
+              className="rounded p-1 text-slate-400 hover:bg-ts-elevated hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="mt-2.5 grid grid-cols-3 gap-1.5 font-mono text-[11px]">
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Altitude</span>
+              <span className="font-semibold text-cyan-300">
+                {selectedFlight.on_ground
+                  ? "Ground"
+                  : selectedFlight.altitude_m != null
+                    ? `${Math.round(selectedFlight.altitude_m)} m`
+                    : "—"}
+              </span>
+            </div>
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Speed</span>
+              <span className="font-semibold text-slate-100">
+                {selectedFlight.speed_mps != null
+                  ? `${Math.round(selectedFlight.speed_mps * 3.6)} km/h`
+                  : "—"}
+              </span>
+            </div>
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Heading</span>
+              <span className="font-semibold text-slate-100">
+                {selectedFlight.heading_deg != null
+                  ? `${Math.round(selectedFlight.heading_deg)}°`
+                  : "—"}
+              </span>
+            </div>
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Vert Rate</span>
+              <span className="font-semibold text-slate-100">
+                {selectedFlight.vertical_rate_mps != null
+                  ? `${selectedFlight.vertical_rate_mps > 0 ? "+" : ""}${selectedFlight.vertical_rate_mps} m/s`
+                  : "—"}
+              </span>
+            </div>
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Pos Age</span>
+              <span className="font-semibold text-slate-100">
+                {selectedFlight.position_age_s != null ? `${selectedFlight.position_age_s}s` : "—"}
+              </span>
+            </div>
+            <div className="rounded border border-ts-border bg-ts-bg/80 p-1.5">
+              <span className="block font-sans text-[9px] uppercase text-slate-400">Trail Pts</span>
+              <span className="font-semibold text-amber-300">{selectedFlight.trail.length}</span>
+            </div>
+          </div>
+
+          <p className="mt-2 text-[10px] text-slate-400">
+            Source: {flightStatus.provider} · {flightStatus.notice}
+          </p>
+        </div>
+      )}
 
       {mode === "GLOBAL" && (
         <div className="flex-1 space-y-3 overflow-y-auto p-3.5 text-xs">
@@ -206,14 +334,52 @@ export function RightPanel() {
                 >
                   {!selectedPlace
                     ? "Select place"
-                    : svQuery.isLoading
+                    : svQuery.isLoading || browserSvQuery.isLoading
                       ? "Checking..."
                       : svAvailable
-                        ? (svQuery.data?.capture_date ?? "Available")
+                        ? (svDate ?? "Available")
                         : "Unavailable"}
                 </p>
               </div>
             </div>
+
+            {!selectedPlace && (
+              <div className="mt-3 border-t border-ts-border pt-2.5">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400">
+                  Quick Street View Check
+                </span>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {[
+                    {
+                      name: "Charminar, Hyderabad",
+                      lat: 17.3616,
+                      lon: 78.4747,
+                      region: "Telangana",
+                    },
+                    { name: "Big Ben, London", lat: 51.5007, lon: -0.1246, region: "England" },
+                    { name: "Tokyo Tower, Japan", lat: 35.6586, lon: 139.7454, region: "Tokyo" },
+                  ].map((preset) => (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => {
+                        setSelectedPlace({
+                          name: preset.name,
+                          lat: preset.lat,
+                          lon: preset.lon,
+                          placeType: "Landmark",
+                          region: preset.region,
+                        });
+                        flyTo({ lat: preset.lat, lon: preset.lon, heightM: 1200, pitchDeg: -45 });
+                      }}
+                      className="rounded-lg border border-cyan-500/20 bg-ts-bg/80 px-2 py-1 text-[10px] text-cyan-200 transition hover:border-cyan-400/50"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {selectedPlace && (
               <div className="mt-3 border-t border-ts-border pt-2.5">
@@ -227,9 +393,7 @@ export function RightPanel() {
                     <span>Look around · Enter Street View</span>
                   </button>
                 ) : (
-                  <p className="text-[11px] text-slate-400">
-                    {svQuery.data?.reason ?? "Street View not available here."}
-                  </p>
+                  <p className="text-[11px] text-amber-300/90">{svReason}</p>
                 )}
               </div>
             )}
@@ -384,7 +548,7 @@ export function RightPanel() {
           lat={selectedPlace.lat}
           lon={selectedPlace.lon}
           placeName={selectedPlace.name}
-          captureDate={svQuery.data?.capture_date}
+          captureDate={svDate}
           copyright={svQuery.data?.copyright}
           onClose={() => setStreetViewOpen(false)}
         />

@@ -84,4 +84,18 @@ describe("TerraScope Mode State Machine & Command-Centre Shell", () => {
       apiRequest("/api/telangana/point-check", { mode: "INDIA", requireTelangana: true }),
     ).rejects.toBeInstanceOf(ModeViolationError);
   });
+
+  it("exposes live flights toggle across all modes with honest ADS-B notice", () => {
+    renderAppShell();
+    const flightsBtn = screen.getByTestId("toggle-flights-btn");
+    expect(flightsBtn).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/Community ADS-B data, coverage varies/i)).toBeInTheDocument();
+
+    fireEvent.click(flightsBtn);
+    expect(flightsBtn).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(screen.getByTestId("mode-btn-india"));
+    fireEvent.click(flightsBtn);
+    expect(flightsBtn).toHaveAttribute("aria-pressed", "true");
+  });
 });

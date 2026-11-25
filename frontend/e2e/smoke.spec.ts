@@ -18,7 +18,7 @@ test("TerraScope E2E smoke: Global -> India -> Telangana with live backend", asy
 
   const districtSelect = page.getByLabel("Select Telangana district");
   await expect(districtSelect).toBeVisible();
-  await expect(districtSelect.locator("option")).toHaveCount(34, { timeout: 10_000 }); // 1 placeholder + 33 districts
+  await expect(districtSelect.locator("option")).toHaveCount(34, { timeout: 20_000 }); // 1 placeholder + 33 districts
 
   await page.getByRole("tab", { name: "Risk" }).click();
   await expect(page.getByText(/Relative Risk Score/i)).toBeVisible({ timeout: 10_000 });

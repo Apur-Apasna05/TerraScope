@@ -74,7 +74,7 @@ export function RightPanel() {
     queryKey: ["streetview-status", selectedPlace?.lat, selectedPlace?.lon],
     queryFn: ({ signal }) =>
       checkStreetViewStatus(selectedPlace!.lat, selectedPlace!.lon, mode, signal),
-    enabled: mode === "GLOBAL" && Boolean(selectedPlace),
+    enabled: Boolean(selectedPlace),
     staleTime: 60_000,
   });
 
@@ -99,7 +99,7 @@ export function RightPanel() {
           type="button"
           onClick={() => togglePanel("right")}
           aria-label="Expand inspector panel"
-          className="flex items-center gap-1.5 rounded-lg border border-ts-border bg-ts-panel/95 px-2.5 py-2 text-xs font-medium text-slate-200 shadow-lg backdrop-blur hover:border-ts-cyan/50"
+          className="flex items-center gap-1.5 rounded-xl border border-cyan-500/25 bg-[#0B1426]/90 px-3 py-2 text-xs font-medium text-slate-200 shadow-lg backdrop-blur-md hover:border-cyan-400/50"
         >
           <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Inspector</span>
@@ -117,9 +117,9 @@ export function RightPanel() {
   return (
     <aside
       aria-label="Context Inspector Panel"
-      className="pointer-events-auto absolute inset-y-0 right-0 z-20 flex h-full w-80 shrink-0 flex-col border-l border-ts-border bg-ts-panel/95 backdrop-blur-md transition-all duration-300 md:static lg:w-96"
+      className="pointer-events-auto absolute inset-y-0 right-0 z-20 flex h-full w-80 shrink-0 flex-col border-l border-cyan-500/15 bg-[#0A1324]/92 backdrop-blur-xl transition-all duration-300 md:static lg:w-[400px]"
     >
-      <div className="flex items-center justify-between border-b border-ts-border px-3.5 py-2.5">
+      <div className="flex items-center justify-between border-b border-cyan-500/15 px-3.5 py-2.5">
         <div className="flex items-center gap-2">
           <Compass className="h-4 w-4 text-ts-cyan" aria-hidden="true" />
           <div>
@@ -149,7 +149,7 @@ export function RightPanel() {
 
       {mode === "GLOBAL" && (
         <div className="flex-1 space-y-3 overflow-y-auto p-3.5 text-xs">
-          <div className="rounded-lg border border-ts-border bg-ts-surface/80 p-3">
+          <div className="rounded-xl border border-cyan-500/15 bg-[#0F1B33]/85 p-3">
             <div className="flex items-center gap-2 font-semibold text-slate-100">
               <MapPin className="h-4 w-4 text-ts-cyan" aria-hidden="true" />
               <span>{selectedPlace?.name ?? "No location selected"}</span>
@@ -165,44 +165,55 @@ export function RightPanel() {
             </p>
           </div>
 
-          <div className="rounded-lg border border-ts-border bg-ts-surface/80 p-3">
+          <div className="rounded-xl border border-cyan-500/15 bg-[#0F1B33]/85 p-3">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300">
               Imagery &amp; Coverage Status
             </h3>
-            <dl className="mt-2 space-y-1.5 text-[11px]">
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Active Provider</dt>
-                <dd className="text-slate-200">{coverageStatus.providerLabel}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Photorealistic 3D Tiles</dt>
-                <dd
-                  className={
-                    coverageStatus.photorealistic3d ? "text-emerald-300" : "text-slate-300"
-                  }
+            <div className="mt-2.5 grid grid-cols-2 gap-2 text-[11px]">
+              <div className="rounded-lg border border-ts-border bg-ts-bg/75 p-2">
+                <span className="text-[10px] uppercase text-slate-400">Active Provider</span>
+                <p
+                  className="mt-0.5 truncate font-medium text-slate-100"
+                  title={coverageStatus.providerLabel}
                 >
-                  {coverageStatus.photorealistic3d ? "Yes" : "No (Fallback active)"}
-                </dd>
+                  {coverageStatus.providerLabel}
+                </p>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Terrain Elevation</dt>
-                <dd className={coverageStatus.terrain ? "text-emerald-300" : "text-slate-300"}>
-                  {coverageStatus.terrain ? "Yes" : "Ellipsoid"}
-                </dd>
+              <div className="rounded-lg border border-ts-border bg-ts-bg/75 p-2">
+                <span className="text-[10px] uppercase text-slate-400">Photorealistic 3D</span>
+                <p
+                  className={`mt-0.5 font-medium ${
+                    coverageStatus.photorealistic3d ? "text-emerald-300" : "text-slate-300"
+                  }`}
+                >
+                  {coverageStatus.photorealistic3d ? "Available" : "Fallback Active"}
+                </p>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-slate-400">Street View Coverage</dt>
-                <dd className={svAvailable ? "text-emerald-300" : "text-slate-300"}>
+              <div className="rounded-lg border border-ts-border bg-ts-bg/75 p-2">
+                <span className="text-[10px] uppercase text-slate-400">Terrain Elevation</span>
+                <p
+                  className={`mt-0.5 font-medium ${
+                    coverageStatus.terrain ? "text-emerald-300" : "text-slate-300"
+                  }`}
+                >
+                  {coverageStatus.terrain ? "World Terrain" : "WGS84 Ellipsoid"}
+                </p>
+              </div>
+              <div className="rounded-lg border border-ts-border bg-ts-bg/75 p-2">
+                <span className="text-[10px] uppercase text-slate-400">Street View</span>
+                <p
+                  className={`mt-0.5 font-medium ${svAvailable ? "text-emerald-300" : "text-slate-300"}`}
+                >
                   {!selectedPlace
-                    ? "Select a place"
+                    ? "Select place"
                     : svQuery.isLoading
                       ? "Checking..."
                       : svAvailable
-                        ? `Yes (${svQuery.data?.capture_date ?? "Captured imagery"})`
-                        : "Not available here"}
-                </dd>
+                        ? (svQuery.data?.capture_date ?? "Available")
+                        : "Unavailable"}
+                </p>
               </div>
-            </dl>
+            </div>
 
             {selectedPlace && (
               <div className="mt-3 border-t border-ts-border pt-2.5">
@@ -210,10 +221,10 @@ export function RightPanel() {
                   <button
                     type="button"
                     onClick={() => setStreetViewOpen(true)}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-ts-blue px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-500"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-xs font-semibold text-white shadow-md transition hover:brightness-110"
                   >
                     <Camera className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Enter Street View</span>
+                    <span>Look around · Enter Street View</span>
                   </button>
                 ) : (
                   <p className="text-[11px] text-slate-400">
@@ -224,7 +235,7 @@ export function RightPanel() {
             )}
           </div>
 
-          <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-[11px] text-slate-300">
+          <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-[11px] text-slate-300">
             Global mode is strictly for planetary exploration, imagery, terrain, 3D buildings, and
             Street View. Disaster analytics operate exclusively inside Telangana mode.
           </div>
@@ -233,11 +244,11 @@ export function RightPanel() {
 
       {mode === "INDIA" && (
         <div className="flex-1 space-y-3 overflow-y-auto p-3.5 text-xs">
-          <div className="rounded-lg border border-ts-border bg-ts-surface/80 p-3">
+          <div className="rounded-xl border border-cyan-500/15 bg-[#0F1B33]/85 p-3">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300">
               {selectedState ? `State: ${selectedState}` : "India State Exploration"}
             </h3>
-            <p className="mt-1.5 text-slate-300">
+            <p className="mt-1.5 text-slate-200">
               {selectedPlace
                 ? `${selectedPlace.name} (${selectedPlace.lat.toFixed(3)}°, ${selectedPlace.lon.toFixed(3)}°)`
                 : "Click any Indian state polygon or search an Indian city/district."}
@@ -247,11 +258,22 @@ export function RightPanel() {
               exclusively inside Telangana.
             </p>
 
+            {selectedPlace && svAvailable && (
+              <button
+                type="button"
+                onClick={() => setStreetViewOpen(true)}
+                className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-500/25"
+              >
+                <Camera className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Look around · Street View</span>
+              </button>
+            )}
+
             {isTelanganaSelectedInIndia && (
               <button
                 type="button"
                 onClick={() => setMode("TELANGANA", queryClient)}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-ts-blue px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-500"
+                className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 px-3 py-2 text-xs font-semibold text-white transition hover:brightness-110"
               >
                 <Radar className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Open in Telangana mode</span>
@@ -259,13 +281,13 @@ export function RightPanel() {
             )}
           </div>
 
-          <div className="rounded-lg border border-ts-border bg-ts-surface/80 p-3">
+          <div className="rounded-xl border border-cyan-500/15 bg-[#0F1B33]/85 p-3">
             <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-200">
               Available Geographic Datasets
             </h3>
             <ul className="mt-2 space-y-2 text-[11px] text-slate-300">
               {(indiaDatasetsQuery.data?.datasets ?? []).map((ds) => (
-                <li key={ds.id} className="rounded border border-ts-border/70 bg-ts-bg/60 p-2">
+                <li key={ds.id} className="rounded-lg border border-ts-border/70 bg-ts-bg/60 p-2">
                   <p className="font-semibold text-slate-100">{ds.name}</p>
                   <p className="text-slate-400">
                     {ds.source} · {ds.resolution}
@@ -279,33 +301,48 @@ export function RightPanel() {
 
       {mode === "TELANGANA" && (
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="border-b border-ts-border bg-ts-surface/60 px-3 py-2">
-            <select
-              aria-label="Select Telangana district"
-              value={selectedDistrict ?? ""}
-              onChange={(e) => {
-                const name = e.target.value || null;
-                setSelectedDistrict(name);
-                const match = districtsQuery.data?.data.districts.find((d) => d.district === name);
-                if (match) {
-                  flyTo({ lat: match.lat, lon: match.lon, heightM: 95_000, pitchDeg: -75 });
-                }
-              }}
-              className="w-full rounded-lg border border-ts-border bg-ts-bg px-2.5 py-1.5 text-xs text-slate-100 focus:border-ts-cyan focus:outline-none"
-            >
-              <option value="">All Telangana (33 districts)</option>
-              {(districtsQuery.data?.data.districts ?? []).map((d) => (
-                <option key={d.district} value={d.district}>
-                  {d.district}
-                </option>
-              ))}
-            </select>
+          <div className="border-b border-cyan-500/15 bg-[#0D182D]/90 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <select
+                aria-label="Select Telangana district"
+                value={selectedDistrict ?? ""}
+                onChange={(e) => {
+                  const name = e.target.value || null;
+                  setSelectedDistrict(name);
+                  const match = districtsQuery.data?.data.districts.find(
+                    (d) => d.district === name,
+                  );
+                  if (match) {
+                    flyTo({ lat: match.lat, lon: match.lon, heightM: 95_000, pitchDeg: -75 });
+                  }
+                }}
+                className="flex-1 rounded-lg border border-cyan-500/20 bg-ts-bg px-2.5 py-1.5 text-xs text-slate-100 focus:border-ts-cyan focus:outline-none"
+              >
+                <option value="">All Telangana (33 districts)</option>
+                {(districtsQuery.data?.data.districts ?? []).map((d) => (
+                  <option key={d.district} value={d.district}>
+                    {d.district}
+                  </option>
+                ))}
+              </select>
+              {selectedPlace && svAvailable && (
+                <button
+                  type="button"
+                  onClick={() => setStreetViewOpen(true)}
+                  title="Look around in Street View"
+                  aria-label="Look around in Street View"
+                  className="rounded-lg border border-cyan-500/30 bg-cyan-500/15 p-1.5 text-cyan-200 hover:bg-cyan-500/25"
+                >
+                  <Camera className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              )}
+            </div>
           </div>
 
           <div
             role="tablist"
             aria-label="Telangana Intelligence Modules"
-            className="flex flex-wrap gap-1 border-b border-ts-border bg-ts-bg/50 px-2.5 py-2"
+            className="flex flex-wrap gap-1 border-b border-cyan-500/15 bg-[#081021]/70 px-2.5 py-2"
           >
             {TELANGANA_TABS.map((tab) => {
               const active = activeTab === tab.id;
@@ -316,9 +353,9 @@ export function RightPanel() {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`rounded px-2 py-1 text-[11px] font-medium transition ${
+                  className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${
                     active
-                      ? "bg-ts-blue text-white"
+                      ? "border border-cyan-400/40 bg-blue-600/90 text-white shadow-sm"
                       : "text-slate-300 hover:bg-ts-elevated hover:text-white"
                   }`}
                 >

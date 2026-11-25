@@ -25,7 +25,9 @@ class Settings(BaseSettings):
 
     app_env: str = Field(default="development")
     log_level: str = Field(default="INFO")
-    cors_origins: str = Field(default="http://localhost:5173,http://127.0.0.1:5173")
+    cors_origins: str = Field(
+        default="http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173"
+    )
     config_path: str = Field(default="config/terrascope.yaml")
     database_url: str = Field(
         default="postgresql+psycopg://terrascope:terrascope_dev_password@localhost:5432/terrascope"

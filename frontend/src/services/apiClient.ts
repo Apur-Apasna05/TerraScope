@@ -1,6 +1,19 @@
 import type { AppMode, HealthResponse } from "../types/terrascope";
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
+function resolveApiBase(): string {
+  const configured = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
+    (window.location.port === "5173" || window.location.port === "4173")
+  ) {
+    // Use Vite's same-origin /api proxy in dev/preview to avoid cross-origin CORS preflight stalls
+    return "";
+  }
+  return configured;
+}
+
+const API_BASE = resolveApiBase();
 
 export class ModeViolationError extends Error {
   constructor(message: string) {

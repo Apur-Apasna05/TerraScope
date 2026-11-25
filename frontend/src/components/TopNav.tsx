@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bell, Globe2, Map, MapPin, Radar, Search, ShieldCheck, User } from "lucide-react";
+import { Bell, Globe2, Map, MapPin, Radar, Search, User } from "lucide-react";
 import { searchPlaces } from "../services/geoApi";
 import { fetchTelanganaAlerts } from "../services/telanganaApi";
 import { useAppStore } from "../store/useAppStore";
@@ -32,7 +32,13 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
 
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [now, setNow] = useState(() => new Date());
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -94,29 +100,31 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
       ? "Search Telangana districts or coordinates..."
       : mode === "INDIA"
         ? "Search Indian states, cities, districts..."
-        : "Search countries, cities, landmarks, lat/lon...";
+        : "Search location, landmark, or coordinates...";
 
   const results = searchQ.data?.results ?? [];
+  const timeLabel = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const dateLabel = now.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
 
   return (
-    <header className="z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-ts-border bg-ts-surface/95 px-4 backdrop-blur-md">
-      {/* Brand + Mode Switch */}
+    <header className="z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-cyan-500/15 bg-[#081021]/95 px-4 shadow-lg backdrop-blur-xl">
+      {/* Brand + Tagline + Mode Switch */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-400/30 bg-cyan-500/10 text-cyan-300 shadow-sm shadow-cyan-500/10">
-            <Globe2 className="h-4 w-4" aria-hidden="true" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-400/40 bg-gradient-to-br from-cyan-500/25 to-blue-600/20 text-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.2)]">
+            <Globe2 className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="leading-tight">
-            <h1 className="text-sm font-bold tracking-wide text-slate-50">TerraScope</h1>
-            <p className="text-[10px] uppercase tracking-widest text-slate-400">
-              {mode === "TELANGANA" ? "Telangana Intelligence" : "Geospatial Explorer"}
+            <h1 className="text-base font-bold tracking-wide text-slate-50">TerraScope</h1>
+            <p className="hidden text-[10px] tracking-wide text-cyan-300/80 sm:block">
+              Observe • Understand • Predict • Safer Tomorrow
             </p>
           </div>
         </div>
 
         <nav
           aria-label="Application Scope Mode"
-          className="flex items-center rounded-lg border border-ts-border bg-ts-bg/80 p-0.5"
+          className="flex items-center rounded-xl border border-cyan-500/20 bg-[#0B162C] p-0.5 shadow-inner"
         >
           {MODES.map(({ id, label, Icon }) => {
             const active = mode === id;
@@ -127,9 +135,9 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
                 onClick={() => setMode(id, queryClient)}
                 aria-pressed={active}
                 data-testid={`mode-btn-${id.toLowerCase()}`}
-                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-300 ${
                   active
-                    ? "bg-ts-blue text-white shadow-sm shadow-blue-500/30"
+                    ? "border border-cyan-400/40 bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-[0_0_14px_rgba(34,211,238,0.3)]"
                     : "text-slate-300 hover:bg-ts-elevated/60 hover:text-white"
                 }`}
               >
@@ -166,7 +174,7 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
             }}
             placeholder={searchPlaceholder}
             aria-label="Location search"
-            className="w-full rounded-lg border border-ts-border bg-ts-bg/90 py-1.5 pl-9 pr-14 text-xs text-slate-100 placeholder:text-slate-500 focus:border-ts-cyan focus:outline-none focus:ring-1 focus:ring-ts-cyan/40"
+            className="w-full rounded-xl border border-cyan-500/20 bg-[#0B162C]/90 py-1.5 pl-9 pr-14 text-xs text-slate-100 placeholder:text-slate-400 focus:border-ts-cyan focus:outline-none focus:ring-1 focus:ring-ts-cyan/40"
           />
           <span className="pointer-events-none absolute right-2.5 rounded border border-ts-border bg-ts-surface px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
             Ctrl+K
@@ -176,7 +184,7 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
         {dropdownOpen && debouncedQuery.length >= 2 && (
           <div
             role="listbox"
-            className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 overflow-y-auto rounded-xl border border-ts-border bg-ts-panel/95 p-1 shadow-2xl backdrop-blur-md"
+            className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-72 overflow-y-auto rounded-xl border border-cyan-500/20 bg-[#0C172E]/95 p-1 shadow-2xl backdrop-blur-md"
           >
             {searchQ.isLoading && (
               <div className="px-3 py-2 text-xs text-slate-400">Searching places...</div>
@@ -206,11 +214,11 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
         )}
       </div>
 
-      {/* Right Status, Notifications, Profile */}
+      {/* Right Status, Live Clock, Notifications, Profile */}
       <div className="flex items-center gap-2.5">
         <div
-          className="hidden items-center gap-1.5 rounded-full border border-ts-border bg-ts-bg/80 px-2.5 py-1 text-[11px] lg:flex"
-          title={basemapStatus}
+          className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-[#0B162C]/90 px-3 py-1 text-[11px] lg:flex"
+          title={`${health?.service ?? "TerraScope"} · ${basemapStatus}`}
         >
           <span
             className={`h-2 w-2 rounded-full ${
@@ -218,17 +226,17 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
                 ? "bg-amber-400"
                 : healthLoading
                   ? "animate-pulse bg-cyan-400"
-                  : "bg-emerald-400"
+                  : "bg-emerald-400 shadow-[0_0_8px_#34d399]"
             }`}
           />
-          <ShieldCheck className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
-          <span className="max-w-44 truncate text-slate-200">
-            {healthError
-              ? "API Offline"
-              : healthLoading
-                ? "Checking API..."
-                : `${health?.service ?? "TerraScope"} · ${basemapStatus}`}
+          <span className="font-semibold tracking-wider text-emerald-300">
+            {healthError ? "OFFLINE" : healthLoading ? "SYNC" : "LIVE"}
           </span>
+        </div>
+
+        <div className="hidden text-right leading-tight xl:block">
+          <p className="font-mono text-xs font-semibold text-slate-100">{timeLabel}</p>
+          <p className="text-[10px] text-slate-400">{dateLabel}</p>
         </div>
 
         <button
@@ -244,17 +252,21 @@ export function TopNav({ health, healthLoading, healthError }: TopNavProps) {
               ? "View Telangana alerts"
               : "Alerts are active only in Telangana mode"
           }
-          className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-ts-border bg-ts-bg/80 text-slate-300 transition hover:border-cyan-400/40 hover:text-white"
+          className="relative flex h-8 w-8 items-center justify-center rounded-full border border-cyan-500/20 bg-[#0B162C] text-slate-300 transition hover:border-cyan-400/50 hover:text-white"
         >
           <Bell className="h-4 w-4" aria-hidden="true" />
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-700 px-1 text-[10px] font-bold text-slate-200">
+          <span
+            className={`absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+              unreadAlerts > 0 ? "bg-rose-500 text-white" : "bg-slate-700 text-slate-200"
+            }`}
+          >
             {unreadAlerts}
           </span>
         </button>
 
         <div
-          className="flex h-8 items-center gap-1.5 rounded-lg border border-ts-border bg-ts-bg/80 px-2.5 text-xs text-slate-300"
-          title="Operator session"
+          className="flex h-8 items-center gap-1.5 rounded-full border border-cyan-500/20 bg-[#0B162C] px-2.5 text-xs text-slate-200"
+          title={`${basemapStatus}`}
         >
           <User className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
           <span className="hidden sm:inline">Analyst</span>

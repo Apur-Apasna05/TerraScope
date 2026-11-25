@@ -3,20 +3,26 @@ import type * as Cesium from "cesium";
 import { initializeBasemapWithFallback } from "./basemapFallback";
 
 vi.mock("cesium", () => ({
+  Credit: class MockCredit {},
+  UrlTemplateImageryProvider: class MockUrlTemplateProvider {
+    errorEvent = { addEventListener: vi.fn() };
+  },
   OpenStreetMapImageryProvider: class MockOsmProvider {},
+  EllipsoidTerrainProvider: class MockEllipsoid {},
   createGooglePhotorealistic3DTileset: vi.fn().mockRejectedValue(new Error("403 Forbidden")),
   createWorldTerrainAsync: vi.fn(),
   createWorldImageryAsync: vi.fn(),
   Ion: { defaultAccessToken: "" },
-  IonWorldImageryStyle: { AERIAL_WITH_LABELS: "AERIAL_WITH_LABELS" },
+  IonWorldImageryStyle: { AERIAL: "AERIAL" },
 }));
 
 function createMockViewer() {
   return {
     isDestroyed: () => false,
     imageryLayers: {
+      length: 1,
       removeAll: vi.fn(),
-      addImageryProvider: vi.fn(),
+      addImageryProvider: vi.fn(() => ({ alpha: 1 })),
     },
     scene: {
       primitives: { add: vi.fn() },
@@ -27,7 +33,7 @@ function createMockViewer() {
 }
 
 describe("initializeBasemapWithFallback", () => {
-  it("falls back to OpenStreetMap ellipsoid when Google & ion keys fail or are missing", async () => {
+  it("falls back to satellite ellipsoid when Google & ion keys fail or are missing", async () => {
     const viewer = createMockViewer();
     const res = await initializeBasemapWithFallback(viewer, {
       googleBrowserKey: "invalid-key",

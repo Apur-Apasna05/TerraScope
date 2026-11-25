@@ -128,7 +128,7 @@ function buildDefaultLayers(): Record<AppMode, LayerConfig[]> {
 }
 
 export const MODE_CAMERA_TARGETS: Record<AppMode, Omit<CameraTarget, "nonce">> = {
-  GLOBAL: { lat: 18.0, lon: 35.0, heightM: 18_500_000, headingDeg: 0, pitchDeg: -90 },
+  GLOBAL: { lat: 16.0, lon: 68.0, heightM: 15_500_000, headingDeg: 0, pitchDeg: -90 },
   INDIA: { lat: 21.5, lon: 78.96, heightM: 4_200_000, headingDeg: 0, pitchDeg: -88 },
   TELANGANA: { lat: 17.85, lon: 79.35, heightM: 620_000, headingDeg: 0, pitchDeg: -85 },
 };
@@ -158,6 +158,7 @@ interface AppState {
   cursorCoords: CursorCoords | null;
   flyToTarget: CameraTarget | null;
   sceneDimension: "3D" | "2D";
+  cameraHeadingDeg: number;
   searchQuery: string;
   leftPanelOpen: boolean;
   rightPanelOpen: boolean;
@@ -175,6 +176,7 @@ interface AppState {
   setCursorCoords: (coords: CursorCoords | null) => void;
   flyTo: (target: Omit<CameraTarget, "nonce">) => void;
   setSceneDimension: (dim: "3D" | "2D") => void;
+  setCameraHeadingDeg: (deg: number) => void;
   setSearchQuery: (q: string) => void;
   togglePanel: (panel: "left" | "right" | "bottom") => void;
   setBasemapStatus: (status: string) => void;
@@ -191,6 +193,7 @@ export const useAppStore = create<AppState>((set) => ({
   cursorCoords: null,
   flyToTarget: null,
   sceneDimension: "3D",
+  cameraHeadingDeg: 0,
   searchQuery: "",
   leftPanelOpen: true,
   rightPanelOpen: true,
@@ -201,7 +204,7 @@ export const useAppStore = create<AppState>((set) => ({
     terrain: false,
     streetView: "unknown",
     streetViewCaptureDate: null,
-    providerLabel: "OpenStreetMap Ellipsoid",
+    providerLabel: "ArcGIS World Imagery (initializing...)",
   },
 
   setMode: (nextMode, queryClient) => {
@@ -260,6 +263,7 @@ export const useAppStore = create<AppState>((set) => ({
   setCursorCoords: (cursorCoords) => set({ cursorCoords }),
   flyTo: (target) => set({ flyToTarget: { ...target, nonce: Date.now() + Math.random() } }),
   setSceneDimension: (sceneDimension) => set({ sceneDimension }),
+  setCameraHeadingDeg: (cameraHeadingDeg) => set({ cameraHeadingDeg }),
   setSearchQuery: (q) => set({ searchQuery: q }),
   togglePanel: (panel) =>
     set((state) => {

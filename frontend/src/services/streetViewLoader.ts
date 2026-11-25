@@ -1,3 +1,10 @@
+export interface StreetViewPanoramaInstance {
+  getPov: () => { heading?: number; pitch?: number };
+  setPov: (pov: { heading: number; pitch: number }) => void;
+  getPosition: () => { lat: () => number; lng: () => number } | null;
+  addListener: (eventName: string, handler: () => void) => { remove: () => void };
+}
+
 interface GoogleStreetViewMaps {
   StreetViewPanorama: new (
     container: HTMLElement,
@@ -6,8 +13,11 @@ interface GoogleStreetViewMaps {
       pov?: { heading: number; pitch: number };
       addressControl?: boolean;
       enableCloseButton?: boolean;
+      motionTracking?: boolean;
+      linksControl?: boolean;
+      panControl?: boolean;
     },
-  ) => unknown;
+  ) => StreetViewPanoramaInstance;
   StreetViewService: new () => {
     getPanorama: (
       request: { location: { lat: number; lng: number }; radius: number },

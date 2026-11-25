@@ -7,6 +7,42 @@ export interface BasemapInitResult {
   coverage: CoverageStatus;
 }
 
+const ARCGIS_WORLD_IMAGERY_URL =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+
+function attachGuaranteedSatelliteBase(viewer: Cesium.Viewer): boolean {
+  viewer.imageryLayers.removeAll();
+  if (typeof Cesium.UrlTemplateImageryProvider === "function") {
+    try {
+      const arcgis = new Cesium.UrlTemplateImageryProvider({
+        url: ARCGIS_WORLD_IMAGERY_URL,
+        maximumLevel: 18,
+        credit: new Cesium.Credit("Esri, Maxar, Earthstar Geographics, and the GIS User Community"),
+      });
+      const layer = viewer.imageryLayers.addImageryProvider(arcgis);
+      arcgis.errorEvent.addEventListener(() => {
+        if (!viewer.isDestroyed() && viewer.imageryLayers.length <= 1) {
+          // Retain OSM underneath only if ArcGIS fails
+          const osm = new Cesium.OpenStreetMapImageryProvider({
+            url: "https://tile.openstreetmap.org/",
+          });
+          viewer.imageryLayers.addImageryProvider(osm, 0);
+          layer.alpha = 1.0;
+        }
+      });
+      return true;
+    } catch {
+      // Fall through to OpenStreetMap base layer
+    }
+  }
+
+  const osmProvider = new Cesium.OpenStreetMapImageryProvider({
+    url: "https://tile.openstreetmap.org/",
+  });
+  viewer.imageryLayers.addImageryProvider(osmProvider);
+  return false;
+}
+
 export async function initializeBasemapWithFallback(
   viewer: Cesium.Viewer,
   options?: {
@@ -26,12 +62,8 @@ export async function initializeBasemapWithFallback(
     ""
   ).trim();
 
-  // Always start with a guaranteed zero-key OpenStreetMap base layer so the globe renders immediately.
-  viewer.imageryLayers.removeAll();
-  const osmProvider = new Cesium.OpenStreetMapImageryProvider({
-    url: "https://tile.openstreetmap.org/",
-  });
-  viewer.imageryLayers.addImageryProvider(osmProvider);
+  // Start immediately with a realistic HTTPS satellite layer so Earth renders right away.
+  const hasArcgisSatellite = attachGuaranteedSatelliteBase(viewer);
 
   let googleTileset: Cesium.Cesium3DTileset | null = null;
   let hasIonTerrain = false;
@@ -68,21 +100,33 @@ export async function initializeBasemapWithFallback(
     }
   }
 
-  // Priority 2: Cesium World Terrain + Cesium ion satellite imagery
+  // Priority 2: Cesium World Terrain + HTTPS Satellite Imagery
+  // Note: If quantized-mesh terrain tiles encounter an error at runtime, revert cleanly to
+  // EllipsoidTerrainProvider so globe tile rendering never stalls.
   if (ionToken) {
     try {
       Cesium.Ion.defaultAccessToken = ionToken;
-      const [terrainProvider, ionImagery] = await Promise.all([
-        Cesium.createWorldTerrainAsync(),
-        Cesium.createWorldImageryAsync({
-          style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS,
-        }),
-      ]);
+      const terrainProvider = await Cesium.createWorldTerrainAsync();
       if (!viewer.isDestroyed()) {
+        terrainProvider.errorEvent.addEventListener(() => {
+          if (!viewer.isDestroyed()) {
+            viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+          }
+        });
         viewer.terrainProvider = terrainProvider;
-        viewer.imageryLayers.removeAll();
-        viewer.imageryLayers.addImageryProvider(ionImagery);
         hasIonTerrain = true;
+      }
+
+      if (!hasArcgisSatellite) {
+        const ionImagery = await Cesium.createWorldImageryAsync({
+          style: Cesium.IonWorldImageryStyle.AERIAL,
+        });
+        if (!viewer.isDestroyed()) {
+          viewer.imageryLayers.removeAll();
+          viewer.imageryLayers.addImageryProvider(ionImagery);
+          hasIonImagery = true;
+        }
+      } else {
         hasIonImagery = true;
       }
     } catch {
@@ -101,22 +145,26 @@ export async function initializeBasemapWithFallback(
         photorealistic3d: false,
         terrain: true,
         streetView: "unknown",
-        providerLabel: "Cesium World Terrain + ion Satellite",
+        providerLabel: hasArcgisSatellite
+          ? "ArcGIS World Imagery + Cesium Terrain"
+          : "Cesium World Terrain + ion Satellite",
       },
     };
   }
 
-  // Priority 3: Zero-key Ellipsoid + OpenStreetMap fallback
+  // Priority 3: Zero-key Ellipsoid + ArcGIS Satellite / OpenStreetMap fallback
   return {
     googleTileset: null,
     statusMessage: googleKey
-      ? "Photorealistic tiles unavailable, using OpenStreetMap ellipsoid fallback"
-      : "Using OpenStreetMap ellipsoid fallback (no Google/ion keys configured)",
+      ? "Photorealistic tiles unavailable, using satellite ellipsoid fallback"
+      : "Using satellite ellipsoid fallback (no Google/ion keys configured)",
     coverage: {
       photorealistic3d: false,
       terrain: false,
       streetView: "unknown",
-      providerLabel: "OpenStreetMap + WGS84 Ellipsoid",
+      providerLabel: hasArcgisSatellite
+        ? "ArcGIS World Imagery + WGS84 Ellipsoid"
+        : "OpenStreetMap + WGS84 Ellipsoid",
     },
   };
 }

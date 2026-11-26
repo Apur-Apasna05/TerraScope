@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.flights import router as flights_router
 from app.api.geo import router as geo_router
@@ -37,6 +38,11 @@ def create_app() -> FastAPI:
     application.include_router(geo_router)
     application.include_router(flights_router)
     application.include_router(telangana_router)
+
+    frontend_dist = settings.repo_root / "frontend" / "dist"
+    if frontend_dist.exists():
+        application.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
+
     return application
 
 

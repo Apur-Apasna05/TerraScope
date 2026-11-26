@@ -20,9 +20,8 @@
   <!-- HLS.js for Live Public CCTV Streaming (God's Eye View Integration) -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
 
-  <!-- Production Data Payload & High-Res Earth Satellite Texture -->
+  <!-- Production Data Payload -->
   <script src="dashboard_data.js"></script>
-  <script src="assets/earth-texture-data.js"></script>
 
   <style>
     :root {
@@ -1593,8 +1592,8 @@
       loader.setCrossOrigin('anonymous');
 
       function loadGlobeTexture() {
-        const localDay = (window.location.protocol === 'file:') ? 'assets/earth-blue-marble.jpg' : '/assets/earth-blue-marble.jpg';
-        const localTopo = (window.location.protocol === 'file:') ? 'assets/earth-topology.png' : '/assets/earth-topology.png';
+        const localDay = 'assets/earth-blue-marble.jpg';
+        const localTopo = 'assets/earth-topology.png';
         const cdnDay = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
         const cdnTopo = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-topology.png';
 

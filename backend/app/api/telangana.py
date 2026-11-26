@@ -167,6 +167,7 @@ def get_flood_intelligence(district: str | None = Query(default=None)) -> DataEn
 
 
 @router.get("/fire", response_model=DataEnvelope[dict[str, Any]])
+@router.get("/fires", response_model=DataEnvelope[dict[str, Any]])
 async def get_fire_intelligence(
     district: str | None = Query(default=None),
     prefer_live: bool = Query(default=True),

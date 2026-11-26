@@ -20,6 +20,8 @@ const FRESHNESS_CLASSES: Record<FreshnessTier, string> = {
   recent: "border-cyan-500/40 bg-cyan-500/15 text-cyan-300",
   stale: "border-amber-500/40 bg-amber-500/15 text-amber-300",
   historical: "border-slate-500/40 bg-slate-500/15 text-slate-300",
+  simulated: "border-purple-500/40 bg-purple-500/15 text-purple-300",
+  data_unavailable: "border-rose-500/40 bg-rose-500/15 text-rose-300",
 };
 
 export function ProvenanceBadge({

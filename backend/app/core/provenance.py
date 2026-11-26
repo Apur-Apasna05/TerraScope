@@ -11,7 +11,7 @@ from app.core.config import get_yaml_config
 T = TypeVar("T")
 
 RecordKind = Literal["observation", "estimate", "prediction"]
-FreshnessTier = Literal["live", "recent", "stale", "historical"]
+FreshnessTier = Literal["live", "recent", "stale", "historical", "simulated", "data_unavailable"]
 
 
 class ProvenanceMeta(BaseModel):

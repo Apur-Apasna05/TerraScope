@@ -6,7 +6,7 @@ export type TelanganaTab =
   "overview" | "flood" | "fire" | "weather" | "risk" | "exposure" | "alerts";
 
 export type RecordKind = "observation" | "estimate" | "prediction";
-export type FreshnessTier = "live" | "recent" | "stale" | "historical";
+export type FreshnessTier = "live" | "recent" | "stale" | "historical" | "simulated" | "data_unavailable";
 
 export interface ProvenanceMeta {
   source: string;

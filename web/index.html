@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- HLS.js for Live Public CCTV Streaming (God's Eye View Integration) -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
+
   <!-- Production Data Payload & High-Res Earth Satellite Texture -->
   <script src="dashboard_data.js"></script>
   <script src="assets/earth-texture-data.js"></script>
@@ -457,47 +460,56 @@
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
     }
 
-    /* Overlaid HUD Labels on Globe */
+        /* Overlaid HUD Labels & Hazards on 3D Globe (Surface-Tracked) */
     .hud-india {
       position: absolute;
       font-weight: 800;
-      font-size: 12px;
-      letter-spacing: 2px;
+      font-size: 13px;
+      letter-spacing: 2.5px;
       color: rgba(255, 255, 255, 0.95);
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9), 0 0 14px rgba(56, 189, 248, 0.8);
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.95), 0 0 18px rgba(56, 189, 248, 0.85);
       pointer-events: none;
       z-index: 20;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.15s ease;
+      will-change: left, top;
     }
     .hud-telangana {
       position: absolute;
-      background: rgba(147, 51, 234, 0.25);
+      background: rgba(147, 51, 234, 0.35);
       border: 1.5px solid #c084fc;
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 9.5px;
+      border-radius: 5px;
+      padding: 3px 8px;
       font-weight: 700;
-      color: white;
-      box-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
-      pointer-events: none;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-size: 11px;
+      color: #f1f5f9;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 21;
+      box-shadow: 0 0 14px rgba(192, 132, 252, 0.5);
+      transform: translate(-50%, -50%);
+      transition: all 0.2s ease;
+      will-change: left, top;
+    }
+    .hud-telangana:hover {
+      background: rgba(147, 51, 234, 0.6);
+      transform: translate(-50%, -50%) scale(1.08);
     }
 
-    /* Floating Hazard & Vehicle Entities */
+    /* Floating Hazard & Vehicle Entities anchored in 3D */
     .globe-marker-fire {
-      position: absolute; font-size: 18px; filter: drop-shadow(0 0 8px #ef4444);
+      position: absolute; font-size: 20px; filter: drop-shadow(0 0 10px #ef4444);
       z-index: 25; cursor: pointer; animation: flameBounce 1.5s infinite alternate ease-in-out;
+      transform: translate(-50%, -50%); will-change: left, top;
     }
-    @keyframes flameBounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-3px) scale(1.1); } }
+    @keyframes flameBounce { 0% { transform: translate(-50%, -50%) scale(1); } 100% { transform: translate(-50%, -55%) scale(1.15); } }
 
-    .globe-marker-rain { position: absolute; font-size: 16px; filter: drop-shadow(0 0 6px #38bdf8); z-index: 25; }
-    .globe-marker-plane { position: absolute; font-size: 14px; filter: drop-shadow(0 0 4px white); z-index: 25; transform: rotate(-35deg); }
-    .globe-marker-ship { position: absolute; font-size: 14px; filter: drop-shadow(0 0 4px #38bdf8); z-index: 25; }
-    .globe-marker-cyclone { position: absolute; font-size: 20px; filter: drop-shadow(0 0 10px #f59e0b); z-index: 25; cursor: pointer; }
+    .globe-marker-rain { position: absolute; font-size: 18px; filter: drop-shadow(0 0 8px #38bdf8); z-index: 25; transform: translate(-50%, -50%); will-change: left, top; }
+    .globe-marker-plane { position: absolute; font-size: 16px; filter: drop-shadow(0 0 6px white); z-index: 25; transform: translate(-50%, -50%) rotate(-35deg); will-change: left, top; }
+    .globe-marker-ship { position: absolute; font-size: 15px; filter: drop-shadow(0 0 6px #38bdf8); z-index: 25; transform: translate(-50%, -50%); will-change: left, top; }
+    .globe-marker-cyclone { position: absolute; font-size: 22px; filter: drop-shadow(0 0 12px #f59e0b); z-index: 25; cursor: pointer; transform: translate(-50%, -50%); will-change: left, top; }
 
-    /* Top-Right Globe Action Controls */
+      /* Top-Right Globe Action Controls */
     .view-controls {
       position: absolute;
       top: 14px; right: 14px;
@@ -977,6 +989,10 @@
             <div class="layer-label"><span class="layer-icon">🚢</span> Maritime Activity</div>
             <label class="switch"><input type="checkbox" id="tglSea" checked onchange="handleLayerToggle('sea')"><span class="slider"></span></label>
           </div>
+          <div class="layer-item">
+            <div class="layer-label"><span class="layer-icon">📹</span> CCTV Cameras (God's Eye)</div>
+            <label class="switch"><input type="checkbox" id="tglCctv" checked onchange="handleLayerToggle('cctv')"><span class="slider"></span></label>
+          </div>
         </div>
       </div>
 
@@ -1048,14 +1064,15 @@
       <div class="globe-marker-cyclone" id="markerCyclone" title="Tropical Storm System" onclick="selectEventById('ev5')">🌀</div>
 
       <!-- Top-Right Globe Action Controls -->
-      <div class="view-controls">
-        <button class="ctrl-btn compass-icon" title="Reset North" onclick="resetGlobeView()">🧭</button>
-        <button class="ctrl-btn" id="btnRotation" title="Pause/Resume Continuous Rotation" onclick="toggleGlobeRotation()">⏸️</button>
-        <button class="ctrl-btn" title="Zoom In" onclick="zoomGlobe(1)">+</button>
-        <button class="ctrl-btn" title="Zoom Out" onclick="zoomGlobe(-1)">−</button>
-        <button class="ctrl-btn mode-pill" id="btn2D3D" title="Toggle 2D / 3D Engine" onclick="toggleEngine2D3D()">2D</button>
-      </div>
-    </section>
+              <div class="view-controls">
+          <button class="ctrl-btn compass-icon" title="Reset North & Level View" onclick="resetGlobeView()">🧭</button>
+          <button class="ctrl-btn" id="btnTilt" title="Toggle 3D Horizon Tilt (Curvature View)" onclick="toggleCameraTilt()">📐</button>
+          <button class="ctrl-btn" id="btnRotation" title="Enable Auto-Rotation (Optional)" onclick="toggleGlobeRotation()">▶️</button>
+          <button class="ctrl-btn" title="Zoom In" onclick="zoomGlobe(1)">+</button>
+          <button class="ctrl-btn" title="Zoom Out" onclick="zoomGlobe(-1)">−</button>
+          <button class="ctrl-btn mode-pill" id="btn2D3D" title="Toggle 2D Map / 3D Globe" onclick="toggleEngine2D3D()">2D</button>
+        </div>
+      </section>
 
     <!-- --------------------------------------------------------------------- -->
     <!-- RIGHT SIDEBAR: EVENT INTELLIGENCE                                         -->
@@ -1063,111 +1080,184 @@
     <aside class="sidebar-right">
       <!-- Header -->
       <div class="intel-top-bar">
-        <div class="intel-heading">Event Intelligence</div>
-        <div class="verified-pill">AI VERIFIED ✓</div>
+        <div class="intel-heading" id="rightPanelHeading">Event Intelligence</div>
+        <div class="verified-pill" id="rightPanelVerifiedBadge">AI VERIFIED ✓</div>
       </div>
 
-      <!-- Selected Event Banner -->
-      <div class="intel-banner">
-        <div class="banner-icon" id="bannerIcon">🔥</div>
-        <div class="banner-text">
-          <h2 id="bannerTitle">Wildfire Detected</h2>
-          <p id="bannerLoc">Warangal District, Telangana, India</p>
+      <!-- EVENT INTELLIGENCE SECTION -->
+      <div id="eventIntelSection" style="display:flex; flex-direction:column; gap:9px;">
+        <!-- Selected Event Banner -->
+        <div class="intel-banner">
+          <div class="banner-icon" id="bannerIcon">🔥</div>
+          <div class="banner-text">
+            <h2 id="bannerTitle">Wildfire Detected</h2>
+            <p id="bannerLoc">Warangal District, Telangana, India</p>
+          </div>
+          <div class="banner-right">
+            <span class="pill-risk-main" id="bannerRisk">HIGH RISK</span><br>
+            <span class="pill-confidence" id="bannerConfidence">Confidence: 94%</span>
+          </div>
         </div>
-        <div class="banner-right">
-          <span class="pill-risk-main" id="bannerRisk">HIGH RISK</span><br>
-          <span class="pill-confidence" id="bannerConfidence">Confidence: 94%</span>
+
+        <!-- Subtabs Bar -->
+        <div class="intel-subtabs">
+          <button class="intel-tab active" onclick="switchTab('overview', this)">Overview</button>
+          <button class="intel-tab" onclick="switchTab('analysis', this)">Analysis</button>
+          <button class="intel-tab" onclick="switchTab('prediction', this)">Prediction</button>
+          <button class="intel-tab" onclick="switchTab('impact', this)">Impact</button>
+          <button class="intel-tab" onclick="switchTab('history', this)">History</button>
+        </div>
+
+        <!-- Dynamic Subtab Content -->
+        <div id="intelBody" style="display:flex; flex-direction:column; gap:9px;">
+          <!-- Satellite Thermal Infrared Canvas Thumbnail -->
+          <div class="sat-preview-box">
+            <canvas id="satCanvas" class="sat-canvas"></canvas>
+            <div class="sat-tag-badge" id="satBadge">NASA FIRMS VIIRS 375m • IR Band</div>
+          </div>
+
+          <!-- Key-Value Metadata Grid -->
+          <div class="meta-table">
+            <div class="meta-cell"><span class="meta-lbl">First Detected:</span> <span class="meta-v" id="lblDetected">Sep 11, 2024 10:42 AM</span></div>
+            <div class="meta-cell"><span class="meta-lbl">Last Updated:</span> <span class="meta-v" id="lblUpdated">Sep 11, 2024 11:01 AM</span></div>
+            <div class="meta-cell"><span class="meta-lbl">Source:</span> <span class="meta-v" id="lblSource">Satellite (Thermal) + Weather</span></div>
+            <div class="meta-cell"><span class="meta-lbl">Status:</span> <span class="meta-v verified" id="lblStatus">✓ Verified</span></div>
+            <div class="meta-cell" style="grid-column: span 2;"><span class="meta-lbl">Coordinates:</span> <span class="meta-v" id="lblCoords">17.978° N, 79.594° E</span></div>
+          </div>
+
+          <!-- 6 Metrics Badges (2 rows of 3) -->
+          <div class="metrics-row-grid">
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">🌡️ Temperature</div>
+              <div class="mini-metric-val" id="metricTemp">42°C</div>
+            </div>
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">💨 Wind</div>
+              <div class="mini-metric-val" id="metricWind">18 km/h <span style="font-size:9px; color:#94a3b8;">SE</span></div>
+            </div>
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">🌲 Vegetation</div>
+              <div class="mini-metric-val" id="metricVeg">Dry</div>
+            </div>
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">👥 Nearby Pop.</div>
+              <div class="mini-metric-val" id="metricPop">42,800</div>
+            </div>
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">🏢 Infra Exposure</div>
+              <div class="mini-metric-val red" id="metricInfra">High</div>
+            </div>
+            <div class="mini-metric-card">
+              <div class="mini-metric-lbl">↗️ Propagation Risk</div>
+              <div class="mini-metric-val red" id="metricProp">High</div>
+            </div>
+          </div>
+
+          <!-- AI Assessment Box -->
+          <div class="ai-card">
+            <div class="ai-card-top">
+              <h3>AI Assessment</h3>
+              <a class="link-action" onclick="switchTab('analysis')">View Full Analysis →</a>
+            </div>
+            <p class="ai-body-text" id="aiNarrative">
+              A significant thermal anomaly has been detected in Warangal district. Dry vegetation and strong southeast winds indicate a high probability of fire spread over the next 6 hours.
+            </p>
+            <div class="ai-action-box" id="aiActionBox">
+              <strong>⚠️ Recommended Action:</strong> Initiate ground verification and prepare local emergency response.
+            </div>
+          </div>
+
+          <!-- Time-Lapse (Last 24 Hours) -->
+          <div class="timelapse-block">
+            <h3>Time-Lapse (Last 24 Hours)</h3>
+            <div class="timelapse-grid">
+              <div class="timelapse-card" onclick="selectTimelapseFrame(0)">
+                <canvas id="cvsTL0" class="timelapse-canvas"></canvas>
+                <span class="timelapse-badge">6h ago</span>
+              </div>
+              <div class="timelapse-card" onclick="selectTimelapseFrame(1)">
+                <canvas id="cvsTL1" class="timelapse-canvas"></canvas>
+                <span class="timelapse-badge">12h ago</span>
+              </div>
+              <div class="timelapse-card" onclick="selectTimelapseFrame(2)">
+                <canvas id="cvsTL2" class="timelapse-canvas"></canvas>
+                <span class="timelapse-badge">18h ago</span>
+              </div>
+              <div class="timelapse-card active" onclick="selectTimelapseFrame(3)">
+                <canvas id="cvsTL3" class="timelapse-canvas"></canvas>
+                <span class="timelapse-badge" style="background:#dc2626;">Now</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Subtabs Bar -->
-      <div class="intel-subtabs">
-        <button class="intel-tab active" onclick="switchTab('overview', this)">Overview</button>
-        <button class="intel-tab" onclick="switchTab('analysis', this)">Analysis</button>
-        <button class="intel-tab" onclick="switchTab('prediction', this)">Prediction</button>
-        <button class="intel-tab" onclick="switchTab('impact', this)">Impact</button>
-        <button class="intel-tab" onclick="switchTab('history', this)">History</button>
-      </div>
-
-      <!-- Dynamic Subtab Content -->
-      <div id="intelBody" style="display:flex; flex-direction:column; gap:9px;">
-        <!-- Satellite Thermal Infrared Canvas Thumbnail -->
-        <div class="sat-preview-box">
-          <canvas id="satCanvas" class="sat-canvas"></canvas>
-          <div class="sat-tag-badge" id="satBadge">NASA FIRMS VIIRS 375m • IR Band</div>
+      <!-- CCTV CAMERA INTELLIGENCE SECTION (GOD'S EYE VIEW) -->
+      <div id="cctvIntelSection" style="display:none; flex-direction:column; gap:9px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:var(--accent-cyan); font-weight:700; letter-spacing:0.5px;">📹 GOD'S EYE VIEW SURVEILLANCE</span>
+          <button class="link-action" style="background:none; border:none; cursor:pointer;" onclick="closeCctvPanel()">✕ Back to Events</button>
         </div>
 
-        <!-- Key-Value Metadata Grid -->
+        <!-- Camera Header Banner -->
+        <div class="intel-banner" style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.22), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(56, 189, 248, 0.45);">
+          <div class="banner-icon" style="background: rgba(2, 132, 199, 0.3); border: 1px solid rgba(56, 189, 248, 0.6); font-size: 20px;">📹</div>
+          <div class="banner-text">
+            <h2 id="cctvCamName" style="font-size:12.5px; color:white;">IH-35 @ 6th St Downtown Overpass</h2>
+            <p id="cctvCamLoc" style="font-size:9.5px; color:#94a3b8;">Austin, Texas, United States</p>
+          </div>
+          <div class="banner-right">
+            <span class="pill-risk-main" id="cctvStreamBadge" style="background: rgba(16, 185, 129, 0.25); color: #34d399; border-color: rgba(16, 185, 129, 0.5);">● LIVE STREAM</span>
+            <div style="font-size:8.5px; color:var(--text-muted); margin-top:3px;" id="cctvProvider">TxDOT Mobility</div>
+          </div>
+        </div>
+
+        <!-- Video Player / Snapshot Screen Box -->
+        <div class="sat-preview-box" style="height:190px; position:relative; background:#000; border-radius:6px; overflow:hidden;">
+          <video id="cctvVideo" style="width:100%; height:100%; object-fit:cover; display:none;" autoplay muted playsinline controls></video>
+          <img id="cctvImg" style="width:100%; height:100%; object-fit:cover; display:none;" alt="Live CCTV Snapshot" />
+          <canvas id="cctvFallbackCanvas" style="width:100%; height:100%; display:none;"></canvas>
+
+          <div class="sat-tag-badge" id="cctvStreamTypeTag" style="color:#38bdf8; background:rgba(0,0,0,0.75);">HLS STREAM • 1080p</div>
+          <div id="cctvRefreshBar" style="position:absolute; bottom:0; left:0; height:3px; background:var(--accent-cyan); width:0%; transition:width 5s linear;"></div>
+        </div>
+
+        <!-- Camera Intrinsics & Extrinsics Table -->
         <div class="meta-table">
-          <div class="meta-cell"><span class="meta-lbl">First Detected:</span> <span class="meta-v" id="lblDetected">Sep 11, 2024 10:42 AM</span></div>
-          <div class="meta-cell"><span class="meta-lbl">Last Updated:</span> <span class="meta-v" id="lblUpdated">Sep 11, 2024 11:01 AM</span></div>
-          <div class="meta-cell"><span class="meta-lbl">Source:</span> <span class="meta-v" id="lblSource">Satellite (Thermal) + Weather</span></div>
-          <div class="meta-cell"><span class="meta-lbl">Status:</span> <span class="meta-v verified" id="lblStatus">✓ Verified</span></div>
-          <div class="meta-cell" style="grid-column: span 2;"><span class="meta-lbl">Coordinates:</span> <span class="meta-v" id="lblCoords">17.978° N, 79.594° E</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Mount Height:</span> <span class="meta-v" id="cctvElevation">22.0 m</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Azimuth Heading:</span> <span class="meta-v" id="cctvHeading">185.0°</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Tilt Pitch:</span> <span class="meta-v" id="cctvPitch">-15.0°</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Field of View:</span> <span class="meta-v" id="cctvFov">65.0°</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Optical Range:</span> <span class="meta-v" id="cctvRange">550 m</span></div>
+          <div class="meta-cell"><span class="meta-lbl">Refresh Cycle:</span> <span class="meta-v" id="cctvInterval">5 sec</span></div>
+          <div class="meta-cell" style="grid-column: span 2;"><span class="meta-lbl">Coordinates:</span> <span class="meta-v" id="cctvCoords">30.267° N, -97.734° W</span></div>
         </div>
 
-        <!-- 6 Metrics Badges (2 rows of 3) -->
-        <div class="metrics-row-grid">
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">🌡️ Temperature</div>
-            <div class="mini-metric-val" id="metricTemp">42°C</div>
-          </div>
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">💨 Wind</div>
-            <div class="mini-metric-val" id="metricWind">18 km/h <span style="font-size:9px; color:#94a3b8;">SE</span></div>
-          </div>
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">🌲 Vegetation</div>
-            <div class="mini-metric-val" id="metricVeg">Dry</div>
-          </div>
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">👥 Nearby Pop.</div>
-            <div class="mini-metric-val" id="metricPop">42,800</div>
-          </div>
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">🏢 Infra Exposure</div>
-            <div class="mini-metric-val red" id="metricInfra">High</div>
-          </div>
-          <div class="mini-metric-card">
-            <div class="mini-metric-lbl">↗️ Propagation Risk</div>
-            <div class="mini-metric-val red" id="metricProp">High</div>
-          </div>
+        <!-- Frustum & Operational Controls -->
+        <div style="display:flex; gap:6px;">
+          <button class="intel-tab active" id="btnToggleFrustum" style="flex:1; padding:6px 0; font-size:10px;" onclick="toggleFrustumVisibility()">📐 3D Frustum: ON</button>
+          <button class="intel-tab" style="flex:1; padding:6px 0; font-size:10px;" onclick="cycleCctvCamera(-1)">⟵ Prev Cam</button>
+          <button class="intel-tab" style="flex:1; padding:6px 0; font-size:10px;" onclick="cycleCctvCamera(1)">Next Cam ⟶</button>
         </div>
 
-        <!-- AI Assessment Box -->
+        <!-- Surveillance Purpose Card -->
         <div class="ai-card">
           <div class="ai-card-top">
-            <h3>AI Assessment</h3>
-            <a class="link-action" onclick="switchTab('analysis')">View Full Analysis →</a>
+            <h3 style="font-size:11px;">Surveillance Purpose</h3>
+            <span style="font-size:9px; color:#38bdf8;" id="cctvModeBadge">GLOBAL SCOPE</span>
           </div>
-          <p class="ai-body-text" id="aiNarrative">
-            A significant thermal anomaly has been detected in Warangal district. Dry vegetation and strong southeast winds indicate a high probability of fire spread over the next 6 hours.
+          <p class="ai-body-text" id="cctvDesc" style="font-size:10.5px; line-height:1.4;">
+            High-traffic interstate arterial surveillance looking south towards downtown Austin.
           </p>
-          <div class="ai-action-box" id="aiActionBox">
-            <strong>⚠️ Recommended Action:</strong> Initiate ground verification and prepare local emergency response.
-          </div>
         </div>
 
-        <!-- Time-Lapse (Last 24 Hours) -->
-        <div class="timelapse-block">
-          <h3>Time-Lapse (Last 24 Hours)</h3>
-          <div class="timelapse-grid">
-            <div class="timelapse-card" onclick="selectTimelapseFrame(0)">
-              <canvas id="cvsTL0" class="timelapse-canvas"></canvas>
-              <span class="timelapse-badge">6h ago</span>
-            </div>
-            <div class="timelapse-card" onclick="selectTimelapseFrame(1)">
-              <canvas id="cvsTL1" class="timelapse-canvas"></canvas>
-              <span class="timelapse-badge">12h ago</span>
-            </div>
-            <div class="timelapse-card" onclick="selectTimelapseFrame(2)">
-              <canvas id="cvsTL2" class="timelapse-canvas"></canvas>
-              <span class="timelapse-badge">18h ago</span>
-            </div>
-            <div class="timelapse-card active" onclick="selectTimelapseFrame(3)">
-              <canvas id="cvsTL3" class="timelapse-canvas"></canvas>
-              <span class="timelapse-badge" style="background:#dc2626;">Now</span>
-            </div>
+        <!-- Other Cameras in Current Scope -->
+        <div style="background:rgba(13,20,38,0.7); border:1px solid var(--border-card); border-radius:6px; padding:6px 8px;">
+          <div style="font-size:9.5px; font-weight:700; color:var(--text-secondary); margin-bottom:4px; text-transform:uppercase;">
+            Other Cameras in <span id="cctvScopeLabel">Global</span> Scope:
+          </div>
+          <div id="nearbyCctvList" style="display:flex; flex-direction:column; gap:4px; max-height:115px; overflow-y:auto;">
+            <!-- Populated dynamically -->
           </div>
         </div>
       </div>
@@ -1422,7 +1512,7 @@
 
     let currentEvent = EVENT_CATALOG[0];
     let is2DActive = false;
-    let isContinuousRotating = true;
+    let isContinuousRotating = false;
     let activeHistoricalEpoch = '2024-09-02';
     let currentAlertSeverityFilter = 'ALL';
     let activeSubtabKey = 'overview';
@@ -1442,19 +1532,39 @@
       infra: null,
       water: null,
       pop: null,
-      weather: null
+      weather: null,
+      cctv: null
     };
 
     // -------------------------------------------------------------------------
-    // 3. Three.js Photorealistic NASA Blue Marble 3D Globe
+    // 3. Three.js Photorealistic NASA Blue Marble 3D Globe & CCTV Intelligence
     // -------------------------------------------------------------------------
-    let scene, camera, renderer, globeMesh, cloudsMesh;
+    let scene, camera, renderer, globeMesh, cloudsMesh, atmosphereMesh;
+    let indiaBoundaryMesh = null, telanganaBoundaryGroup = null, flood3DMesh = null;
     let raycaster = new THREE.Raycaster();
     let mouseVector = new THREE.Vector2();
     let targetRotationY = -1.38;
     let targetRotationX = 0.32;
     let isDragging = false;
+    let isRightDragging = false;
     let prevMouseX = 0, prevMouseY = 0;
+    let mouseDragDistance = 0;
+
+    // Advanced 3D Camera Controller (Google Earth / Cesium style Tilt & Zoom)
+    let cameraDistance = 2.45;
+    let targetCameraDistance = 2.45;
+    let cameraPitch = 0.0;        // 0.0 = top-down, 0.72 = 41 deg oblique horizon tilt
+    let targetCameraPitch = 0.0;
+
+    // CCTV & Exploration Scope State (God's Eye View Integration)
+    let currentScope = 'global';
+    let activeCctvCameraId = null;
+    let isFrustumVisible = true;
+    let cctvMeshGroup = null;
+    let cctvMarkerPins = [];
+    let cctvFrustumMeshes = [];
+    let cctvRefreshTimer = null;
+    let hlsInstance = null;
 
     function initThreeGlobe() {
       const canvas = document.getElementById('globeCanvas');
@@ -1463,68 +1573,118 @@
       const height = container.clientHeight || window.innerHeight;
 
       scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-      camera.position.z = 2.45;
+      camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
+      camera.position.set(0, 0, cameraDistance);
 
       renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Lighting
-      const sunLight = new THREE.DirectionalLight(0xffffff, 1.25);
-      sunLight.position.set(-3, 2, 2.5);
+      // Oblique Directional Sun Light creating authentic day/night terminator
+      const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
+      sunLight.position.set(-4.5, 2.5, 3.5);
       scene.add(sunLight);
 
-      const ambientLight = new THREE.AmbientLight(0x1a263d, 0.7);
+      // Subtle atmospheric ambient light
+      const ambientLight = new THREE.AmbientLight(0x1a263d, 0.45);
       scene.add(ambientLight);
 
-      // Load NASA Blue Marble Textures
+      // Authentic 3D Atmospheric Fresnel Rayleigh Scattering Halo
+      const atmosphereGeo = new THREE.SphereGeometry(0.895, 64, 64);
+      const atmosphereMat = new THREE.ShaderMaterial({
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vNormal;
+          void main() {
+            float intensity = pow(0.68 - dot(vNormal, vec3(0, 0, 1.0)), 2.6);
+            gl_FragColor = vec4(0.25, 0.72, 0.98, 1.0) * intensity * 1.5;
+          }
+        `,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+        transparent: true
+      });
+      atmosphereMesh = new THREE.Mesh(atmosphereGeo, atmosphereMat);
+      scene.add(atmosphereMesh);
+
+      // Load NASA Blue Marble + Topology Relief Textures
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
 
       function loadGlobeTexture() {
+        const localDay = (window.location.protocol === 'file:') ? 'assets/earth-blue-marble.jpg' : '/assets/earth-blue-marble.jpg';
+        const localTopo = (window.location.protocol === 'file:') ? 'assets/earth-topology.png' : '/assets/earth-topology.png';
+        const cdnDay = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
+        const cdnTopo = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-topology.png';
+
         if (window.EARTH_BLUE_MARBLE_B64) {
-          loader.load(window.EARTH_BLUE_MARBLE_B64, setupGlobeWithTexture);
+          loader.load(window.EARTH_BLUE_MARBLE_B64, function(tex) {
+            loader.load(localTopo, function(topo) {
+              setupGlobeWithTexture(tex, topo);
+            }, undefined, function() {
+              setupGlobeWithTexture(tex, null);
+            });
+          });
           return;
         }
-        const localTexture = (window.location.protocol === 'file:') ? 'assets/earth-blue-marble.jpg' : '/assets/earth-blue-marble.jpg';
-        const cdnTexture = 'https://unpkg.com/three-globe@2.45.6/example/img/earth-blue-marble.jpg';
 
         loader.load(
-          localTexture,
-          function(texture) { setupGlobeWithTexture(texture); },
+          localDay,
+          function(texture) {
+            loader.load(localTopo, function(topo) {
+              setupGlobeWithTexture(texture, topo);
+            }, undefined, function() {
+              setupGlobeWithTexture(texture, null);
+            });
+          },
           undefined,
           function(err) {
-            loader.load(cdnTexture, function(cdnTex) { setupGlobeWithTexture(cdnTex); });
+            loader.load(cdnDay, function(cdnTex) {
+              setupGlobeWithTexture(cdnTex, null);
+            });
           }
         );
       }
       loadGlobeTexture();
 
-      function setupGlobeWithTexture(earthDayTexture) {
+      function setupGlobeWithTexture(earthDayTexture, topoTexture) {
         earthDayTexture.wrapS = THREE.RepeatWrapping;
         earthDayTexture.wrapT = THREE.ClampToEdgeWrapping;
 
         const earthGeo = new THREE.SphereGeometry(0.85, 64, 64);
-        const earthMaterial = new THREE.MeshPhongMaterial({
+        const matConfig = {
           map: earthDayTexture,
-          shininess: 15,
+          shininess: 25,
           specular: new THREE.Color(0x38bdf8)
-        });
+        };
+        if (topoTexture) {
+          topoTexture.wrapS = THREE.RepeatWrapping;
+          topoTexture.wrapT = THREE.ClampToEdgeWrapping;
+          matConfig.bumpMap = topoTexture;
+          matConfig.bumpScale = 0.026;
+        }
+
+        const earthMaterial = new THREE.MeshPhongMaterial(matConfig);
 
         globeMesh = new THREE.Mesh(earthGeo, earthMaterial);
         globeMesh.rotation.y = targetRotationY;
         globeMesh.rotation.x = targetRotationX;
         scene.add(globeMesh);
 
-        // Add Realistic Cloud Layer
+        // Add Realistic 3D Cloud Layer
         const cloudsGeo = new THREE.SphereGeometry(0.865, 48, 48);
         const cloudsCanvas = createDynamicCloudCanvas();
         const cloudsTex = new THREE.CanvasTexture(cloudsCanvas);
         const cloudsMaterial = new THREE.MeshLambertMaterial({
           map: cloudsTex,
           transparent: true,
-          opacity: 0.55,
+          opacity: 0.52,
           blending: THREE.AdditiveBlending
         });
 
@@ -1532,17 +1692,145 @@
         cloudsMesh.rotation.y = targetRotationY;
         cloudsMesh.rotation.x = targetRotationX;
         scene.add(cloudsMesh);
+
+        // -------------------------------------------------------------------
+        // Render Genuine 3D Boundaries Draped on Sphere Surface
+        // -------------------------------------------------------------------
+        init3DGeospatialBoundaries();
+
+        // Initialize 3D CCTV Camera Layer & Viewshed Frustums (God's Eye View)
+        initThreeCctvLayers();
       }
 
-      // Drag Controls
+      // ---------------------------------------------------------------------
+      // 3D GeoJSON Boundary Renderers
+      // ---------------------------------------------------------------------
+      function init3DGeospatialBoundaries() {
+        if (!globeMesh) return;
+        const data = window.TERRASCOPE_DATA || {};
+
+        // 1. India Subcontinent Outline
+        if (data.india_boundary && data.india_boundary.length) {
+          const indiaPoints = [];
+          data.india_boundary.forEach(poly => {
+            for (let i = 0; i < poly.length - 1; i++) {
+              const p1 = latLonToGlobeVector3(poly[i][1], poly[i][0], 0.8525);
+              const p2 = latLonToGlobeVector3(poly[i+1][1], poly[i+1][0], 0.8525);
+              indiaPoints.push(p1, p2);
+            }
+          });
+          const indiaGeom = new THREE.BufferGeometry().setFromPoints(indiaPoints);
+          const indiaMat = new THREE.LineBasicMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.75,
+            linewidth: 1
+          });
+          indiaBoundaryMesh = new THREE.LineSegments(indiaGeom, indiaMat);
+          globeMesh.add(indiaBoundaryMesh);
+        }
+
+        // 2. Telangana 33 Administrative Districts Boundary (Purple Glow + Cyan Grid)
+        if (data.districts_geojson && data.districts_geojson.features) {
+          telanganaBoundaryGroup = new THREE.Group();
+          const distPoints = [];
+          data.districts_geojson.features.forEach(feat => {
+            const geom = feat.geometry;
+            if (!geom) return;
+            const parseRings = (rings) => {
+              rings.forEach(ring => {
+                for (let i = 0; i < ring.length - 1; i++) {
+                  const p1 = latLonToGlobeVector3(ring[i][1], ring[i][0], 0.8532);
+                  const p2 = latLonToGlobeVector3(ring[i+1][1], ring[i+1][0], 0.8532);
+                  distPoints.push(p1, p2);
+                }
+              });
+            };
+            if (geom.type === 'Polygon') parseRings(geom.coordinates);
+            else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(parseRings);
+          });
+
+          const distGeom = new THREE.BufferGeometry().setFromPoints(distPoints);
+          const distMat = new THREE.LineBasicMaterial({
+            color: 0xc084fc,
+            transparent: true,
+            opacity: 0.95,
+            linewidth: 2
+          });
+          const distLines = new THREE.LineSegments(distGeom, distMat);
+          telanganaBoundaryGroup.add(distLines);
+          globeMesh.add(telanganaBoundaryGroup);
+        }
+
+        // 3. Sentinel-1 SAR Flood Inundation Polygons (Telangana Exclusive)
+        if (data.flood_geojson && data.flood_geojson.features) {
+          const floodPoints = [];
+          data.flood_geojson.features.forEach(feat => {
+            const geom = feat.geometry;
+            if (!geom) return;
+            const parseRings = (rings) => {
+              rings.forEach(ring => {
+                for (let i = 0; i < ring.length - 1; i++) {
+                  const p1 = latLonToGlobeVector3(ring[i][1], ring[i][0], 0.854);
+                  const p2 = latLonToGlobeVector3(ring[i+1][1], ring[i+1][0], 0.854);
+                  floodPoints.push(p1, p2);
+                }
+              });
+            };
+            if (geom.type === 'Polygon') parseRings(geom.coordinates);
+            else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(parseRings);
+          });
+          const floodGeom = new THREE.BufferGeometry().setFromPoints(floodPoints);
+          const floodMat = new THREE.LineBasicMaterial({
+            color: 0x00e5ff,
+            transparent: true,
+            opacity: 0.90,
+            linewidth: 2
+          });
+          flood3DMesh = new THREE.LineSegments(floodGeom, floodMat);
+          globeMesh.add(flood3DMesh);
+        }
+      }
+
+      // ---------------------------------------------------------------------
+      // Multi-Touch & Mouse Orbit / Tilt Controls (Google Earth Paradigm)
+      // ---------------------------------------------------------------------
+      canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
       canvas.addEventListener('mousedown', (e) => {
-        isDragging = true;
+        if (e.button === 2 || (e.button === 0 && e.shiftKey)) {
+          isRightDragging = true;
+        } else if (e.button === 0) {
+          isDragging = true;
+        }
         prevMouseX = e.clientX;
         prevMouseY = e.clientY;
+        mouseDragDistance = 0;
       });
-      window.addEventListener('mouseup', () => isDragging = false);
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        isRightDragging = false;
+      });
+
+      // Click to select CCTV Camera Pins
+      canvas.addEventListener('click', (e) => {
+        if (mouseDragDistance > 6 || !globeMesh || !cctvMarkerPins.length) return;
+        const rect = canvas.getBoundingClientRect();
+        mouseVector.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouseVector.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouseVector, camera);
+        const activePins = cctvMarkerPins.filter(p => p.visible);
+        const intersects = raycaster.intersectObjects(activePins);
+        if (intersects.length > 0) {
+          const hit = intersects[0].object;
+          if (hit.userData && hit.userData.cameraId) {
+            selectCctvCamera(hit.userData.cameraId);
+          }
+        }
+      });
+
       window.addEventListener('mousemove', (e) => {
-        // Update Cursor Coordinates via Raycasting
         const rect = canvas.getBoundingClientRect();
         mouseVector.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         mouseVector.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -1552,31 +1840,38 @@
           const intersects = raycaster.intersectObject(globeMesh);
           if (intersects.length > 0) {
             const point = intersects[0].point;
-            // Convert Cartesian to Spherical Lat/Lon
             const radius = 0.85;
-            const lat = 90 - (Math.acos(point.y / radius) * 180 / Math.PI);
+            const lat = 90 - (Math.acos(Math.max(-1, Math.min(1, point.y / radius))) * 180 / Math.PI);
             let lon = ((Math.atan2(point.x, point.z) - globeMesh.rotation.y) * 180 / Math.PI);
             lon = ((lon + 180) % 360) - 180;
             document.getElementById('cursorCoords').innerText = `Lat: ${lat.toFixed(3)}° N, Lon: ${lon.toFixed(3)}° E`;
           }
         }
 
-        if (!isDragging) return;
+        if (!isDragging && !isRightDragging) return;
         const deltaX = e.clientX - prevMouseX;
         const deltaY = e.clientY - prevMouseY;
+        mouseDragDistance += Math.abs(deltaX) + Math.abs(deltaY);
         prevMouseX = e.clientX;
         prevMouseY = e.clientY;
 
-        targetRotationY += deltaX * 0.005;
-        targetRotationX += deltaY * 0.005;
-        targetRotationX = Math.max(-1.1, Math.min(1.1, targetRotationX));
+        if (isRightDragging) {
+          // Camera Tilt / Pitch Control (Horizon Curvature Angle)
+          targetCameraPitch += deltaY * 0.0055;
+          targetCameraPitch = Math.max(0.0, Math.min(1.15, targetCameraPitch));
+        } else if (isDragging) {
+          // Globe Longitude / Latitude Rotation
+          targetRotationY += deltaX * 0.005;
+          targetRotationX += deltaY * 0.005;
+          targetRotationX = Math.max(-1.1, Math.min(1.1, targetRotationX));
+        }
       });
 
-      // Wheel Zoom
+      // Smooth Wheel Zoom
       canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
-        camera.position.z += e.deltaY * 0.0015;
-        camera.position.z = Math.max(1.3, Math.min(4.0, camera.position.z));
+        targetCameraDistance += e.deltaY * 0.0015;
+        targetCameraDistance = Math.max(1.32, Math.min(3.8, targetCameraDistance));
       });
 
       window.addEventListener('resize', () => {
@@ -1587,20 +1882,82 @@
         renderer.setSize(w, h);
       });
 
+      // ---------------------------------------------------------------------
+      // Update Surface-Anchored HUD Markers with Real 3D Horizon Occlusion
+      // ---------------------------------------------------------------------
+      function updateScreenMarkers() {
+        if (!globeMesh) return;
+        const markers = [
+          { el: document.getElementById('labelIndia'), lat: 21.0, lon: 78.5, scope: ['global', 'india'] },
+          { el: document.getElementById('labelTelangana'), lat: 17.85, lon: 79.55, scope: ['global', 'india', 'telangana'] },
+          { el: document.getElementById('markerFire'), lat: 17.978, lon: 79.594, scope: ['global', 'india', 'telangana'] },
+          { el: document.getElementById('markerRain'), lat: 17.385, lon: 78.486, scope: ['global', 'india', 'telangana'] },
+          { el: document.getElementById('markerPlane'), lat: 15.200, lon: 82.500, scope: ['global', 'india'] },
+          { el: document.getElementById('markerShip'), lat: 8.500, lon: 86.000, scope: ['global', 'india'] },
+          { el: document.getElementById('markerCyclone'), lat: 11.500, lon: 88.200, scope: ['global', 'india'] }
+        ];
+
+        const camDir = camera.position.clone().normalize();
+        const canvasRect = canvas.getBoundingClientRect();
+        const hw = canvasRect.width / 2;
+        const hh = canvasRect.height / 2;
+
+        markers.forEach(m => {
+          if (!m.el) return;
+          if (m.scope && !m.scope.includes(currentScope)) {
+            m.el.style.display = 'none';
+            return;
+          }
+
+          const localPos = latLonToGlobeVector3(m.lat, m.lon, 0.865);
+          // Apply globeMesh rotation to obtain world space position
+          const worldPos = localPos.clone().applyEuler(globeMesh.rotation);
+          
+          // Test horizon occlusion (facing camera)
+          const normal = worldPos.clone().normalize();
+          const dot = normal.dot(camDir);
+
+          if (dot < 0.12) {
+            // Occluded on back of spherical Earth
+            m.el.style.display = 'none';
+          } else {
+            m.el.style.display = (m.el.id === 'labelTelangana') ? 'flex' : 'block';
+            const screenPos = worldPos.clone().project(camera);
+            const x = (screenPos.x * hw) + hw;
+            const y = -(screenPos.y * hh) + hh;
+            m.el.style.left = `${x}px`;
+            m.el.style.top = `${y}px`;
+          }
+        });
+      }
+
       // Animation Loop with Play/Pause support
       function animate() {
         requestAnimationFrame(animate);
         if (globeMesh) {
-          if (isContinuousRotating && !isDragging) {
+          // Strictly stationary unless explicitly enabled by user
+          if (isContinuousRotating && !isDragging && !isRightDragging) {
             targetRotationY += 0.00045;
           }
           globeMesh.rotation.y += (targetRotationY - globeMesh.rotation.y) * 0.08;
           globeMesh.rotation.x += (targetRotationX - globeMesh.rotation.x) * 0.08;
           if (cloudsMesh) {
-            cloudsMesh.rotation.y = globeMesh.rotation.y + 0.00018;
+            cloudsMesh.rotation.y = globeMesh.rotation.y;
             cloudsMesh.rotation.x = globeMesh.rotation.x;
           }
         }
+
+        // Smooth Camera Pitch & Distance Interpolation
+        cameraDistance += (targetCameraDistance - cameraDistance) * 0.08;
+        cameraPitch += (targetCameraPitch - cameraPitch) * 0.08;
+        const camY = cameraDistance * Math.sin(cameraPitch);
+        const camZ = cameraDistance * Math.cos(cameraPitch);
+        camera.position.set(0, camY, camZ);
+        camera.lookAt(0, 0, 0);
+
+        // Update Surface-Anchored Screen Markers
+        updateScreenMarkers();
+
         renderer.render(scene, camera);
       }
       animate();
@@ -1610,7 +1967,14 @@
       isContinuousRotating = !isContinuousRotating;
       const btn = document.getElementById('btnRotation');
       btn.innerText = isContinuousRotating ? '⏸️' : '▶️';
-      btn.title = isContinuousRotating ? 'Pause Continuous Rotation' : 'Resume Continuous Rotation';
+      btn.title = isContinuousRotating ? 'Pause Continuous Rotation' : 'Enable Auto-Rotation (Optional)';
+    }
+
+    function toggleCameraTilt() {
+      // Toggle between 0 deg overhead and 43 deg oblique horizon tilt
+      targetCameraPitch = (targetCameraPitch > 0.3) ? 0.0 : 0.72;
+      const btn = document.getElementById('btnTilt');
+      if (btn) btn.classList.toggle('active', targetCameraPitch > 0.3);
     }
 
     // Dynamic Cloud Layer Canvas
@@ -1639,6 +2003,420 @@
         ctx.stroke();
       }
       return c;
+    }
+
+    function cameraHue(index) {
+      return ((index * 137.507764) % 360);
+    }
+
+    function latLonToGlobeVector3(lat, lon, alt = 0.852) {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+      const x = -(alt * Math.sin(phi) * Math.cos(theta));
+      const z = (alt * Math.sin(phi) * Math.sin(theta));
+      const y = (alt * Math.cos(phi));
+      return new THREE.Vector3(x, y, z);
+    }
+
+    function buildCameraFrustumMesh(cam, idx) {
+      const P0 = latLonToGlobeVector3(cam.lat, cam.lon, 0.852);
+      const norm = P0.clone().normalize();
+      const P_north = latLonToGlobeVector3(cam.lat + 0.1, cam.lon, 0.852);
+      const north = P_north.sub(P0.clone().multiplyScalar(P_north.dot(norm))).normalize();
+      const east = new THREE.Vector3().crossVectors(north, norm).normalize();
+
+      const theta = (cam.headingDeg || 0) * (Math.PI / 180);
+      const phi = (cam.pitchDeg || -15) * (Math.PI / 180);
+
+      const dirHoriz = north.clone().multiplyScalar(Math.cos(theta)).add(east.clone().multiplyScalar(Math.sin(theta)));
+      const dir = dirHoriz.clone().multiplyScalar(Math.cos(phi)).add(norm.clone().multiplyScalar(Math.sin(-phi))).normalize();
+
+      let right = new THREE.Vector3().crossVectors(dir, norm);
+      if (right.lengthSq() < 0.0001) right = east.clone();
+      right.normalize();
+      const up = new THREE.Vector3().crossVectors(right, dir).normalize();
+
+      const rangeUnits = Math.max(0.045, Math.min(0.12, ((cam.rangeM || 500) / 1000.0) * 0.08));
+      const halfFovH = Math.tan(((cam.fovDeg || 65) * Math.PI / 180) / 2) * rangeUnits;
+      const halfFovV = halfFovH * (9.0 / 16.0);
+
+      const Pfar = P0.clone().add(dir.clone().multiplyScalar(rangeUnits));
+      const tl = Pfar.clone().sub(right.clone().multiplyScalar(halfFovH)).add(up.clone().multiplyScalar(halfFovV));
+      const tr = Pfar.clone().add(right.clone().multiplyScalar(halfFovH)).add(up.clone().multiplyScalar(halfFovV));
+      const br = Pfar.clone().add(right.clone().multiplyScalar(halfFovH)).sub(up.clone().multiplyScalar(halfFovV));
+      const bl = Pfar.clone().sub(right.clone().multiplyScalar(halfFovH)).sub(up.clone().multiplyScalar(halfFovV));
+
+      const vertices = new Float32Array([
+        P0.x, P0.y, P0.z,
+        tl.x, tl.y, tl.z,
+        tr.x, tr.y, tr.z,
+        br.x, br.y, br.z,
+        bl.x, bl.y, bl.z
+      ]);
+
+      const indices = [
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 1,
+        1, 2, 3,
+        1, 3, 4
+      ];
+
+      const geom = new THREE.BufferGeometry();
+      geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      geom.setIndex(indices);
+      geom.computeVertexNormals();
+
+      const hue = cameraHue(idx);
+      const color = new THREE.Color(`hsl(${hue}, 85%, 60%)`);
+      const mat = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.22,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const volMesh = new THREE.Mesh(geom, mat);
+
+      const linePoints = [
+        P0, tl,  P0, tr,  P0, br,  P0, bl,
+        tl, tr,  tr, br,  br, bl,  bl, tl
+      ];
+      const lineGeom = new THREE.BufferGeometry().setFromPoints(linePoints);
+      const lineMat = new THREE.LineBasicMaterial({
+        color: new THREE.Color(`hsl(${hue}, 95%, 70%)`),
+        transparent: true,
+        opacity: 0.85
+      });
+      const wireMesh = new THREE.LineSegments(lineGeom, lineMat);
+
+      const frustumGroup = new THREE.Group();
+      frustumGroup.add(volMesh);
+      frustumGroup.add(wireMesh);
+      frustumGroup.userData = { cameraId: cam.id, defaultColor: color };
+      return frustumGroup;
+    }
+
+    function initThreeCctvLayers() {
+      if (!globeMesh) return;
+      if (!cctvMeshGroup) {
+        cctvMeshGroup = new THREE.Group();
+        globeMesh.add(cctvMeshGroup);
+      }
+      cctvMeshGroup.clear();
+      cctvMarkerPins = [];
+      cctvFrustumMeshes = [];
+
+      const cams = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) || [];
+      cams.forEach((cam, idx) => {
+        const inScope = (cam.mode === currentScope);
+
+        // Marker Pin
+        const P0 = latLonToGlobeVector3(cam.lat, cam.lon, 0.854);
+        const pinGeo = new THREE.SphereGeometry(0.012, 16, 16);
+        const hue = cameraHue(idx);
+        const pinMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(`hsl(${hue}, 90%, 65%)`) });
+        const pinMesh = new THREE.Mesh(pinGeo, pinMat);
+        pinMesh.position.copy(P0);
+        pinMesh.userData = { cameraId: cam.id, cam: cam };
+        pinMesh.visible = inScope;
+        cctvMeshGroup.add(pinMesh);
+        cctvMarkerPins.push(pinMesh);
+
+        // Frustum Cone
+        const frustumMesh = buildCameraFrustumMesh(cam, idx);
+        frustumMesh.visible = inScope && isFrustumVisible;
+        cctvMeshGroup.add(frustumMesh);
+        cctvFrustumMeshes.push(frustumMesh);
+      });
+    }
+
+    function initLeafletCctvLayer() {
+      if (!leafletMapInstance) return;
+      if (!MAP_LAYERS.cctv) {
+        MAP_LAYERS.cctv = L.layerGroup();
+        leafletMapInstance.addLayer(MAP_LAYERS.cctv);
+      }
+      MAP_LAYERS.cctv.clearLayers();
+
+      const cams = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) || [];
+      cams.forEach((cam, idx) => {
+        if (cam.mode !== currentScope) return;
+
+        const hue = cameraHue(idx);
+        const iconHtml = `
+          <div style="background:hsl(${hue}, 80%, 45%); border:2px solid white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(0,0,0,0.7); cursor:pointer; font-size:12px;">
+            📹
+          </div>
+        `;
+        const icon = L.divIcon({ html: iconHtml, className: 'cctv-map-icon', iconSize: [24, 24] });
+        const marker = L.marker([cam.lat, cam.lon], { icon: icon }).addTo(MAP_LAYERS.cctv);
+
+        marker.bindTooltip(`<strong>📹 ${cam.name}</strong><br>${cam.city}, ${cam.country}<br><span style="color:#38bdf8;">${cam.feedType.toUpperCase()} Stream (${cam.status})</span>`);
+        marker.on('click', () => {
+          selectCctvCamera(cam.id);
+        });
+
+        // 2D Viewshed Sector Arc
+        const heading = cam.headingDeg || 0;
+        const fov = cam.fovDeg || 65;
+        const rangeKm = (cam.rangeM || 500) / 1000.0;
+        const pts = [[cam.lat, cam.lon]];
+        const startAng = heading - fov / 2;
+        const endAng = heading + fov / 2;
+        for (let a = startAng; a <= endAng; a += 5) {
+          const rad = a * Math.PI / 180;
+          const dLat = (rangeKm / 111.0) * Math.cos(rad);
+          const dLon = (rangeKm / (111.0 * Math.cos(cam.lat * Math.PI / 180))) * Math.sin(rad);
+          pts.push([cam.lat + dLat, cam.lon + dLon]);
+        }
+        pts.push([cam.lat, cam.lon]);
+        L.polygon(pts, {
+          color: `hsl(${hue}, 90%, 65%)`,
+          weight: 1.5,
+          fillColor: `hsl(${hue}, 85%, 55%)`,
+          fillOpacity: 0.25
+        }).addTo(MAP_LAYERS.cctv);
+      });
+    }
+
+    function selectCctvCamera(camId) {
+      const cams = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) || [];
+      const cam = cams.find(c => c.id === camId);
+      if (!cam) return;
+      activeCctvCameraId = cam.id;
+
+      // Switch right panel to CCTV view
+      document.getElementById('eventIntelSection').style.display = 'none';
+      document.getElementById('cctvIntelSection').style.display = 'flex';
+      document.getElementById('rightPanelHeading').innerText = "CCTV Surveillance";
+      document.getElementById('rightPanelVerifiedBadge').innerText = "GOD'S EYE ✓";
+      document.getElementById('rightPanelVerifiedBadge').style.background = "rgba(2, 132, 199, 0.2)";
+      document.getElementById('rightPanelVerifiedBadge').style.borderColor = "rgba(56, 189, 248, 0.5)";
+      document.getElementById('rightPanelVerifiedBadge').style.color = "#38bdf8";
+
+      // Populate telemetry
+      document.getElementById('cctvCamName').innerText = cam.name;
+      document.getElementById('cctvCamLoc').innerText = `${cam.city}, ${cam.state || ''}, ${cam.country}`;
+      document.getElementById('cctvProvider').innerText = cam.provider;
+      document.getElementById('cctvElevation').innerText = `${cam.elevationM.toFixed(1)} m`;
+      document.getElementById('cctvHeading').innerText = `${cam.headingDeg.toFixed(1)}°`;
+      document.getElementById('cctvPitch').innerText = `${cam.pitchDeg.toFixed(1)}°`;
+      document.getElementById('cctvFov').innerText = `${cam.fovDeg.toFixed(1)}°`;
+      document.getElementById('cctvRange').innerText = `${cam.rangeM.toFixed(0)} m`;
+      document.getElementById('cctvInterval').innerText = `${cam.refreshIntervalSec} sec`;
+      document.getElementById('cctvCoords').innerText = `${cam.lat.toFixed(4)}° N, ${cam.lon.toFixed(4)}° E`;
+      document.getElementById('cctvDesc').innerText = cam.description || "Active municipal CCTV surveillance node.";
+      document.getElementById('cctvModeBadge').innerText = `${cam.mode.toUpperCase()} SCOPE`;
+      document.getElementById('cctvScopeLabel').innerText = capitalize(cam.mode);
+
+      // Status Badge
+      const badge = document.getElementById('cctvStreamBadge');
+      if (cam.feedType === 'hls') {
+        badge.innerText = "● LIVE STREAM (HLS)";
+        badge.style.background = "rgba(16, 185, 129, 0.25)";
+        badge.style.color = "#34d399";
+        badge.style.borderColor = "rgba(16, 185, 129, 0.5)";
+        document.getElementById('cctvStreamTypeTag').innerText = "HLS STREAM • 1080p";
+      } else {
+        badge.innerText = `● SNAPSHOT (${cam.refreshIntervalSec}s)`;
+        badge.style.background = "rgba(56, 189, 248, 0.2)";
+        badge.style.color = "#38bdf8";
+        badge.style.borderColor = "rgba(56, 189, 248, 0.5)";
+        document.getElementById('cctvStreamTypeTag').innerText = `JPEG SNAPSHOT • ${cam.refreshIntervalSec}s REFRESH`;
+      }
+
+      // Populate Nearby Cameras
+      const listEl = document.getElementById('nearbyCctvList');
+      listEl.innerHTML = '';
+      cams.filter(c => c.mode === cam.mode).forEach(c => {
+        const item = document.createElement('div');
+        item.style.cssText = `display:flex; justify-content:space-between; align-items:center; padding:4px 6px; border-radius:4px; font-size:10px; cursor:pointer; background:${c.id === cam.id ? 'rgba(2, 132, 199, 0.3)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${c.id === cam.id ? 'var(--accent-cyan)' : 'transparent'};`;
+        item.innerHTML = `<span>📹 ${c.name}</span><span style="font-size:8.5px; color:${c.feedType === 'hls' ? '#34d399' : '#38bdf8'}; font-weight:700;">${c.feedType.toUpperCase()}</span>`;
+        item.onclick = () => selectCctvCamera(c.id);
+        listEl.appendChild(item);
+      });
+
+      // Render Video / Image feed
+      const videoEl = document.getElementById('cctvVideo');
+      const imgEl = document.getElementById('cctvImg');
+      const cvsEl = document.getElementById('cctvFallbackCanvas');
+      const refreshBar = document.getElementById('cctvRefreshBar');
+
+      if (cctvRefreshTimer) { clearInterval(cctvRefreshTimer); cctvRefreshTimer = null; }
+      if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+
+      if (cam.feedType === 'hls' && cam.streamUrl) {
+        imgEl.style.display = 'none';
+        cvsEl.style.display = 'none';
+        videoEl.style.display = 'block';
+        refreshBar.style.display = 'none';
+
+        if (window.Hls && Hls.isSupported()) {
+          hlsInstance = new Hls({ enableWorker: true, lowLatencyMode: true });
+          hlsInstance.loadSource(cam.streamUrl);
+          hlsInstance.attachMedia(videoEl);
+          hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+            videoEl.play().catch(() => showCctvFallbackCanvas(cam));
+          });
+          hlsInstance.on(Hls.Events.ERROR, () => {
+            showCctvFallbackCanvas(cam);
+          });
+        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          videoEl.src = cam.streamUrl;
+          videoEl.play().catch(() => showCctvFallbackCanvas(cam));
+        } else {
+          showCctvFallbackCanvas(cam);
+        }
+      } else if (cam.snapshotUrl && !cam.snapshotUrl.startsWith('/assets/')) {
+        videoEl.style.display = 'none';
+        cvsEl.style.display = 'none';
+        imgEl.style.display = 'block';
+        refreshBar.style.display = 'block';
+
+        const loadSnapshot = () => {
+          imgEl.src = cam.snapshotUrl + (cam.snapshotUrl.includes('?') ? '&' : '?') + 'ts=' + Date.now();
+          refreshBar.style.transition = 'none';
+          refreshBar.style.width = '0%';
+          setTimeout(() => {
+            refreshBar.style.transition = `width ${cam.refreshIntervalSec}s linear`;
+            refreshBar.style.width = '100%';
+          }, 50);
+        };
+        imgEl.onerror = () => showCctvFallbackCanvas(cam);
+        loadSnapshot();
+        cctvRefreshTimer = setInterval(loadSnapshot, cam.refreshIntervalSec * 1000);
+      } else {
+        showCctvFallbackCanvas(cam);
+      }
+
+      // Camera Frustum Focus in 3D
+      cctvFrustumMeshes.forEach(f => {
+        const isThis = (f.userData.cameraId === cam.id);
+        f.children[0].material.opacity = isThis ? 0.45 : (isFrustumVisible ? 0.15 : 0.0);
+        f.children[1].material.opacity = isThis ? 1.0 : (isFrustumVisible ? 0.4 : 0.0);
+      });
+
+      // Smooth camera navigation towards camera
+      const targetRadY = -(cam.lon * Math.PI / 180) - 1.57;
+      const targetRadX = (cam.lat * Math.PI / 180);
+      targetRotationY = targetRadY;
+      targetRotationX = Math.max(-1.1, Math.min(1.1, targetRadX));
+      camera.position.z = Math.max(1.4, camera.position.z);
+
+      if (leafletMapInstance && is2DActive) {
+        leafletMapInstance.flyTo([cam.lat, cam.lon], 13);
+      }
+    }
+
+    function showCctvFallbackCanvas(cam) {
+      const videoEl = document.getElementById('cctvVideo');
+      const imgEl = document.getElementById('cctvImg');
+      const cvsEl = document.getElementById('cctvFallbackCanvas');
+      const refreshBar = document.getElementById('cctvRefreshBar');
+      videoEl.style.display = 'none';
+      imgEl.style.display = 'none';
+      refreshBar.style.display = 'none';
+      cvsEl.style.display = 'block';
+
+      cvsEl.width = cvsEl.clientWidth * window.devicePixelRatio || 350;
+      cvsEl.height = cvsEl.clientHeight * window.devicePixelRatio || 190;
+      const ctx = cvsEl.getContext('2d');
+      const w = cvsEl.width, h = cvsEl.height;
+
+      // Dark Tech Grid Pattern
+      ctx.fillStyle = '#060d1a';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#0f2038';
+      ctx.lineWidth = 1;
+      const step = 20;
+      for (let x = 0; x < w; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+      // Reticle crosshair in center
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.5;
+      const cx = w / 2, cy = h / 2;
+      ctx.beginPath();
+      ctx.moveTo(cx - 25, cy); ctx.lineTo(cx + 25, cy);
+      ctx.moveTo(cx, cy - 25); ctx.lineTo(cx, cy + 25);
+      ctx.stroke();
+      ctx.strokeRect(cx - 40, cy - 30, 80, 60);
+
+      // Telemetry HUD overlay
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(20, 20, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = 'bold 11px JetBrains Mono, monospace';
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillText('REC [LIVE SURVEILLANCE NODE]', 32, 24);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '10px JetBrains Mono, monospace';
+      ctx.fillText(`CAM ID: ${cam.id}`, 20, 48);
+      ctx.fillText(`COORDS: ${cam.lat.toFixed(4)}°N, ${cam.lon.toFixed(4)}°E`, 20, 64);
+      ctx.fillText(`AZ: ${cam.headingDeg.toFixed(1)}° | TILT: ${cam.pitchDeg.toFixed(1)}°`, 20, 80);
+      ctx.fillText(`FOV: ${cam.fovDeg.toFixed(1)}° | RANGE: ${cam.rangeM}m`, 20, 96);
+      ctx.fillText(`SOURCE: ${cam.provider}`, 20, 112);
+
+      const now = new Date();
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(now.toISOString(), 20, h - 15);
+    }
+
+    function closeCctvPanel() {
+      if (cctvRefreshTimer) { clearInterval(cctvRefreshTimer); cctvRefreshTimer = null; }
+      if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+      document.getElementById('cctvIntelSection').style.display = 'none';
+      document.getElementById('eventIntelSection').style.display = 'flex';
+      document.getElementById('rightPanelHeading').innerText = "Event Intelligence";
+      document.getElementById('rightPanelVerifiedBadge').innerText = "AI VERIFIED ✓";
+      document.getElementById('rightPanelVerifiedBadge').style.background = "rgba(245, 158, 11, 0.15)";
+      document.getElementById('rightPanelVerifiedBadge').style.borderColor = "rgba(245, 158, 11, 0.45)";
+      document.getElementById('rightPanelVerifiedBadge').style.color = "#fbbf24";
+    }
+
+    function cycleCctvCamera(dir) {
+      const cams = ((window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) || []).filter(c => c.mode === currentScope);
+      if (!cams.length) return;
+      let idx = cams.findIndex(c => c.id === activeCctvCameraId);
+      idx = (idx + dir + cams.length) % cams.length;
+      selectCctvCamera(cams[idx].id);
+    }
+
+    function toggleFrustumVisibility() {
+      isFrustumVisible = !isFrustumVisible;
+      const btn = document.getElementById('btnToggleFrustum');
+      btn.innerText = `📐 3D Frustum: ${isFrustumVisible ? 'ON' : 'OFF'}`;
+      btn.classList.toggle('active', isFrustumVisible);
+      cctvFrustumMeshes.forEach(f => {
+        const isThis = (f.userData.cameraId === activeCctvCameraId);
+        f.visible = isFrustumVisible && (isThis || isFrustumVisible);
+      });
+    }
+
+    function updateCctvLayerScope(scope) {
+      currentScope = scope;
+      const cams = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) || [];
+      cctvMarkerPins.forEach(p => {
+        p.visible = (p.userData.cam && p.userData.cam.mode === scope);
+      });
+      cctvFrustumMeshes.forEach(f => {
+        const cam = cams.find(c => c.id === f.userData.cameraId);
+        f.visible = (cam && cam.mode === scope && isFrustumVisible);
+      });
+      initLeafletCctvLayer();
+
+      if (activeCctvCameraId) {
+        const activeCam = cams.find(c => c.id === activeCctvCameraId);
+        if (activeCam && activeCam.mode !== scope) {
+          closeCctvPanel();
+        }
+      }
     }
 
     // -------------------------------------------------------------------------
@@ -1842,11 +2620,23 @@
         });
       }
       MAP_LAYERS.wind.addTo(leafletMapInstance);
+
+      // 7. Layer: CCTV Cameras (God's Eye View)
+      initLeafletCctvLayer();
     }
 
     function handleLayerToggle(layerKey) {
       const checkbox = document.getElementById(`tgl${capitalize(layerKey)}`);
       const isChecked = checkbox ? checkbox.checked : true;
+
+      if (layerKey === 'cctv') {
+        if (cctvMeshGroup) cctvMeshGroup.visible = isChecked;
+        if (MAP_LAYERS.cctv && leafletMapInstance) {
+          if (isChecked) leafletMapInstance.addLayer(MAP_LAYERS.cctv);
+          else leafletMapInstance.removeLayer(MAP_LAYERS.cctv);
+        }
+        return;
+      }
 
       if (!leafletMapInstance) return;
 
@@ -1910,6 +2700,7 @@
         <div class="legend-row"><div class="legend-color-box" style="background:#0284c7;"></div><span>SAR Flood Inundation Extent</span></div>
         <div class="legend-row"><div class="legend-color-box" style="background:#38bdf8;"></div><span>7-Day Rainfall &gt; 100mm</span></div>
         <div class="legend-row"><div class="legend-color-box" style="background:#10b981;"></div><span>Operational Health Facilities</span></div>
+        <div class="legend-row"><div class="legend-color-box" style="background:#38bdf8; border:1px solid white;"></div><span>📹 CCTV Surveillance Node</span></div>
       `;
     }
 
@@ -1960,49 +2751,91 @@
     // 5. Scope Navigation (Global, India, Telangana)
     // -------------------------------------------------------------------------
     function setScope(scope) {
+      currentScope = scope;
       document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
       const lblIndia = document.getElementById('labelIndia');
       const lblTelangana = document.getElementById('labelTelangana');
 
-      if (scope === 'global') {
+      const tickerStrong = document.querySelector('.ticker-left-info strong');
+      const tickerDesc = document.querySelector('.ticker-left-info span:last-child');
+      const statAct = document.getElementById('statActive');
+      const statRsk = document.getElementById('statRisk');
+      const statFir = document.getElementById('statFires');
+      const statFld = document.getElementById('statFloods');
+      const statQke = document.getElementById('statQuakes');
+      const statExp = document.getElementById('statExposed');
+
+            if (scope === 'global') {
         document.getElementById('pillGlobal').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'block';
         if (lblTelangana) lblTelangana.style.display = 'flex';
         targetRotationY = -1.38;
         targetRotationX = 0.32;
-        camera.position.z = 2.45;
+        targetCameraDistance = 2.45;
+        targetCameraPitch = 0.0;
+        if (flood3DMesh) flood3DMesh.visible = false;
         if (leafletMapInstance) leafletMapInstance.flyTo([20.0, 78.5], 4);
+        if (tickerStrong) tickerStrong.innerText = '🌐 Global Monitoring';
+        if (tickerDesc) tickerDesc.innerText = '195 Countries • Real-time Data • AI Intelligence';
+        if (statAct) statAct.innerText = '27';
+        if (statRsk) statRsk.innerText = '8';
+        if (statFir) statFir.innerText = '5';
+        if (statFld) statFld.innerText = '7';
+        if (statQke) statQke.innerText = '2';
+        if (statExp) statExp.innerText = '1.8M';
       } else if (scope === 'india') {
         document.getElementById('pillIndia').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'block';
         if (lblTelangana) lblTelangana.style.display = 'flex';
         targetRotationY = -1.38;
         targetRotationX = 0.34;
-        camera.position.z = 1.85;
+        targetCameraDistance = 1.85;
+        targetCameraPitch = 0.25;
+        if (flood3DMesh) flood3DMesh.visible = false;
         if (leafletMapInstance) leafletMapInstance.flyTo([21.0, 79.0], 5);
+        if (tickerStrong) tickerStrong.innerText = '🇮🇳 Subcontinental Monitoring';
+        if (tickerDesc) tickerDesc.innerText = '28 States & 8 UTs • IMD & Open Data Intelligence';
+        if (statAct) statAct.innerText = '12';
+        if (statRsk) statRsk.innerText = '4';
+        if (statFir) statFir.innerText = '2';
+        if (statFld) statFld.innerText = '3';
+        if (statQke) statQke.innerText = '1';
+        if (statExp) statExp.innerText = '420K';
       } else if (scope === 'telangana') {
         document.getElementById('pillTelangana').classList.add('active');
         if (lblIndia) lblIndia.style.display = 'none';
-        if (lblTelangana) lblTelangana.style.display = 'none';
+        if (lblTelangana) lblTelangana.style.display = 'flex';
         targetRotationY = -1.39;
         targetRotationX = 0.36;
-        camera.position.z = 1.45;
-        if (leafletMapInstance) leafletMapInstance.flyTo([17.9, 79.3], 8);
+        targetCameraDistance = 1.42;
+        targetCameraPitch = 0.58;
+        if (flood3DMesh) flood3DMesh.visible = true;
+        if (leafletMapInstance) leafletMapInstance.flyTo([17.85, 79.55], 8);
+        if (tickerStrong) tickerStrong.innerText = '🏛️ Telangana Disaster Risk Assessment';
+        if (tickerDesc) tickerDesc.innerText = '33 Administrative Districts • Sentinel-1 SAR + AHP Multiplicative Engine';
+        if (statAct) statAct.innerText = '5';
+        if (statRsk) statRsk.innerText = '3';
+        if (statFir) statFir.innerText = '1';
+        if (statFld) statFld.innerText = '1';
+        if (statQke) statQke.innerText = '0';
+        if (statExp) statExp.innerText = '118.4K';
       }
+      updateCctvLayerScope(scope);
     }
 
     function resetGlobeView() {
       targetRotationY = -1.38;
       targetRotationX = 0.32;
-      camera.position.z = 2.45;
+      targetCameraDistance = 2.45;
+      targetCameraPitch = 0.0;
       if (leafletMapInstance && is2DActive) {
         leafletMapInstance.flyTo([17.85, 79.55], 7);
       }
     }
 
     function zoomGlobe(delta) {
-      camera.position.z -= delta * 0.25;
-      camera.position.z = Math.max(1.3, Math.min(4.0, camera.position.z));
+      targetCameraDistance -= delta * 0.25;
+      targetCameraDistance = Math.max(1.32, Math.min(3.8, targetCameraDistance));
       if (leafletMapInstance && is2DActive) {
         if (delta > 0) leafletMapInstance.zoomIn();
         else leafletMapInstance.zoomOut();
@@ -2052,19 +2885,44 @@
         });
       }
 
-      // Predefined Indian States & Regions
+      // Predefined Global Cities, Indian States & Regions
       const places = [
-        { name: "Telangana, India", tag: "STATE", lat: 17.85, lon: 79.55, zoom: 7.5 },
-        { name: "Andhra Pradesh, India", tag: "STATE", lat: 15.91, lon: 79.74, zoom: 6.5 },
-        { name: "Maharashtra, India", tag: "STATE", lat: 19.75, lon: 75.71, zoom: 6.0 },
-        { name: "Karnataka, India", tag: "STATE", lat: 15.31, lon: 75.71, zoom: 6.0 },
-        { name: "India (Subcontinent)", tag: "COUNTRY", lat: 20.59, lon: 78.96, zoom: 5.0 },
-        { name: "Hyderabad, Telangana", tag: "CAPITAL", lat: 17.385, lon: 78.486, zoom: 10.0 },
-        { name: "Khammam, Telangana", tag: "HOTSPOT", lat: 17.247, lon: 80.151, zoom: 10.0 }
+        { name: "Telangana, India", tag: "STATE", lat: 17.85, lon: 79.55, zoom: 7.5, mode: "telangana" },
+        { name: "Andhra Pradesh, India", tag: "STATE", lat: 15.91, lon: 79.74, zoom: 6.5, mode: "india" },
+        { name: "Maharashtra, India", tag: "STATE", lat: 19.75, lon: 75.71, zoom: 6.0, mode: "india" },
+        { name: "Karnataka, India", tag: "STATE", lat: 15.31, lon: 75.71, zoom: 6.0, mode: "india" },
+        { name: "India (Subcontinent)", tag: "COUNTRY", lat: 20.59, lon: 78.96, zoom: 5.0, mode: "india" },
+        { name: "Hyderabad, Telangana", tag: "CAPITAL", lat: 17.385, lon: 78.486, zoom: 10.0, mode: "telangana" },
+        { name: "Khammam, Telangana", tag: "HOTSPOT", lat: 17.247, lon: 80.151, zoom: 10.0, mode: "telangana" },
+        { name: "Warangal, Telangana", tag: "DISTRICT", lat: 17.978, lon: 79.594, zoom: 10.0, mode: "telangana" },
+        { name: "New Delhi, India", tag: "CAPITAL", lat: 28.613, lon: 77.209, zoom: 10.0, mode: "india" },
+        { name: "Mumbai, Maharashtra", tag: "METROPOLIS", lat: 19.076, lon: 72.877, zoom: 10.0, mode: "india" },
+        { name: "Bengaluru, Karnataka", tag: "TECH HUB", lat: 12.971, lon: 77.594, zoom: 10.0, mode: "india" },
+        { name: "Austin, Texas, USA", tag: "GLOBAL CITY", lat: 30.267, lon: -97.743, zoom: 10.0, mode: "global" },
+        { name: "Tokyo, Japan", tag: "GLOBAL CITY", lat: 35.676, lon: 139.650, zoom: 10.0, mode: "global" },
+        { name: "New York City, USA", tag: "GLOBAL CITY", lat: 40.712, lon: -74.006, zoom: 10.0, mode: "global" },
+        { name: "London, United Kingdom", tag: "GLOBAL CITY", lat: 51.507, lon: -0.127, zoom: 10.0, mode: "global" }
       ];
       places.forEach(p => {
         if (p.name.toLowerCase().includes(q)) results.push(p);
       });
+
+      // Search CCTV Cameras Catalog (God's Eye View Integration)
+      if (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.cctv_cameras) {
+        window.TERRASCOPE_DATA.cctv_cameras.forEach(c => {
+          if (c.name.toLowerCase().includes(q) || c.city.toLowerCase().includes(q) || c.provider.toLowerCase().includes(q) || (c.country && c.country.toLowerCase().includes(q))) {
+            results.push({
+              name: `📹 ${c.name} (${c.city})`,
+              cctvId: c.id,
+              tag: `CCTV (${c.feedType.toUpperCase()})`,
+              mode: c.mode,
+              lat: c.lat,
+              lon: c.lon,
+              zoom: 13
+            });
+          }
+        });
+      }
 
       if (results.length === 0) {
         dropdown.innerHTML = `<div style="padding:10px; font-size:11px; color:#64748b;">No matching location found</div>`;
@@ -2098,13 +2956,31 @@
     }
 
     function navigateToLocation(res) {
+      if (res.cctvId) {
+        if (res.mode && res.mode !== currentScope) {
+          setScope(res.mode);
+        }
+        selectCctvCamera(res.cctvId);
+        return;
+      }
+
       if (res.district) {
+        if (currentScope !== 'telangana') setScope('telangana');
         openDistrictDossier(res.district);
       }
+
+      if (res.mode && res.mode !== currentScope) {
+        setScope(res.mode);
+      }
+
       if (leafletMapInstance && is2DActive) {
         leafletMapInstance.flyTo([res.lat, res.lon], res.zoom || 9);
       } else {
-        setScope('telangana');
+        const targetRadY = -(res.lon * Math.PI / 180) - 1.57;
+        const targetRadX = (res.lat * Math.PI / 180);
+        targetRotationY = targetRadY;
+        targetRotationX = Math.max(-1.1, Math.min(1.1, targetRadX));
+        camera.position.z = res.zoom ? Math.max(1.35, 2.5 - res.zoom * 0.1) : 1.7;
       }
     }
 
@@ -2612,6 +3488,7 @@
       initThreeGlobe();
       initLeafletEngine();
       updateLegendDisplay();
+      setScope('global');
       startLiveClock();
 
       // Probe live FastAPI backend status

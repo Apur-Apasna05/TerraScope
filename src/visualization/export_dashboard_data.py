@@ -407,7 +407,15 @@ def export_dashboard_data():
         "validation_strategy": "Spatially Disjoint 10km Block Holdout (11 Train Blocks, 5 Test Blocks)"
     }
 
-    # 13. Metadata & Provenance Header
+    # 13. CCTV Camera Intelligence Catalog
+    cctv_catalog_path = os.path.join(raw_dir, "cctv_catalog.json")
+    cctv_cameras = []
+    if os.path.exists(cctv_catalog_path):
+        with open(cctv_catalog_path, "r", encoding="utf-8") as f:
+            cctv_data = json.load(f)
+            cctv_cameras = cctv_data.get("sources", [])
+
+    # 14. Metadata & Provenance Header
     carto_key = os.environ.get("CARTO_BASEMAP_API_KEY") or os.environ.get("CARTO_API_KEY") or "cb1_56ol_1_c37417fcc3decf99d3ade9b6"
 
     metadata = {
@@ -450,7 +458,8 @@ def export_dashboard_data():
             "district_summaries": district_infrastructure
         },
         "ml_flood_model": ml_flood_model,
-        "production_alerts": production_alerts
+        "production_alerts": production_alerts,
+        "cctv_cameras": cctv_cameras
     }
 
     # Save to JSON

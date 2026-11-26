@@ -1,0 +1,561 @@
+=== PAGE 1 ===
+XXX-X-XXXX-XXXX-X/XX/$XX.00 ©20 IEEE  
+TerraScope: A Multi-Source Geospatial Intelligence 
+Framework for Flood and Fire Monitoring and Risk 
+Assessment in Telangana 
+ 
+line 1: 1st Given Name Surname  
+line 2: dept. name of organization  
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address or ORCID 
+line 1: 4th Given Name Surname 
+line 2: dept. name of organization 
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address  or ORCID
+line 1: 2nd Given Name Surname 
+line 2: dept. name of organization  
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address or ORCID 
+line 1: 5th Given Name Surname 
+line 2: dept. name of organization  
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address  or ORCID
+line 1: 3rd Given Name Surname 
+line 2: dept. name of organization  
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address or ORCID 
+line 1: 6th Given Name Surname 
+line 2: dept. name of organization  
+(of Affiliation) 
+line 3: name of organization  
+(of Affiliation) 
+line 4: City, Country 
+line 5: email address or ORCID  
+Abstract— This paper presents TerraScope, a multi -source 
+geospatial intelligence framework for flood and fire monitoring 
+and geographic risk assessment in Telangana, India. The 
+framework fuses satellite imagery, rainfall and meteorological 
+data, terrain, and population and infrastructure layers within a 
+common spatial workflow. Flood extent is derived from 
+Sentinel-1 SAR and optical water indices, fire hotspots from 
+MODIS/VIIRS active -fire data, and a hazard –exposure–
+vulnerability index ranks districts by relative risk. A web 
+interface provides district-level 2D/3D exploration and alerts. 
+Keywords— geospatial intel ligence, flood mapping, fire 
+monitoring, Sentinel-1, remote sensing, GIS, data fusion, risk 
+assessment. 
+I. INTRODUCTION  
+Environmental hazards, particularly floods and fires, pose 
+significant challenges to regional resilience, ecological 
+stability, and infrastructure safety. Their effective monitoring 
+requires the integration of heterogeneous information sources, 
+as individual satellite observations or meteorological 
+measurements often provide only a partial understanding of 
+evolving environmental condit ions. Although advances in 
+remote sensing and Geographic Information Systems (GIS) 
+have improved the acquisition and visualization of 
+environmental data, the fragmented nature of these sources 
+can constrain comprehensive spatial analysis and risk 
+interpretation. In particular, identifying an environmental 
+event alone is insufficient for understanding its potential 
+implications without considering surrounding terrain, 
+vegetation, population distribution, transportation networks, 
+and critical infrastructure. This highlights the need for an 
+integrated geospatial approach capable of correlating 
+environmental observations with relevant geographical and 
+atmospheric parameters to support contextualized disaster 
+assessment. 
+To address this challenge, this paper presents TerraScope, 
+a Telangana -focused geospatial intelligence system for 
+integrated environmental monitoring and disaster risk 
+assessment.The system overlays hazard observations on 
+terrain, population and infrastructure layers within a single 
+interactive framework. Through state-level and district-level 
+spatial exploration, TerraScope enables the examination of 
+environmental events in relation to rainfall, temperature, wind 
+conditions, terrain, vegetation, population, and infrastructure. 
+Furthermore, AI -assisted analytical components facilitate 
+event detection, multi -source information correlation, and 
+geographical risk assessment, while an integrated alerting 
+mechanism communicates identified events and associated 
+risk information. By consolidating these capabilities within a 
+regionally focused platform, this work demonstrates an 
+integrated approach to geospatial environmental intelligence, 
+with the objective of supporting more informed spatial 
+analysis and disaster-risk interpretation across Telangana. 
+The main contributions of this paper are: (1) a unified flood–
+fire framework that fuses satellite, meteorological, terrain and 
+exposure data for Telangana; (2) a Random Forest flood 
+classifier validated with spatial block cross-validation against 
+⟨reference lay er⟩; (3) a transparent hazard –exposure–
+vulnerability index for district-level relative risk; and (4) an 
+interactive 2D/3D interface with alerts. 
+II. RELATED WORK 
+Satellite remote sensing plays an important role in flood 
+monitoring, particularly in regions with limited ground-based 
+observations. Synthetic Aperture Radar (SAR) imagery 
+enables the identification of surface -water changes under 
+different weather and illumination conditions [1]. The 
+National Remote Sensing Centre (NRSC), ISRO, has 
+conducted satellite-based flood mapping in Telangana [2] . 
+Recent research has also explored Sentinel -1 SAR imagery 
+and machine -learning techniques for flood inundation 
+mapping along the Godavari River, demonstrating the 
+applicability of data -driven methods for ident ifying flood-
+affected regions [3]. 
+Satellite-based fire monitoring supports the identification and 
+geographical analysis of active fire locations. Instruments 
+such as the Moderate Resolution Imaging Spectroradiometer 
+
+=== PAGE 2 ===
+(MODIS) and Visible Infrared Imaging Ra diometer Suite 
+(VIIRS) provide thermal observations for detecting fire 
+hotspots [4], [5]. In India, the Forest Survey of India (FSI) 
+uses these satellite observations for near-real-time forest fire 
+monitoring and alert dissemination [6]. Integrating fire-event 
+information with meteorological conditions, vegetation, and 
+nearby settlements provides additional context for assessing 
+potential fire exposure. 
+Geographic Information Systems (GIS) enable the 
+integration of satellite observations, weather parameters, and 
+geographical datasets for environmental analysis. Combining 
+layers such as terrain, vegetation, population, roads, and 
+infrastructure helps examine the spatial relationship between 
+environmental hazards and surrounding features. Building on 
+this approach, TerraScope integrates flood observations, fire-
+event information, meteorological data, and geographical 
+layers into a unified Telangana -focused platform, 
+incorporating AI-assisted analysis, spatial visualization, and 
+alert management for regional environmental monitoring and 
+risk assessment. Existing platforms such as Copernicus EMS, 
+the Global Flood Monitoring service, Global Forest Watch 
+and ISRO’s Bhuvan provide hazard maps at national or 
+global scale, but they generally treat floods and fires 
+separately and do not combine them with district -level 
+exposure layers for Telangana. TerraScope addresses this 
+gap. 
+III. PROPOSED SYSTEM 
+TerraScope is a Telangana-centric geospatial intelligence 
+platform designed to integrate, visualize, and analyse 
+environmental and geographical datasets for disaster 
+monitoring and risk assessment. The system follows a 
+modular architecture consisting of data acquisition, geospatial 
+processing, multi -hazard analysis, AI -assisted intelligence, 
+and visualization with alert management. These components 
+operate within a common spatial framework to support the 
+monitoring of two major environmental hazards: floods and 
+fires, with geographical exploration at state and district levels. 
+The data acquisition component collects satellite imagery, 
+rainfall measurements, temperature, wind speed and direction, 
+fire-event records, and flood -related observations from 
+relevant data sources. It also incorporates geographical 
+datasets such as administrative boundaries, elevation, 
+vegetation, population distribution, roads, and infrastructure. 
+These datasets are processed and integrated to establish spatial 
+consistency and enable their association with relevant 
+geographical locations across Telangana. 
+The environmental analysis component supports separate 
+monitoring workflows for floods and fires. Flood monitoring 
+uses satellite-derived observations, rainfall information, and 
+geographical characteristics to identify and examine 
+potentially inundated regions. Fire monitoring combines fire-
+event information with meteorological conditions, vegetation 
+distribution, and nearby settlements to examine potential fire-
+related risks. AI-assisted analytical capabilities support event 
+identification, multi-source data correlation, and geographical 
+risk assessment by considering hazard observations alongside 
+relevant environmental and geographical parameters. 
+The visualization and alert management component 
+provides an interactive interface through two -dimensional 
+maps and three -dimensional geographical views. Users can  
+explore Telangana and its districts while examining satellite 
+imagery, weather conditions, hazard locations, and 
+geographical exposure layers. The alert mechanism 
+communicates identified environmental events and associated 
+risk information.  
+IV. METHODOLOGY 
+The methodology adopted in TerraScope follows an 
+integrated geospatial processing framework for environmental 
+monitoring and disaster risk assessment across Telangana. 
+The framework combines heterogeneous environmental 
+observations, meteorological parameter s, and geographical 
+datasets to facilitate hazard identification, spatial correlation, 
+and geographical exposure assessment. The overall 
+processing workflow consists of data acquisition, geospatial 
+preprocessing, flood and fire analysis, multi -source data 
+integration, risk assessment, and visualization. Each stage 
+contributes to transforming environmental observations into 
+geographically contextualized information for regional 
+disaster intelligence. 
+A. Study Area and Data Acquisition 
+The study area comprises the geographical extent of 
+Telangana, India, including its administrative districts. 
+Environmental and geographical datasets are acquired from 
+relevant satellite observation platforms, meteorological 
+services, and geospatial repositories. The pri mary inputs 
+include satellite imagery, rainfall measurements, temperature, 
+wind speed, wind direction, fire -event observations, and 
+flood-related information. Additional spatial datasets 
+representing administrative boundaries, elevation, vegetation, 
+population distribution, transportation networks, and 
+infrastructure are incorporated to establish the geographical 
+context of detected environmental events. 
+Table I lists the datasets used. Sentinel -1 C -band SAR 
+(VV/VH, Ground Range Detected, Interferometric Wi de 
+mode) provides all -weather water detection, and Sentinel -2 
+optical imagery provides NDWI and vegetation indices. 
+Rainfall is taken from [CHIRPS / IMD gridded rainfall] and 
+wind and temperature from [ERA5 -Land / IMD]. Terrain 
+parameters (elevation, slope ) are derived from the SRTM 
+digital elevation model. Active fire detections come from 
+NASA FIRMS (MODIS and VIIRS). Population is taken from 
+WorldPop, and road networks from OpenStreetMap. All 
+layers are clipped to the Telangana district boundaries from 
+[source] and resampled to a common [30 m / 100 m] grid. 
+TABLE I 
+Datasets Used in TerraScope 
+Data Source Resolut
+ion 
+Use 
+SAR 
+imagery 
+Sentinel-1 
+(VV/VH) 
+10 m Flood extent 
+Optical 
+imagery 
+Sentinel-2 10 m NDWI, 
+vegetation 
+Rainfall CHIRPS (0.05°) 
+or IMD (0.25°) 
+Daily Flood context 
+
+=== PAGE 3 ===
+Wind, 
+temperature 
+ERA5-Land or 
+IMD 
+[hourly/
+daily] 
+Fire exposure 
+Elevation SRTM 30 m Slope, terrain 
+Active 
+fires 
+NASA FIRMS: 
+MODIS / VIIRS 
+1 km / 
+375 m 
+Fire detection 
+Population WorldPop ~100 m Exposure 
+Roads OpenStreetMap Vector Exposure 
+Boundarie
+s 
+[Survey of India 
+/ GADM] 
+Vector District 
+aggregation 
+ 
+B. Geospatial Preprocessing and Data Integration 
+The acquired datasets may exhibit differences in 
+coordinate reference systems, spatial resolutions, temporal 
+attributes, and data formats. Geospatial preprocessing is 
+therefore performed to facilitate consistent spatial 
+representation and interoperability. The processing stage 
+involves coordinate reference system transformation, spatial 
+alignment, attribute organization, and geograph ical 
+association with the administrative boundaries of Telangana. 
+Numerical environmental parameters can be normalized to 
+a common interval to facilitate comparative analysis. Min –
+max normalization is expressed as: 
+ 
+𝑋′ = 𝑋 − 𝑋min
+𝑋max − 𝑋min
+ 
+where 
+ X = Original input value. 
+ X_min = Minimum value of the parameter. 
+ X_max = Maximum value of the parameter. 
+ X' = Normalized value, generally within the 
+range [0, 1]. 
+The processed datasets are subsequently integrated within a 
+common geospatial framework, enabling the association of 
+environmental observations with geographical attributes such 
+as terrain, vegetation, settlements, and infrastructure. 
+C. Flood Monitoring and Inundation Analysis 
+The flood -monitoring component examines satellite -
+derived surface observations in conjunction with rainfall 
+information and terrain characteristics to identify and interpret 
+potentially inundated regions. Satellite imagery provides the 
+spatial basis for examining water -related surface changes, 
+while rainfall observations contribute meteorological context 
+to flood-related conditions. Elevation and terrain information 
+further support the geographical interpretation of potentially 
+affected areas. 
+For optical satellite imagery, water pixels can be 
+delineated using the Normali zed Difference Water Index 
+(NDWI) [7]: 
+𝑁𝐷𝑊𝐼 = 𝐺 − 𝑁𝐼𝑅
+𝐺 + 𝑁𝐼𝑅  
+where 
+ G = Green spectral band. 
+ NIR = Near-Infrared spectral band. 
+ NDWI = Used to identify water -associated 
+pixels. 
+ Classification threshold = Applied to distinguish 
+water pixels from other land-cover classes. 
+The identified flood -related regions are spatially 
+associated with administrative boundaries and contextual 
+geographical datasets. This enables the examination of 
+potentially affected settlements, transportation networks, 
+population dis tribution, and infrastructure. The resulting 
+spatial representation supports regional flood monitoring and 
+geographical exposure assessment. 
+D. Fire Detection and Meteorological Correlation 
+The fire -monitoring component utilizes available fire -
+event observations to identify the geographical locations of 
+detected fire activity. These locations are examined in 
+conjunction with meteorological parameters, particularly 
+wind speed and wind direction, to understand the surrounding 
+atmospheric conditions. Vegetatio n distribution, terrain 
+characteristics, and nearby settlements and infrastructure are 
+incorporated to provide additional geographical context. 
+The integration of fire -event locations with wind-related 
+information facilitates the examination of potential downwind 
+exposure. Vegetation and land -cover characteristics provide 
+contextual information regarding the surrounding 
+environment, while population and infrastructure layers assist 
+in identifying geographically exposed features. This 
+combined analysis supports fire-related risk assessment and 
+the spatial interpretation of environmental conditions. Wind 
+direction is treated as a contextual parameter for exposure 
+analysis rather than a deterministic prediction of fire 
+propagation. 
+E. Geospatial Exposure and Risk Assessment 
+Geospatial exposure assessment establishes the 
+relationship between identified environmental hazards and 
+geographically distributed features. The analysis incorporates 
+population distribution, infrastructure, transportation 
+networks, vegetation, and terrain to examine the potential 
+exposure of surrounding regions. 
+A generalized weighted exposure index, computed as a 
+weighted linear combination of normalized criteria as 
+commonly used in GIS-based multi-criteria analysis [9], can 
+be expressed as: 
+𝐸(𝑥, 𝑦) = ∑ 𝑤𝑖
+𝑛
+𝑖=1
+𝑃𝑖(𝑥, 𝑦) 
+subject to: 
+∑ 𝑤𝑖
+𝑛
+𝑖=1
+= 1,  𝑤𝑖 ≥ 0 
+where 
+ E(x, y) = Exposure index at geographical location 
+(x, y). 
+
+=== PAGE 4 ===
+ P_i(x, y) = Individual normalized geographical 
+parameter. 
+ w_i = Corresponding weight assigned to each 
+parameter. 
+ n = Total number of integrated geographical 
+parameters. 
+Following the widely used hazard –exposure–vulnerability     
+framework for disaster risk [8], a generalized risk-assessment 
+formulation is represented as: 
+𝑅(𝑥, 𝑦) = 𝐻(𝑥, 𝑦) × 𝐸(𝑥, 𝑦) × 𝑉(𝑥, 𝑦) 
+ 
+where 
+ R(x, y) = Relative risk index at geographical 
+location (x, y). 
+ H(x, y) = Hazard score at geographical location 
+(x, y). 
+ E(x, y) = Geographical exposure at location (x, 
+y). 
+ V(x, y) = Vulnerability at location (x, y). 
+ 
+The formulation represents the relationship between hazard 
+conditions, exposed geographical features, and their potential 
+susceptibility. The resulting index indicates relative risk and 
+does not represent a calibrated probability of disaster 
+occurrence. 
+F. Random Forest Flood Classification 
+A Random Forest classifier [12] labels each pixel as flood 
+or non-flood. The input feature vector X contains Sentinel-1 
+VV and VH backscatter (dB), NDWI, [7 -day] cumulative 
+rainfall, elevation, slope, and [HAND]. Training labels are 
+derived from [the NRSC flood inundation  layer [2] for the 
+(event/date)]. The labeled samples are split [70%/30%] into 
+training and test sets using spatially separated blocks to avoid 
+inflated accuracy from spatial autocorrelation. The model uses 
+[200] trees with [default / tuned] hyperparameter s. 
+Performance is assessed with precision, recall, F1-score and 
+intersection-over-union (IoU). 
+The classification is expressed as: 
+𝑌̂ = 𝑓𝜃(𝑋)  
+where 
+ X = Input feature set. 
+ f_theta = Implemented analytical function 
+parameterized by theta. 
+ theta = Parameters of the analytical function. 
+ Y_hat = Resulting analytical output. 
+Fire detections are taken directly from FIRMS, so no learned 
+model is used for fire. The alert module raises an alert when 
+the relative risk index R(x, y) exceeds a threshold R_thr  = 
+[value], or when a FIRMS detection falls within [x] km of a 
+settlement. 
+The output may correspond to an event classification, 
+correlated information, or a risk-assessment result, depending 
+on the analytical operation. 
+G. Geospatial Visualization and Alert Generation 
+The final stage presents the processed environmental 
+information through an interactive geospatial visualization 
+interface. Satellite observations, meteorological parameters, 
+fire-event locations, flood -related information, and 
+geographical exposure layers are represented within a unified 
+geographical environment. Two -dimensional map 
+representations and three-dimensional visualization facilitate 
+spatial exploration across Telangana, while administrative 
+boundary integration enables district-level navigation. 
+The alert management component communicates 
+identified environmental events and associated risk 
+information through the platform interface. This facilitates 
+access to geographically contextualized information and 
+enables users to examine  relevant environmental conditions 
+and potentially exposed locations. 
+Together, these stages convert raw observations into 
+geographically contextualized hazard and exposure 
+information for each district of Telangana. 
+V. RESULT AND DISCUSSION 
+ 
+The TerraScope prototype lets users move from a state-wide 
+view to individual districts and inspect hazard layers in 2D 
+and 3D alongside weather and exposure data. Viewing these 
+layers together provides a consolidated picture of 
+environmental conditions at different geographical scales. 
+ 
+The system supports fire monitoring through the visualization 
+of fire events and their corresponding geographical locations. 
+Meteorological parameters, including temperature and wind 
+conditions, together with vegetation distribution and ne arby 
+settlements, provide additional context for examining 
+potential fire -related risks. Similarly, the flood -monitoring 
+functionality supports the identification and visualization of 
+flood-affected areas using available satellite imagery and 
+flood-related information. Rainfall observations and 
+geographical layers, including population distribution, road 
+networks, and infrastructure, contribute to understanding the 
+potential exposure of surrounding regions to flood 
+conditions. 
+The integration of population, vegetation, transportation, and 
+infrastructure layers enhances the geographical context of 
+hazard monitoring. These datasets help identify areas where 
+environmental events may have implications for human 
+settlements and essential infrastructure. AI -assisted 
+analytical capabilities further support environmental event 
+identification, correlation of relevant information, and 
+geographical risk assessment. The alert and notification 
+functionality provides a mechanism for communicating 
+identified events and potential risk conditions to users. 
+The implementation shows that fire and flood monitoring can 
+be combined with exposure information in one regional 
+system. However, the operational effectiveness of the system 
+must be established through systematic evaluation  using 
+independently validated reference datasets. Quantitative 
+measures such as detection accuracy, false -positive rate, 
+spatial agreement, and alert response time would provide a 
+
+=== PAGE 5 ===
+stronger basis for assessing system performance. These 
+measurements are not  claimed here in the absence of 
+experimental validation results. 
+VI. CONCLUSION 
+TerraScope is a Telangana -focused system that supports 
+environmental monitoring and disaster -risk assessment by 
+placing hazard observations in their terrain, population and 
+infrastructure context. Users can monitor fire and flood 
+events and explore conditions through state-level and district-
+level navigation with 3D visualization. 
+By integrating environmental parameters such as 
+temperature, rainfall, wind conditions, and vegetation with 
+population distribution, roads, and infrastructure, TerraScope 
+provides valuable geographical context for understanding 
+potential disaster impacts. Its AI -assisted analytical 
+capabilities support event identification, information 
+correlation, and geographical risk assessment, while the alert 
+and notification features help communicate relevant 
+environmental events and potential risk conditions. 
+The project demonstrates the practical application of 
+geospatial technologies and artificial intelligence in 
+addressing regional environmental monitoring challenges. 
+Rather than switching between separate data sources, users 
+can interpret them together in one interface.  TerraScope 
+therefore provides a foundation for more accessible, 
+integrated, and data -driven environmental monitoring and 
+disaster-management support in Telangana. 
+ 
+REFERENCES 
+[1]  A. Twele, W. Cao, S. Plank, and S. Martinis, “Sentinel -1-based flood 
+mapping: a fully automated processing chain,” Int. J. Remote Sens. , 
+vol. 37, no. 13, pp. 2990–3004, 2016. 
+[2]  NRSC, ISRO, “Flood Inundation Areas in Part of Telangana,” Map 
+No. 2024/FL/TS/03/01092024, Hyderabad, India, Sep. 2, 2024.  
+[3]  M. Ashhar, V. R. Keesara, and V. Sridhar, “Flood inundation mapping 
+of a river stretch using machine learning algorithms in the Google Earth 
+Engine environment,” J. Flood Risk Manag. , vol. 18, no. 2, e70062, 
+2025. doi: 10.1111/jfr3.70062. 
+[4]  L. Giglio, W. Schroeder, and C. O. Justice, “The collection 6 MODIS 
+active fire detection algorithm and fire products,” Remote Sens. 
+Environ., vol. 178, pp. 31–41, 2016. 
+[5]  W. Schroeder, P. Oliva, L. Giglio, and I. A. Csiszar, “The New VIIRS 
+375 m active fire detection data product: Algorithm description and 
+initial assessment,” Remote Sens. Environ., vol. 143, pp. 85–96, 2014. 
+[6]  Forest Survey of India, “Near Real -Time Forest Fire Monitoring.”  
+[7] S. K. McFeeters, “The use of the Nor malized Difference Water Index 
+(NDWI) in the delineation of open water features,” Int. J. Remote Sens., 
+vol. 17, no. 7, pp. 1425–1432, 1996. 
+[8]  IPCC, Managing the Risks of Extreme Events and Disasters to 
+Advance Climate Change Adaptation (SREX) , Cambridge Univ. Press, 
+2012. 
+[9] J. Malczewski, “GIS-based multicriteria decision analysis: a survey of 
+the literature,” Int. J. Geogr. Inf. Sci., vol. 20, no. 7, pp. 703–726, 2006, 
+doi: 10.1080/13658810600661508.  
+[10]  N. Kazakis, I. Kougias, and T. Patsialis, “Assessment of flood hazard 
+areas at a regional scale using an index-based approach and Analytical 
+Hierarchy Process: Application in Rhodope –Evros region, Greece,” 
+Sci. Total Environ., vol. 538, pp. 555–563, 2015. 
+[11] T. L. Saaty, “A scaling method for priorities in hierarchical structures,” 
+J. Math. Psychol., vol. 15, no. 3, pp. 234–281, 1977. 
+[12]  L. Breiman, “Random forests,” Mach. Learn., vol. 45, no. 1, pp. 5–32, 
+2001. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

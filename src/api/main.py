@@ -17,7 +17,8 @@ if root_dir not in sys.path:
 
 from fastapi import FastAPI, HTTPException, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(
     title="TerraScope Geospatial Intelligence Framework API",
@@ -33,6 +34,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount web static directory
+web_dir = os.path.join(root_dir, "web")
+web_assets_dir = os.path.join(web_dir, "assets")
+if os.path.exists(web_assets_dir):
+    app.mount("/assets", StaticFiles(directory=web_assets_dir), name="assets")
+
+@app.get("/")
+def serve_index():
+    index_path = os.path.join(web_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "TerraScope API online. web/index.html not found."}
+
+@app.get("/dashboard_data.js")
+def serve_dashboard_data():
+    return FileResponse(os.path.join(web_dir, "dashboard_data.js"))
+
+@app.get("/dashboard_data.json")
+def serve_dashboard_json():
+    return FileResponse(os.path.join(web_dir, "dashboard_data.json"))
 
 # In-memory storage for acknowledged alerts
 ACKNOWLEDGED_ALERT_IDS = set()
@@ -355,6 +377,45 @@ def search_locations(q: str = Query(..., description="Query for district, state,
             results.append(p)
 
     return {"query": q, "results": results[:10]}
+
+# ---------------------------------------------------------------------------
+# CCTV Camera Intelligence Endpoints (God's Eye View Integration)
+# ---------------------------------------------------------------------------
+@app.get("/api/cctv/sources")
+def get_cctv_sources(mode: Optional[str] = Query(None, description="Filter cameras by mode: global, india, telangana")):
+    payload = get_data_payload()
+    cameras = payload.get("cctv_cameras", [])
+    if mode:
+        mode_clean = mode.strip().lower()
+        cameras = [c for c in cameras if c.get("mode", "").lower() == mode_clean]
+    return {
+        "count": len(cameras),
+        "mode_filter": mode,
+        "sources": cameras
+    }
+
+@app.get("/api/cctv/health")
+def get_cctv_health():
+    payload = get_data_payload()
+    cameras = payload.get("cctv_cameras", [])
+    live_count = sum(1 for c in cameras if c.get("status") == "active")
+    return {
+        "status": "HEALTHY",
+        "timestamp_utc": datetime.utcnow().isoformat() + "Z",
+        "total_cameras": len(cameras),
+        "active_cameras": live_count,
+        "streaming_protocols": ["HLS", "MJPEG", "HTTPS Snapshot"],
+        "providers_registered": sorted(list({c.get("provider", "Unknown") for c in cameras}))
+    }
+
+@app.get("/api/cctv/camera/{camera_id}")
+def get_cctv_camera_detail(camera_id: str = Path(..., description="Unique ID of the CCTV camera")):
+    payload = get_data_payload()
+    cameras = payload.get("cctv_cameras", [])
+    cam = next((c for c in cameras if c["id"] == camera_id), None)
+    if not cam:
+        raise HTTPException(status_code=404, detail=f"CCTV camera '{camera_id}' not found in catalog")
+    return cam
 
 if __name__ == "__main__":
     import uvicorn

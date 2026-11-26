@@ -5,13 +5,21 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+import os
 import yaml
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def _default_repo_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    env_root = os.environ.get("REPO_ROOT") or os.environ.get("TERRASCOPE_REPO_ROOT")
+    if env_root:
+        return Path(env_root).resolve()
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "data").exists() or (parent / "config").exists() or (parent / ".git").exists():
+            return parent
+    return current.parents[2] if len(current.parents) > 2 else current.parent
 
 
 class Settings(BaseSettings):

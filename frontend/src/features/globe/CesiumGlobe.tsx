@@ -402,10 +402,17 @@ export function CesiumGlobe() {
           .then(([gj, riskEnv]) => {
             if (controller.signal.aborted || viewer.isDestroyed()) return;
             const sevMap = riskEnv
-              ? new Map(riskEnv.data.rankings.map((r) => [r.district.toLowerCase(), r.severity]))
+              ? new Map<string, SeverityTier>(
+                  riskEnv.data.rankings.map((r) => [r.district.toLowerCase(), r.severity]),
+                )
               : null;
             const sevMapLgd = riskEnv
-              ? new Map(riskEnv.data.rankings.map((r: any) => [Number(r.district_id || r.dist_lgd), r.severity]))
+              ? new Map<number, SeverityTier>(
+                  riskEnv.data.rankings.map((r) => [
+                    Number(r.district_id || r.dist_lgd || 0),
+                    r.severity,
+                  ]),
+                )
               : null;
             telanganaLayerRef.current = createBoundaryLayer(viewer, gj, {
               lineHeightM: 1600,
@@ -413,7 +420,8 @@ export function CesiumGlobe() {
               getStyle: (feat) => {
                 const name = String(feat.properties?.district ?? "").toLowerCase();
                 const lgd = Number(feat.properties?.dist_lgd || feat.properties?.district_id);
-                const sev = (lgd ? sevMapLgd?.get(lgd) : null) ?? sevMap?.get(name) ?? "low";
+                const sev: SeverityTier =
+                  (lgd ? sevMapLgd?.get(lgd) : null) ?? sevMap?.get(name) ?? "low";
                 const isSelected =
                   Boolean(selectedDistrict) && name === selectedDistrict?.toLowerCase();
                 return {

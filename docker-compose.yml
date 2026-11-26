@@ -29,11 +29,13 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-terrascope}:${POSTGRES_PASSWORD:-terrascope_dev_password}@db:5432/${POSTGRES_DB:-terrascope}
       CONFIG_PATH: /app/config/terrascope.yaml
+      REPO_ROOT: /app
     ports:
       - "8000:8000"
     volumes:
       - ./config:/app/config:ro
       - ./data:/app/data:ro
+      - ./paper_assets:/app/paper_assets:ro
     depends_on:
       db:
         condition: service_healthy

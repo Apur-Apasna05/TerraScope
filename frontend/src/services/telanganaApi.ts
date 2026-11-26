@@ -89,6 +89,8 @@ export interface WeatherPayload {
 export interface DistrictRiskRow {
   rank: number;
   district: string;
+  district_id?: number | string;
+  dist_lgd?: number | string;
   hazard_score: number;
   exposure_score: number;
   vulnerability_score: number;

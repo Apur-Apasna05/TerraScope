@@ -2398,11 +2398,12 @@
     // 4. 2D Leaflet Engine & Real Geospatial Layers
     // -------------------------------------------------------------------------
     function initLeafletEngine() {
-      const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || 'cb1_56ol_1_c37417fcc3decf99d3ade9b6';
+      const cartoKey = (window.TERRASCOPE_DATA && window.TERRASCOPE_DATA.metadata && window.TERRASCOPE_DATA.metadata.carto_basemap_key) || '';
+      const tileUrl = cartoKey ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}` : `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png`;
       
       leafletMapInstance = L.map('map2dContainer', { zoomControl: false }).setView([17.85, 79.55], 7);
       
-      L.tileLayer(`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${cartoKey}`, {
+      L.tileLayer(tileUrl, {
         attribution: '&copy; CARTO &copy; OpenStreetMap &copy; TerraScope',
         subdomains: 'abcd',
         maxZoom: 19

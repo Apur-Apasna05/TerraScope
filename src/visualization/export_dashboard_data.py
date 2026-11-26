@@ -433,7 +433,7 @@ def export_dashboard_data():
             cctv_cameras = cctv_data.get("sources", [])
 
     # 14. Metadata & Provenance Header
-    carto_key = os.environ.get("CARTO_BASEMAP_API_KEY") or os.environ.get("CARTO_API_KEY") or "cb1_56ol_1_c37417fcc3decf99d3ade9b6"
+    carto_key = os.environ.get("CARTO_BASEMAP_API_KEY") or os.environ.get("CARTO_API_KEY") or ""
 
     metadata = {
         "system_name": "TerraScope Geospatial Intelligence Framework",

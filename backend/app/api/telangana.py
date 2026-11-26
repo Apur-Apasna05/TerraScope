@@ -143,8 +143,10 @@ def get_telangana_district_summary(
                 "message": f"District '{name}' not found among Telangana's 33 districts.",
             },
         )
+    data_dict = match.model_dump() if hasattr(match, "model_dump") else match.dict()
+    data_dict["district"] = match.district_name
     return DataEnvelope(
-        data=match.dict(),
+        data=data_dict,
         meta=ProvenanceMeta(
             source=match.data_source,
             observed_at=match.observed_at,
@@ -215,6 +217,8 @@ async def get_risk_intelligence(
             selected["district"] = sel_rec.district_name
             selected["severity"] = sel_rec.severity_level.lower()
 
+    from app.research.risk import PRESERVED_AHP_CR, PRESERVED_AHP_MATRIX, PRESERVED_AHP_WEIGHTS
+
     first = records[0] if records else None
     return DataEnvelope(
         data={
@@ -228,12 +232,15 @@ async def get_risk_intelligence(
                 "interpretation": "Canonical multi-sensor physical flood and thermal vulnerability assessment",
                 "severity_thresholds": SEVERITY_THRESHOLDS,
                 "calculation_version": "v2.1-canonical-hev",
+                "consistency_ratio": PRESERVED_AHP_CR,
+                "ahp_matrix": PRESERVED_AHP_MATRIX,
+                "ahp_weights": PRESERVED_AHP_WEIGHTS,
             },
         },
         meta=ProvenanceMeta(
             source=first.data_source if first else "Canonical Telangana Multiplicative R=HxExV Engine",
             observed_at=first.observed_at if first else None,
-            kind="analysis",
+            kind="estimate",
             freshness=first.data_freshness.lower() if first else "historical",
             method="AHP Weighted Multiplicative Risk Assessment R=HxExV",
             confidence=first.confidence if first else 0.9947,

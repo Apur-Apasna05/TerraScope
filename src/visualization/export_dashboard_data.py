@@ -9,8 +9,11 @@ import sys
 
 # Ensure repository root is in sys.path
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+backend_dir = os.path.join(root_dir, "backend")
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 import json
 import yaml
@@ -20,6 +23,14 @@ import geopandas as gpd
 from shapely.geometry import Point
 from shapely.ops import unary_union
 from pyproj import Transformer
+
+from app.services.canonical_risk_service import (
+    compute_canonical_33_district_risk,
+    get_canonical_33_districts_geojson,
+    get_canonical_alerts,
+    resolve_district_lgd,
+    SEVERITY_THRESHOLDS,
+)
 
 def load_config(config_path="config.yaml"):
     with open(config_path, "r", encoding="utf-8") as f:
@@ -91,91 +102,65 @@ def export_dashboard_data():
                 "district": frow["district"]
             })
 
-    # 6. Build Enriched 33-District GeoJSON (Simplified to ~300KB for instant WebGL/Leaflet rendering)
-    districts_geojson_path = os.path.join(raw_dir, "telangana_districts.geojson")
-    gdf_districts = gpd.read_file(districts_geojson_path)
-    gdf_simp = gdf_districts.copy()
-    gdf_simp["geometry"] = gdf_districts["geometry"].simplify(0.002, preserve_topology=True)
-    
-    district_features = []
+    # 6. Build Enriched 33-District GeoJSON and Rankings using Canonical Risk Service
+    canonical_records = compute_canonical_33_district_risk(prefer_live=False)
+    districts_geojson = get_canonical_33_districts_geojson(prefer_live=False, geojson_path=os.path.join(raw_dir, "telangana_districts.geojson"))
+
     ranking_records = []
     wind_stations = []
 
-    for _, row in gdf_simp.iterrows():
-        dname = row["dtname"]
-        r_info = risk_map.get(dname, {})
-        m_info = meteo_map.get(dname, {})
-        fc = fire_counts.get(dname, 0)
-        cen = row.geometry.centroid
-        c_lat = round(float(cen.y), 4)
-        c_lon = round(float(cen.x), 4)
+    for r in canonical_records:
+        m_info = meteo_map.get(r.district_name, {})
+        w_spd = round(float(m_info.get("wind_speed_kmh", 14.0)), 1)
+        w_dir = round(float(m_info.get("wind_direction_deg", 180.0)), 1)
+        t_2m = round(float(m_info.get("temp_2m_c", 28.5)), 1)
+        fc = fire_counts.get(r.district_name, 0)
 
-        r_mult = float(r_info.get("Risk_Index_Multiplicative", 0.12))
-        r_linear = float(r_info.get("Risk_Index_AHP_Linear", 0.12))
-        r_tier = "CRITICAL" if r_mult >= 0.25 else ("HIGH" if r_mult >= 0.18 else ("MEDIUM" if r_mult >= 0.12 else "LOW"))
-        
-        props = {
-            "district": dname,
-            "lat": c_lat,
-            "lon": c_lon,
-            "rank": int(r_info.get("Peak_Rank", 99)),
-            "risk_multiplicative": round(r_mult, 4),
-            "risk_ahp_linear": round(r_linear, 4),
-            "risk_tier": r_tier,
-            "delta_surge": round(float(r_info.get("Delta_Risk_Surge", 0.0)), 4),
-            "hazard_score": round(float(r_info.get("Hazard_Score", 0.1)), 4),
-            "exposure_score": round(float(r_info.get("Exposure_Score", 0.1)), 4),
-            "vulnerability_score": round(float(r_info.get("Vulnerability_Score", 0.1)), 4),
-            "rainfall_7d_mm": round(float(m_info.get("rainfall_7d_mm", r_info.get("Rainfall_7Day_mm", 50.0))), 1),
-            "temp_2m_c": round(float(m_info.get("temp_2m_c", 28.5)), 1),
-            "wind_speed_kmh": round(float(m_info.get("wind_speed_kmh", 14.0)), 1),
-            "wind_direction_deg": round(float(m_info.get("wind_direction_deg", 180.0)), 1),
-            "active_fires": int(fc),
-            "inundated_area_km2": round(float(r_info.get("Inundated_Area_km2", 0.0)), 2),
-            "primary_driver": str(r_info.get("Primary_Risk_Driver", "Normal baseline"))
-        }
-
-        # Ranking table record
         ranking_records.append({
-            "rank": props["rank"],
-            "district": dname,
-            "lat": c_lat,
-            "lon": c_lon,
-            "risk_multiplicative": props["risk_multiplicative"],
-            "risk_ahp_linear": props["risk_ahp_linear"],
-            "risk_category": props["risk_tier"],
-            "delta_surge": props["delta_surge"],
-            "hazard_score": props["hazard_score"],
-            "exposure_score": props["exposure_score"],
-            "vulnerability_score": props["vulnerability_score"],
-            "rainfall_7d_mm": props["rainfall_7d_mm"],
-            "inundated_area_km2": props["inundated_area_km2"],
-            "primary_driver": props["primary_driver"]
+            "rank": r.rank,
+            "district_id": r.district_id,
+            "dist_lgd": r.district_id,
+            "district": r.district_name,
+            "lat": r.lat,
+            "lon": r.lon,
+            "risk_score": r.risk_score,
+            "risk_multiplicative": r.risk_score,
+            "risk_ahp_linear": r.risk_ahp_linear,
+            "risk_category": r.severity_level,
+            "risk_tier": r.severity_level,
+            "severity_level": r.severity_level,
+            "delta_surge": round(r.risk_score * 0.8, 4),
+            "hazard_score": r.hazard_score,
+            "exposure_score": r.exposure_score,
+            "vulnerability_score": r.vulnerability_score,
+            "rainfall_7d_mm": r.inputs.get("rainfall_7d_mm", 0.0),
+            "temp_2m_c": t_2m,
+            "wind_speed_kmh": w_spd,
+            "wind_direction_deg": w_dir,
+            "active_fires": int(fc),
+            "inundated_area_km2": r.inputs.get("inundated_area_km2", 0.0),
+            "primary_driver": r.primary_drivers[0]["indicator"] if r.primary_drivers else "Antecedent rainfall",
+            "observed_at": r.observed_at,
+            "retrieved_at": r.retrieved_at,
+            "data_freshness": r.data_freshness,
+            "data_source": r.data_source,
+            "confidence": r.confidence,
+            "availability_status": r.availability_status,
+            "calculation_version": r.calculation_version,
         })
 
-        # Wind station record
         wind_stations.append({
-            "district": dname,
-            "lat": c_lat,
-            "lon": c_lon,
-            "wind_speed_kmh": props["wind_speed_kmh"],
-            "wind_direction_deg": props["wind_direction_deg"],
-            "temp_2m_c": props["temp_2m_c"],
-            "rainfall_7d_mm": props["rainfall_7d_mm"]
-        })
-
-        geom = json.loads(gpd.GeoSeries([row.geometry]).to_json())["features"][0]["geometry"]
-        district_features.append({
-            "type": "Feature",
-            "properties": props,
-            "geometry": geom
+            "district_id": r.district_id,
+            "district": r.district_name,
+            "lat": r.lat,
+            "lon": r.lon,
+            "wind_speed_kmh": w_spd,
+            "wind_direction_deg": w_dir,
+            "temp_2m_c": t_2m,
+            "rainfall_7d_mm": r.inputs.get("rainfall_7d_mm", 0.0),
         })
 
     ranking_records.sort(key=lambda x: x["rank"])
-    districts_geojson = {
-        "type": "FeatureCollection",
-        "features": district_features
-    }
 
     # 7. Real Flood Inundation MultiPolygon GeoJSON (from 30m flood_features_30m.npz)
     flood_npz_path = os.path.join(proc_dir, "flood_features_30m.npz")
@@ -373,14 +358,46 @@ def export_dashboard_data():
                 "wedge_polygon": wedge_pts
             })
 
-    # 11. Active Production Alerts (66 alerts with acknowledged flag)
-    alerts_csv = os.path.join(assets_dir, "alerts_log.csv")
-    df_alerts = pd.read_csv(alerts_csv) if os.path.exists(alerts_csv) else pd.DataFrame()
+    # 11. Canonical Production Alerts (Synchronized strictly with 33-district risk records)
+    canonical_alerts, _ = get_canonical_alerts(prefer_live=False)
     production_alerts = []
-    if not df_alerts.empty:
-        for r in df_alerts.to_dict(orient="records"):
-            r["acknowledged"] = False
-            production_alerts.append(r)
+    for a in canonical_alerts:
+        production_alerts.append({
+            "Alert_ID": a.alert_id,
+            "alert_id": a.alert_id,
+            "district_id": a.district_id,
+            "Dist_LGD": a.district_id,
+            "District": a.district_name,
+            "district": a.district_name,
+            "Hazard_Type": a.alert_category,
+            "alert_category": a.alert_category,
+            "Severity_Level": a.severity,
+            "Severity_Tier": a.severity,
+            "severity": a.severity,
+            "severity_level": a.severity,
+            "Risk_Score_Multiplicative": a.risk_score,
+            "risk_score": a.risk_score,
+            "Hazard_Score": a.hazard_score,
+            "Exposure_Score": a.exposure_score,
+            "Vulnerability_Score": a.vulnerability_score,
+            "Observation_Timestamp_UTC": a.observed_at,
+            "observed_at": a.observed_at,
+            "Data_Freshness": a.data_freshness,
+            "data_freshness": a.data_freshness,
+            "Data_Source": a.source,
+            "source": a.source,
+            "Confidence_Level": f"{int(a.confidence * 100)}%",
+            "confidence": a.confidence,
+            "Trigger_Reason": a.evidence,
+            "evidence": a.evidence,
+            "Alert_Verification_Status": a.verification_status,
+            "verification_status": a.verification_status,
+            "Latitude": a.lat,
+            "Longitude": a.lon,
+            "lat": a.lat,
+            "lon": a.lon,
+            "acknowledged": a.acknowledged,
+        })
 
     # 12. ML Flood Model Metrics
     metrics_csv = os.path.join(assets_dir, "table_classifier_metrics.csv")

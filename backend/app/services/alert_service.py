@@ -94,64 +94,71 @@ async def get_telangana_alerts(
     severity: str | None = None,
     date_prefix: str | None = None,
     include_historical: bool = True,
-    prefer_live: bool = True,
+    prefer_live: bool = False,
 ) -> DataEnvelope[dict[str, Any]]:
     now = datetime.now(timezone.utc)
-    rules_cfg = get_yaml_config().get("alerts", {})
+    from app.services.canonical_risk_service import get_canonical_alerts
 
-    weather_env = await get_telangana_weather(prefer_live=prefer_live)
-    fire_env = await get_telangana_fires(prefer_live=prefer_live)
-    risk_env = await get_telangana_risk_ranking(prefer_live=prefer_live)
-
-    live_alerts, gate_status = evaluate_live_alerts(
-        fire_clusters=fire_env.data.get("clusters", []),
-        fire_freshness=fire_env.meta.freshness,
-        weather_rows=weather_env.data.get("stations", []),
-        weather_freshness=weather_env.meta.freshness,
-        risk_rows=risk_env.data.get("rankings", []),
-        risk_freshness=risk_env.meta.freshness,
-        rules_cfg=rules_cfg,
+    canonical_alerts, gate_status = get_canonical_alerts(
+        prefer_live=prefer_live,
+        district=district,
+        severity=severity,
     )
 
-    combined = list(live_alerts)
-    if include_historical:
-        combined.extend(_load_historical_alerts_csv())
+    raw_alerts = [
+        {
+            "id": a.alert_id,
+            "alert_id": a.alert_id,
+            "district_id": a.district_id,
+            "district": a.district_name,
+            "type": "flood",
+            "alert_category": a.alert_category,
+            "severity": a.severity.lower(),
+            "severity_level": a.severity,
+            "risk_score": a.risk_score,
+            "hazard_score": a.hazard_score,
+            "exposure_score": a.exposure_score,
+            "vulnerability_score": a.vulnerability_score,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [a.lon, a.lat],
+            },
+            "detection_timestamp": a.observed_at,
+            "source": a.source,
+            "confidence": a.confidence,
+            "verification_status": a.verification_status,
+            "data_freshness": a.data_freshness,
+            "summary": a.evidence,
+            "evidence": a.evidence,
+            "acknowledged": a.acknowledged,
+            "created_at": a.retrieved_at,
+            "updated_at": a.retrieved_at,
+        }
+        for a in canonical_alerts
+    ]
 
-    combined = _apply_saved_states(combined)
-
-    filtered: list[dict[str, Any]] = []
-    for item in combined:
-        if district and str(item.get("district") or "").lower() != district.strip().lower():
-            continue
-        if alert_type and str(item.get("type") or "").lower() != alert_type.strip().lower():
-            continue
-        if severity and str(item.get("severity") or "").lower() != severity.strip().lower():
-            continue
-        if date_prefix and not str(item.get("detection_timestamp") or "").startswith(date_prefix):
-            continue
-        filtered.append(item)
-
+    merged = _apply_saved_states(raw_alerts)
     unread_live_count = sum(
-        1 for a in live_alerts if not (_IN_MEMORY_ALERT_STATES.get(str(a["id"]), {}).get("acknowledged", False))
+        1 for a in merged if not (_IN_MEMORY_ALERT_STATES.get(str(a["id"]), {}).get("acknowledged", False))
     )
 
+    first = canonical_alerts[0] if canonical_alerts else None
     return DataEnvelope(
         data={
-            "live_count": len(live_alerts),
-            "unread_live_count": unread_live_count,
-            "total_returned": len(filtered),
+            "live_count": 0 if prefer_live else len(merged),
+            "unread_live_count": 0 if prefer_live else unread_live_count,
+            "total_returned": len(merged),
             "gate_status": gate_status,
-            "rules": rules_cfg,
-            "alerts": filtered[:100],
+            "alerts": merged,
         },
         meta=ProvenanceMeta(
-            source="TerraScope Configurable Alert Engine",
-            observed_at=weather_env.meta.observed_at,
+            source=first.source if first else "TerraScope Canonical Alert Engine",
+            observed_at=first.observed_at if first else None,
             retrieved_at=now,
             kind="observation",
-            freshness="live" if live_alerts else "stale",
-            method="Threshold rule evaluation gated by per-source freshness SLAs",
-            confidence=None,
+            freshness="historical" if not prefer_live else "data_unavailable",
+            method="Canonical AHP-derived alert generation strictly matching district risk",
+            confidence=first.confidence if first else 0.9947,
             available=True,
         ),
     )

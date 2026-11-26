@@ -404,12 +404,16 @@ export function CesiumGlobe() {
             const sevMap = riskEnv
               ? new Map(riskEnv.data.rankings.map((r) => [r.district.toLowerCase(), r.severity]))
               : null;
+            const sevMapLgd = riskEnv
+              ? new Map(riskEnv.data.rankings.map((r: any) => [Number(r.district_id || r.dist_lgd), r.severity]))
+              : null;
             telanganaLayerRef.current = createBoundaryLayer(viewer, gj, {
               lineHeightM: 1600,
               fillHeightM: 800,
               getStyle: (feat) => {
                 const name = String(feat.properties?.district ?? "").toLowerCase();
-                const sev = sevMap?.get(name) ?? "low";
+                const lgd = Number(feat.properties?.dist_lgd || feat.properties?.district_id);
+                const sev = (lgd ? sevMapLgd?.get(lgd) : null) ?? sevMap?.get(name) ?? "low";
                 const isSelected =
                   Boolean(selectedDistrict) && name === selectedDistrict?.toLowerCase();
                 return {

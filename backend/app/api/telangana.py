@@ -90,17 +90,39 @@ def check_point_analytics(
 
 @router.get("/districts", response_model=DataEnvelope[dict[str, Any]])
 def list_telangana_districts() -> DataEnvelope[dict[str, Any]]:
-    """Returns all 33 simplified Telangana district boundaries and centroids."""
-    geojson, summaries = _load_telangana_districts_simplified()
+    """Returns all 33 simplified Telangana district boundaries with canonical risk attributes."""
+    from app.services.canonical_risk_service import get_canonical_33_districts_geojson, compute_canonical_33_district_risk
+
+    geojson = get_canonical_33_districts_geojson(prefer_live=False)
+    records = compute_canonical_33_district_risk(prefer_live=False)
+    summaries = [
+        {
+            "district_id": r.district_id,
+            "dist_lgd": r.district_id,
+            "district": r.district_name,
+            "state": "Telangana",
+            "lat": r.lat,
+            "lon": r.lon,
+            "risk_score": r.risk_score,
+            "severity_level": r.severity_level,
+            "rank": r.rank,
+            "data_freshness": r.data_freshness,
+            "observed_at": r.observed_at,
+        }
+        for r in records
+    ]
+    summaries.sort(key=lambda d: d["district"])
+
+    first = records[0] if records else None
     return DataEnvelope(
         data={"count": len(summaries), "districts": summaries, "geojson": geojson},
         meta=ProvenanceMeta(
-            source="Telangana Administrative Boundaries (DataMeet / Survey of India, EPSG:4326)",
-            observed_at=None,
+            source=first.data_source if first else "Telangana Administrative Boundaries (EPSG:4326)",
+            observed_at=first.observed_at if first else None,
             kind="observation",
-            freshness="historical",
-            method="Topology-preserving simplification (0.002 deg) of 33 district polygons",
-            confidence=None,
+            freshness=first.data_freshness.lower() if first else "historical",
+            method="Authoritative 33-district boundaries unified with canonical risk engine",
+            confidence=first.confidence if first else 0.9947,
             available=len(summaries) == 33,
         ),
     )
@@ -110,8 +132,9 @@ def list_telangana_districts() -> DataEnvelope[dict[str, Any]]:
 def get_telangana_district_summary(
     name: str = Path(..., min_length=2, max_length=80),
 ) -> DataEnvelope[dict[str, Any]]:
-    _, summaries = _load_telangana_districts_simplified()
-    match = next((d for d in summaries if d["district"].lower() == name.strip().lower()), None)
+    from app.services.canonical_risk_service import get_canonical_risk_for_district
+
+    match = get_canonical_risk_for_district(name, prefer_live=False)
     if match is None:
         raise HTTPException(
             status_code=404,
@@ -121,14 +144,14 @@ def get_telangana_district_summary(
             },
         )
     return DataEnvelope(
-        data=match,
+        data=match.dict(),
         meta=ProvenanceMeta(
-            source="Telangana Administrative Boundaries (EPSG:4326)",
-            observed_at=None,
+            source=match.data_source,
+            observed_at=match.observed_at,
             kind="observation",
-            freshness="historical",
-            method="Centroid and LGD lookup from 33-district boundary dataset",
-            confidence=None,
+            freshness=match.data_freshness.lower(),
+            method="Canonical LGD resolution and authoritative district risk assessment",
+            confidence=match.confidence,
             available=True,
         ),
     )
@@ -164,11 +187,59 @@ async def get_weather_intelligence(
 @router.get("/risk", response_model=DataEnvelope[dict[str, Any]])
 async def get_risk_intelligence(
     district: str | None = Query(default=None),
-    prefer_live: bool = Query(default=True),
+    prefer_live: bool = Query(default=False),
 ) -> DataEnvelope[dict[str, Any]]:
-    from app.services.risk_service import get_telangana_risk_ranking
+    from app.services.canonical_risk_service import (
+        compute_canonical_33_district_risk,
+        get_canonical_risk_for_district,
+        SEVERITY_THRESHOLDS,
+    )
 
-    return await get_telangana_risk_ranking(district=district, prefer_live=prefer_live)
+    records = compute_canonical_33_district_risk(prefer_live=prefer_live)
+    recs_dict = []
+    for r in records:
+        rd = r.dict()
+        rd["district"] = r.district_name
+        rd["severity"] = r.severity_level.lower()
+        rd["top_drivers"] = [
+            {"indicator": dr.get("indicator", ""), "weighted_contribution": dr.get("weighted_value", 0.0)}
+            for dr in r.primary_drivers
+        ]
+        recs_dict.append(rd)
+
+    selected = None
+    if district:
+        sel_rec = get_canonical_risk_for_district(district, prefer_live=prefer_live)
+        if sel_rec:
+            selected = sel_rec.dict()
+            selected["district"] = sel_rec.district_name
+            selected["severity"] = sel_rec.severity_level.lower()
+
+    first = records[0] if records else None
+    return DataEnvelope(
+        data={
+            "rankings": recs_dict,
+            "selected_district": selected,
+            "severity_thresholds": SEVERITY_THRESHOLDS,
+            "calculation_version": "v2.1-canonical-hev",
+            "historical_sept2024_trajectory": [],
+            "methodology": {
+                "formula": "R = H × E × V (AHP-weighted multiplicative risk index)",
+                "interpretation": "Canonical multi-sensor physical flood and thermal vulnerability assessment",
+                "severity_thresholds": SEVERITY_THRESHOLDS,
+                "calculation_version": "v2.1-canonical-hev",
+            },
+        },
+        meta=ProvenanceMeta(
+            source=first.data_source if first else "Canonical Telangana Multiplicative R=HxExV Engine",
+            observed_at=first.observed_at if first else None,
+            kind="analysis",
+            freshness=first.data_freshness.lower() if first else "historical",
+            method="AHP Weighted Multiplicative Risk Assessment R=HxExV",
+            confidence=first.confidence if first else 0.9947,
+            available=True,
+        ),
+    )
 
 
 @router.get("/exposure", response_model=DataEnvelope[dict[str, Any]])

@@ -12,8 +12,13 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+backend_dir = os.path.join(root_dir, "backend")
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+from app.core.telangana_districts import resolve_district_lgd
 
 from fastapi import FastAPI, HTTPException, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
@@ -123,10 +128,15 @@ def get_districts():
     return payload.get("districts_geojson", {"type": "FeatureCollection", "features": []})
 
 @app.get("/api/districts/{name}")
-def get_district_details(name: str = Path(..., description="Name of the Telangana district")):
+def get_district_details(name: str = Path(..., description="Name or LGD code of the Telangana district")):
     payload = get_data_payload()
     districts = payload.get("district_peak_ranking", [])
-    match = next((d for d in districts if d["district"].lower() == name.lower()), None)
+    target_lgd = resolve_district_lgd(name)
+    match = None
+    if target_lgd is not None:
+        match = next((d for d in districts if d.get("district_id") == target_lgd or d.get("dist_lgd") == target_lgd), None)
+    if not match:
+        match = next((d for d in districts if d["district"].lower() == name.lower()), None)
     if not match:
         raise HTTPException(status_code=404, detail=f"District '{name}' not found in Telangana 33 districts")
 
@@ -290,10 +300,17 @@ def get_alerts(
         
         if unacknowledged and is_ack:
             continue
-        if severity and a.get("Severity_Tier", "").upper() != severity.upper():
-            continue
-        if district and a.get("District", "").lower() != district.lower():
-            continue
+        if severity:
+            sev_candidate = (a.get("severity_level") or a.get("Severity_Level") or a.get("Severity_Tier") or a.get("severity") or "").upper()
+            if sev_candidate != severity.upper():
+                continue
+        if district:
+            target_lgd = resolve_district_lgd(district)
+            a_lgd = a.get("district_id") or a.get("Dist_LGD")
+            if target_lgd is not None and a_lgd != target_lgd:
+                continue
+            elif target_lgd is None and str(a.get("District", "")).lower() != district.lower() and str(a.get("district", "")).lower() != district.lower():
+                continue
             
         filtered.append(a_copy)
         

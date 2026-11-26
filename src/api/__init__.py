@@ -1,3 +1,0 @@
-"""
-TerraScope FastAPI Application Package.
-"""

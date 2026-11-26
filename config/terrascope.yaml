@@ -1,0 +1,97 @@
+project:
+  name: "TerraScope"
+  version: "2.0.0"
+  region_focus: "Telangana, India"
+  crs_geographic: "EPSG:4326"
+  crs_projected_telangana: "EPSG:32644"
+
+modes:
+  GLOBAL:
+    analytics_enabled: false
+    camera:
+      lon: 20.0
+      lat: 15.0
+      height_m: 18500000
+  INDIA:
+    analytics_enabled: false
+    bounds:
+      west: 68.1
+      south: 6.7
+      east: 97.4
+      north: 35.5
+    camera:
+      lon: 78.96
+      lat: 21.5
+      height_m: 4200000
+  TELANGANA:
+    analytics_enabled: true
+    district_count: 33
+    bounds:
+      west: 77.2
+      south: 15.8
+      east: 81.4
+      north: 19.95
+    camera:
+      lon: 79.35
+      lat: 17.85
+      height_m: 620000
+
+freshness_sla_hours:
+  firms:
+    live_max_hours: 3.0
+    recent_max_hours: 24.0
+  era5_land:
+    live_max_hours: 12.0
+    recent_max_hours: 48.0
+  chirps:
+    live_max_hours: 24.0
+    recent_max_hours: 72.0
+  sentinel1:
+    live_max_hours: 24.0
+    recent_max_hours: 72.0
+
+fire_module:
+  wedge_angle_deg: 30.0
+  wedge_distance_m: 5000.0
+  settlement_proximity_km: 2.0
+  dedup_distance_deg: 0.010
+  persistence_distance_deg: 0.015
+  propagation_disclaimer: "Potential downwind exposure corridor based on ERA5-Land ambient wind advection; not a physical fire-spread prediction model."
+
+risk_index:
+  ahp:
+    # Preserved from validated research config (CR = 0.00762 < 0.10)
+    pairwise_matrix:
+      - [1.000, 2.000, 3.000]
+      - [0.500, 1.000, 2.000]
+      - [0.333, 0.500, 1.000]
+    cr_threshold: 0.10
+    preserved_weights:
+      hazard: 0.5397
+      exposure: 0.2970
+      vulnerability: 0.1634
+    preserved_cr: 0.00762
+  hazard_weights:
+    rainfall_7d: 0.50
+    flood_inundation: 0.40
+    active_fires: 0.10
+  exposure_weights:
+    population: 0.35
+    roads: 0.25
+    critical_infra: 0.20
+    cropland: 0.20
+  vulnerability_weights:
+    bpl_ratio: 0.35
+    kutcha_roof: 0.25
+    hospital_bed_deficit: 0.20
+    drainage_handicap: 0.20
+  index_interpretation_label: "Relative risk ranking among Telangana's 33 districts, not an absolute calibrated probability."
+
+alerts:
+  high_risk_threshold_percentile: 90.0
+  flood_rainfall_7d_threshold_mm: 150.0
+  flood_inundation_area_threshold_km2: 25.0
+  fire_settlement_proximity_km: 2.0
+  fire_frp_critical_mw: 25.0
+  fire_frp_warning_mw: 10.0
+  block_alerts_on_stale_data: true

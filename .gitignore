@@ -1,22 +1,30 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
 
-# Caches
-data/cache/
-.gev-cache/
-.gev-logs/
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
+coverage/
 
-# Node
-node_modules/
-npm-debug.log*
-
-# OS artifacts
-.DS_Store
-Thumbs.db
-
-
+# Environment & Secrets
 .env
 *.env
+!.env.example
 
+# Caches & Logs
+data/cache/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

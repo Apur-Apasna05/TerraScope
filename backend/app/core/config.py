@@ -7,7 +7,7 @@ from typing import Any
 
 import os
 import yaml
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -42,9 +42,18 @@ class Settings(BaseSettings):
     )
 
     # Server-only secrets (never return in API responses)
-    google_maps_server_key: str = Field(default="")
-    nasa_firms_api_key: str = Field(default="")
-    cesium_ion_token: str = Field(default="")
+    google_maps_server_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("GOOGLE_MAPS_SERVER_KEY", "GOOGLE_MAPS_API_KEY", "VITE_GOOGLE_MAPS_BROWSER_KEY"),
+    )
+    nasa_firms_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("NASA_FIRMS_API_KEY", "FIRMS_MAP_KEY"),
+    )
+    cesium_ion_token: str = Field(
+        default="",
+        validation_alias=AliasChoices("CESIUM_ION_TOKEN", "VITE_CESIUM_ION_TOKEN"),
+    )
     opensky_client_id: str = Field(default="")
     opensky_client_secret: str = Field(default="")
     weather_api_key: str = Field(default="")

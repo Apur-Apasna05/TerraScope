@@ -47,6 +47,12 @@ export default defineConfig(({ mode }) => {
     envDir: "..",
     define: {
       CESIUM_BASE_URL: JSON.stringify("/cesium"),
+      "import.meta.env.VITE_CESIUM_ION_TOKEN": JSON.stringify(
+        env.VITE_CESIUM_ION_TOKEN || env.CESIUM_ION_TOKEN || ""
+      ),
+      "import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY": JSON.stringify(
+        env.VITE_GOOGLE_MAPS_BROWSER_KEY || env.GOOGLE_MAPS_API_KEY || ""
+      ),
     },
     plugins: [
       react(),

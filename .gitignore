@@ -28,3 +28,7 @@ data/cache/
 # OS
 .DS_Store
 Thumbs.db
+
+# Submodules & External clones
+gods-eye-view/
+

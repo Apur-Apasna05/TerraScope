@@ -112,6 +112,25 @@ export function CesiumGlobe() {
     viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#060B18");
     viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#0A1529");
     viewer.scene.globe.enableLighting = false;
+    viewer.scene.rethrowRenderErrors = false;
+    viewer.scene.renderError.addEventListener((_scene, error) => {
+      console.warn("Cesium renderError caught and handled:", error);
+      if (!viewer.isDestroyed()) {
+        viewer.scene.globe.show = true;
+        if (googleTilesetRef.current) {
+          try {
+            viewer.scene.primitives.remove(googleTilesetRef.current);
+          } catch {}
+          googleTilesetRef.current = null;
+        }
+        if (
+          viewer.terrainProvider &&
+          !(viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider)
+        ) {
+          viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        }
+      }
+    });
     if (viewer.scene.skyAtmosphere) {
       viewer.scene.skyAtmosphere.brightnessShift = 0.08;
       viewer.scene.skyAtmosphere.saturationShift = 0.12;

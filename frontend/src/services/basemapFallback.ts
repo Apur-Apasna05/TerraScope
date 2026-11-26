@@ -72,25 +72,53 @@ export async function initializeBasemapWithFallback(
   // Priority 1: Google Photorealistic 3D Tiles (with explicit LOD/cache limits)
   if (googleKey) {
     try {
-      googleTileset = options?.createGoogleTileset
-        ? await options.createGoogleTileset(googleKey)
-        : await Cesium.createGooglePhotorealistic3DTileset(
-            { key: googleKey, onlyUsingWithGoogleGeocoder: true },
-            { maximumScreenSpaceError: 2, cacheBytes: 512 * 1024 * 1024 },
+      // Validate key has 3D Tiles permission before mounting to prevent render-loop crashes
+      let authorized = true;
+      if (!options?.createGoogleTileset && typeof fetch !== "undefined") {
+        try {
+          const probe = await fetch(
+            `https://tile.googleapis.com/v1/3dtiles/root.json?key=${encodeURIComponent(googleKey)}`,
+            { signal: AbortSignal.timeout(3000) },
           );
-      if (!viewer.isDestroyed()) {
-        viewer.scene.primitives.add(googleTileset);
-        viewer.scene.globe.show = false;
-        return {
-          googleTileset,
-          statusMessage: "Google Photorealistic 3D Tiles active",
-          coverage: {
-            photorealistic3d: true,
-            terrain: true,
-            streetView: "unknown",
-            providerLabel: "Google Photorealistic 3D Tiles",
-          },
-        };
+          if (probe.status === 403 || probe.status === 401) {
+            console.warn("Google 3D Tiles returned 403/401; falling back to Cesium Ion terrain / ArcGIS satellite.");
+            authorized = false;
+          }
+        } catch {
+          // If probe fails or offline, continue with caution
+        }
+      }
+
+      if (authorized) {
+        googleTileset = options?.createGoogleTileset
+          ? await options.createGoogleTileset(googleKey)
+          : await Cesium.createGooglePhotorealistic3DTileset(
+              { key: googleKey, onlyUsingWithGoogleGeocoder: true },
+              { maximumScreenSpaceError: 2, cacheBytes: 512 * 1024 * 1024 },
+            );
+        if (!viewer.isDestroyed() && googleTileset) {
+          googleTileset.tileFailed.addEventListener((err) => {
+            console.warn("Google 3D Tiles tile failed, restoring globe:", err);
+            if (!viewer.isDestroyed()) {
+              try {
+                viewer.scene.primitives.remove(googleTileset);
+              } catch {}
+              viewer.scene.globe.show = true;
+            }
+          });
+          viewer.scene.primitives.add(googleTileset);
+          viewer.scene.globe.show = false;
+          return {
+            googleTileset,
+            statusMessage: "Google Photorealistic 3D Tiles active",
+            coverage: {
+              photorealistic3d: true,
+              terrain: true,
+              streetView: "unknown",
+              providerLabel: "Google Photorealistic 3D Tiles",
+            },
+          };
+        }
       }
     } catch {
       googleTileset = null;
